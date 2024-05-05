@@ -8,3 +8,9 @@ bevy = { version = "0.13", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline"
 ] }
+
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3
