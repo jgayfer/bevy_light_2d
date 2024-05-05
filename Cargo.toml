@@ -6,7 +6,8 @@ edition = "2021"
 [dependencies]
 bevy = { version = "0.13", default-features = false, features = [
     "bevy_render",
-    "bevy_core_pipeline"
+    "bevy_core_pipeline",
+    "bevy_winit"
 ] }
 
 [profile.dev]
