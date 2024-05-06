@@ -5,7 +5,10 @@ use bevy::render::render_graph::{RenderGraphApp, ViewNodeRunner};
 use bevy::render::RenderApp;
 use render::lighting::{LightingNode, LightingPass, LightingPipeline};
 
+mod component;
 mod render;
+
+pub use component::{PointLight2d, PointLight2dBundle};
 
 pub struct Light2dPlugin;
 

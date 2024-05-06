@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_light_2d::Light2dPlugin;
+use bevy_light_2d::{Light2dPlugin, PointLight2d, PointLight2dBundle};
 
 fn main() {
     App::new()
@@ -16,6 +16,15 @@ fn setup(mut commands: Commands) {
             custom_size: Some(Vec2::splat(100.)),
             ..default()
         },
+        ..default()
+    });
+
+    commands.spawn(PointLight2dBundle {
+        point_light: PointLight2d {
+            color: Color::RED,
+            ..default()
+        },
+        transform: Transform::from_xyz(50., 0., 0.),
         ..default()
     });
 }
