@@ -3,6 +3,7 @@ use bevy::core_pipeline::core_2d::graph::{Core2d, Node2d};
 use bevy::prelude::*;
 use bevy::render::render_graph::{RenderGraphApp, ViewNodeRunner};
 use bevy::render::render_resource::{ShaderType, StorageBuffer};
+use bevy::render::renderer::{RenderDevice, RenderQueue};
 use bevy::render::{Extract, Render, RenderApp, RenderSet};
 use render::lighting::{LightingNode, LightingPass, LightingPipeline};
 
@@ -64,6 +65,8 @@ fn extract_camera(
 }
 
 fn prepare_lights(
+    render_device: Res<RenderDevice>,
+    render_queue: Res<RenderQueue>,
     camera_query: Query<(&Camera, &GlobalTransform)>,
     point_light_query: Query<(&PointLight2d, &GlobalTransform)>,
     mut lighting_pass_assets: ResMut<LightingPassAssets>,
@@ -93,6 +96,10 @@ fn prepare_lights(
             energy: point_light.energy,
         });
     }
+
+    lighting_pass_assets
+        .point_lights
+        .write_buffer(&render_device, &render_queue);
 }
 
 #[derive(Default, Resource)]
