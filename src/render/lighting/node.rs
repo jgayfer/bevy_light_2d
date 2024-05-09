@@ -6,6 +6,8 @@ use bevy::render::render_resource::{
 };
 use bevy::render::view::{ViewTarget, ViewUniforms};
 
+use crate::LightingPassAssets;
+
 use super::LightingPipeline;
 
 #[derive(Default)]
@@ -34,6 +36,14 @@ impl ViewNode for LightingNode {
             return Ok(());
         };
 
+        let Some(point_light_buffer) = world
+            .resource::<LightingPassAssets>()
+            .point_lights
+            .binding()
+        else {
+            return Ok(());
+        };
+
         let post_process = view_target.post_process_write();
 
         let bind_group = render_context.render_device().create_bind_group(
@@ -43,6 +53,7 @@ impl ViewNode for LightingNode {
                 post_process.source,
                 &lighting_pipeline.sampler,
                 view_uniform_binding,
+                point_light_buffer,
             )),
         );
 

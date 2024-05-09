@@ -22,9 +22,10 @@ fn setup(mut commands: Commands) {
     commands.spawn(PointLight2dBundle {
         point_light: PointLight2d {
             color: Color::RED,
+            radius: 200.,
             ..default()
         },
-        transform: Transform::from_xyz(50., 0., 0.),
+        transform: Transform::from_xyz(150., 0., 0.),
         ..default()
     });
 }

@@ -103,18 +103,18 @@ fn prepare_lights(
 }
 
 #[derive(Default, Resource)]
-struct LightingPassAssets {
+pub struct LightingPassAssets {
     pub point_lights: StorageBuffer<GpuPointLight2dBuffer>,
 }
 
 #[derive(Default, Clone, ShaderType)]
-struct GpuPointLight2dBuffer {
+pub struct GpuPointLight2dBuffer {
     #[size(runtime)]
     pub data: Vec<GpuPointLight2d>,
 }
 
 #[derive(Default, Clone, ShaderType)]
-struct GpuPointLight2d {
+pub struct GpuPointLight2d {
     pub center: Vec2,
     pub radius: f32,
     pub color: Vec3,
