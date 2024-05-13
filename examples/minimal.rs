@@ -14,6 +14,7 @@ fn setup(mut commands: Commands) {
     commands.spawn(SpriteBundle {
         sprite: Sprite {
             custom_size: Some(Vec2::splat(100.)),
+            color: Color::GRAY,
             ..default()
         },
         ..default()
@@ -21,11 +22,21 @@ fn setup(mut commands: Commands) {
 
     commands.spawn(PointLight2dBundle {
         point_light: PointLight2d {
-            color: Color::RED,
-            radius: 200.,
-            ..default()
+            color: Color::LIME_GREEN,
+            radius: 100.,
+            energy: 1.0,
         },
-        transform: Transform::from_xyz(150., 0., 0.),
+        transform: Transform::from_xyz(50., 25., 0.),
+        ..default()
+    });
+
+    commands.spawn(PointLight2dBundle {
+        point_light: PointLight2d {
+            color: Color::YELLOW,
+            radius: 100.,
+            energy: 1.0,
+        },
+        transform: Transform::from_xyz(25., 50., 0.),
         ..default()
     });
 }
