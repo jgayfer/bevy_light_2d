@@ -4,8 +4,8 @@
 struct PointLight2d {
     center: vec2f,
     radius: f32,
-    energy: f32,
     color: vec3f,
+    energy: f32,
 }
 
 struct PointLight2dBuffer {
