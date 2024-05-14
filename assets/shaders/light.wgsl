@@ -42,5 +42,5 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
         }
     }
 
-    return vec4(color, alpha);
+    return vec4(color, max(alpha, 0.5));
 }
