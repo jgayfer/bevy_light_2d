@@ -2,10 +2,9 @@ use bevy::core_pipeline::fullscreen_vertex_shader::fullscreen_shader_vertex_stat
 use bevy::prelude::*;
 use bevy::render::render_resource::binding_types::{storage_buffer_read_only, uniform_buffer};
 use bevy::render::render_resource::{
-    BindGroupLayout, BindGroupLayoutEntries, BlendComponent, BlendFactor, BlendOperation,
-    BlendState, CachedRenderPipelineId, ColorTargetState, ColorWrites, FragmentState,
-    MultisampleState, PipelineCache, PrimitiveState, RenderPipelineDescriptor, Sampler,
-    SamplerDescriptor, ShaderStages, TextureFormat,
+    BindGroupLayout, BindGroupLayoutEntries, BlendState, CachedRenderPipelineId, ColorTargetState,
+    ColorWrites, FragmentState, MultisampleState, PipelineCache, PrimitiveState,
+    RenderPipelineDescriptor, Sampler, SamplerDescriptor, ShaderStages, TextureFormat,
 };
 use bevy::render::renderer::RenderDevice;
 use bevy::render::texture::BevyDefault;
@@ -52,7 +51,7 @@ impl FromWorld for LightingPipeline {
                         entry_point: "fragment".into(),
                         targets: vec![Some(ColorTargetState {
                             format: TextureFormat::bevy_default(),
-                            blend: Some(BLEND),
+                            blend: Some(BlendState::ALPHA_BLENDING),
                             write_mask: ColorWrites::ALL,
                         })],
                     }),
@@ -73,17 +72,3 @@ impl FromWorld for LightingPipeline {
         }
     }
 }
-
-const BLEND: BlendState = BlendState {
-    color: BlendComponent {
-        src_factor: BlendFactor::SrcAlpha,
-        dst_factor: BlendFactor::One,
-        operation: BlendOperation::Add,
-    },
-
-    alpha: BlendComponent {
-        src_factor: BlendFactor::OneMinusSrcAlpha,
-        dst_factor: BlendFactor::One,
-        operation: BlendOperation::Add,
-    },
-};

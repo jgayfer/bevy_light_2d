@@ -14,7 +14,7 @@ fn setup(mut commands: Commands) {
     commands.spawn(SpriteBundle {
         sprite: Sprite {
             custom_size: Some(Vec2::splat(100.)),
-            color: Color::GRAY,
+            color: Color::WHITE,
             ..default()
         },
         ..default()
