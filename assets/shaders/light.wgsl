@@ -1,7 +1,7 @@
 #import bevy_core_pipeline::fullscreen_vertex_shader::FullscreenVertexOutput
 #import bevy_render::view::View
 
-const ALPHA_BLEND: f32 = 0.5;
+const LIGHT_SOURCE_MULTIPLIER: f32 = 0.5;
 
 struct PointLight2d {
     center: vec2f,
@@ -19,16 +19,28 @@ struct AmbientLight2d {
     brightness: f32
 }
 
+
 @group(0) @binding(0)
-var<uniform> view: View;
+var screen_texture: texture_2d<f32>;
 @group(0) @binding(1)
-var<storage> point_light_buffer: PointLight2dBuffer;
+var texture_sampler: sampler;
 @group(0) @binding(2)
+var<uniform> view: View;
+@group(0) @binding(3)
+var<storage> point_light_buffer: PointLight2dBuffer;
+@group(0) @binding(4)
 var<uniform> ambient_light: AmbientLight2d;
 
 @fragment
 fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
-    var color = ambient_light.color * ambient_light.brightness;
+    let texture = textureSample(screen_texture, texture_sampler, vo.uv);
+
+    // The color of the main texture, before applying any lighting effects.
+    var color = texture.rgb;
+
+    // Blend in the ambient light, dividing by 100 as the input value is
+    // interpreted as a percentage (e.g. 100 brightness is full brightness).
+    color *= ambient_light.color * ambient_light.brightness / 100;
 
     // For each light, determine its illumination if we're within range of it.
     for (var i = 0u; i < arrayLength(&point_light_buffer.data); i++) {
@@ -49,9 +61,13 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
 
             // Add in the color from the light, taking into account the light's
             // energy and how far away it is.
-            color += point_light.color * point_light.energy * distance_multiplier;
+            color +=
+                point_light.color
+                * point_light.energy
+                * distance_multiplier
+                * LIGHT_SOURCE_MULTIPLIER;
         }
     }
 
-    return vec4(color, ALPHA_BLEND);
+    return vec4(color, texture.a);
 }

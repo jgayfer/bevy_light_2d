@@ -1,10 +1,12 @@
 use bevy::core_pipeline::fullscreen_vertex_shader::fullscreen_shader_vertex_state;
 use bevy::prelude::*;
-use bevy::render::render_resource::binding_types::{storage_buffer_read_only, uniform_buffer};
+use bevy::render::render_resource::binding_types::{
+    sampler, storage_buffer_read_only, texture_2d, uniform_buffer,
+};
 use bevy::render::render_resource::{
-    BindGroupLayout, BindGroupLayoutEntries, BlendState, CachedRenderPipelineId, ColorTargetState,
-    ColorWrites, FragmentState, MultisampleState, PipelineCache, PrimitiveState,
-    RenderPipelineDescriptor, Sampler, SamplerDescriptor, ShaderStages, TextureFormat,
+    BindGroupLayout, BindGroupLayoutEntries, CachedRenderPipelineId, ColorTargetState, ColorWrites,
+    FragmentState, MultisampleState, PipelineCache, PrimitiveState, RenderPipelineDescriptor,
+    Sampler, SamplerBindingType, SamplerDescriptor, ShaderStages, TextureFormat, TextureSampleType,
 };
 use bevy::render::renderer::RenderDevice;
 use bevy::render::texture::BevyDefault;
@@ -28,6 +30,8 @@ impl FromWorld for LightingPipeline {
             &BindGroupLayoutEntries::sequential(
                 ShaderStages::FRAGMENT,
                 (
+                    texture_2d(TextureSampleType::Float { filterable: true }),
+                    sampler(SamplerBindingType::Filtering),
                     uniform_buffer::<ViewUniform>(false),
                     storage_buffer_read_only::<GpuPointLight2dBuffer>(false),
                     uniform_buffer::<GpuAmbientLight2d>(false),
@@ -52,17 +56,13 @@ impl FromWorld for LightingPipeline {
                         entry_point: "fragment".into(),
                         targets: vec![Some(ColorTargetState {
                             format: TextureFormat::bevy_default(),
-                            blend: Some(BlendState::ALPHA_BLENDING),
+                            blend: None,
                             write_mask: ColorWrites::ALL,
                         })],
                     }),
                     primitive: PrimitiveState::default(),
                     depth_stencil: None,
-                    multisample: MultisampleState {
-                        count: 4,
-                        mask: !0,
-                        alpha_to_coverage_enabled: false,
-                    },
+                    multisample: MultisampleState::default(),
                     push_constant_ranges: vec![],
                 });
 

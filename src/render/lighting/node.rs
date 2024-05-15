@@ -1,7 +1,9 @@
 use bevy::prelude::*;
 use bevy::render::render_graph::ViewNode;
 
-use bevy::render::render_resource::{BindGroupEntries, PipelineCache, RenderPassDescriptor};
+use bevy::render::render_resource::{
+    BindGroupEntries, Operations, PipelineCache, RenderPassColorAttachment, RenderPassDescriptor,
+};
 use bevy::render::view::{ViewTarget, ViewUniforms};
 
 use crate::LightingPassAssets;
@@ -50,10 +52,14 @@ impl ViewNode for LightingNode {
             return Ok(());
         };
 
+        let post_process = view_target.post_process_write();
+
         let bind_group = render_context.render_device().create_bind_group(
             "lighting_bind_group",
             &lighting_pipeline.layout,
             &BindGroupEntries::sequential((
+                post_process.source,
+                &lighting_pipeline.sampler,
                 view_uniform_binding,
                 point_light_buffer,
                 ambient_light_uniform,
@@ -62,7 +68,11 @@ impl ViewNode for LightingNode {
 
         let mut render_pass = render_context.begin_tracked_render_pass(RenderPassDescriptor {
             label: Some("lighting_pass"),
-            color_attachments: &[Some(view_target.get_color_attachment())],
+            color_attachments: &[Some(RenderPassColorAttachment {
+                view: post_process.destination,
+                resolve_target: None,
+                ops: Operations::default(),
+            })],
             depth_stencil_attachment: None,
             timestamp_writes: None,
             occlusion_query_set: None,
