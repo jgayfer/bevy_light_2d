@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_light_2d::{Light2dPlugin, PointLight2d, PointLight2dBundle};
+use bevy_light_2d::{AmbientLight2d, Light2dPlugin, PointLight2d, PointLight2dBundle};
 
 fn main() {
     App::new()
@@ -9,7 +9,7 @@ fn main() {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn((Camera2dBundle::default(), AmbientLight2d::default()));
 
     commands.spawn(SpriteBundle {
         sprite: Sprite {

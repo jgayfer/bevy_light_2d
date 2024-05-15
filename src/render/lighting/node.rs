@@ -42,10 +42,22 @@ impl ViewNode for LightingNode {
             return Ok(());
         };
 
+        let Some(ambient_light_uniform) = world
+            .resource::<LightingPassAssets>()
+            .ambient_light
+            .binding()
+        else {
+            return Ok(());
+        };
+
         let bind_group = render_context.render_device().create_bind_group(
             "lighting_bind_group",
             &lighting_pipeline.layout,
-            &BindGroupEntries::sequential((view_uniform_binding, point_light_buffer)),
+            &BindGroupEntries::sequential((
+                view_uniform_binding,
+                point_light_buffer,
+                ambient_light_uniform,
+            )),
         );
 
         let mut render_pass = render_context.begin_tracked_render_pass(RenderPassDescriptor {

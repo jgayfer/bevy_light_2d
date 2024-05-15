@@ -10,7 +10,7 @@ use bevy::render::renderer::RenderDevice;
 use bevy::render::texture::BevyDefault;
 use bevy::render::view::ViewUniform;
 
-use crate::GpuPointLight2dBuffer;
+use crate::{GpuAmbientLight2d, GpuPointLight2dBuffer};
 
 #[derive(Resource)]
 pub struct LightingPipeline {
@@ -30,6 +30,7 @@ impl FromWorld for LightingPipeline {
                 (
                     uniform_buffer::<ViewUniform>(false),
                     storage_buffer_read_only::<GpuPointLight2dBuffer>(false),
+                    uniform_buffer::<GpuAmbientLight2d>(false),
                 ),
             ),
         );

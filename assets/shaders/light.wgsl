@@ -2,7 +2,6 @@
 #import bevy_render::view::View
 
 const ALPHA_BLEND: f32 = 0.5;
-const AMBIENT_COLOR: vec3f = vec3(0.1);
 
 struct PointLight2d {
     center: vec2f,
@@ -15,14 +14,21 @@ struct PointLight2dBuffer {
     data: array<PointLight2d>
 }
 
+struct AmbientLight2d {
+    color: vec3f,
+    brightness: f32
+}
+
 @group(0) @binding(0)
 var<uniform> view: View;
 @group(0) @binding(1)
 var<storage> point_light_buffer: PointLight2dBuffer;
+@group(0) @binding(2)
+var<uniform> ambient_light: AmbientLight2d;
 
 @fragment
 fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
-    var color = AMBIENT_COLOR;
+    var color = ambient_light.color * ambient_light.brightness;
 
     // For each light, determine its illumination if we're within range of it.
     for (var i = 0u; i < arrayLength(&point_light_buffer.data); i++) {

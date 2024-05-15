@@ -23,3 +23,18 @@ pub struct PointLight2dBundle {
     pub inherited_visibility: InheritedVisibility,
     pub view_visibility: ViewVisibility,
 }
+
+#[derive(Component, Clone, Copy)]
+pub struct AmbientLight2d {
+    pub color: Color,
+    pub brightness: f32,
+}
+
+impl Default for AmbientLight2d {
+    fn default() -> Self {
+        Self {
+            color: Color::WHITE,
+            brightness: 0.0,
+        }
+    }
+}
