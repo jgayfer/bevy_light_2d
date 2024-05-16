@@ -6,7 +6,7 @@ use bevy::render::render_resource::{
 };
 use bevy::render::view::{ViewTarget, ViewUniforms};
 
-use crate::LightingPassAssets;
+use crate::{AmbientLight2d, LightingPassAssets};
 
 use super::LightingPipeline;
 
@@ -14,13 +14,13 @@ use super::LightingPipeline;
 pub struct LightingNode;
 
 impl ViewNode for LightingNode {
-    type ViewQuery = &'static ViewTarget;
+    type ViewQuery = (&'static ViewTarget, &'static AmbientLight2d);
 
     fn run<'w>(
         &self,
         _graph: &mut bevy::render::render_graph::RenderGraphContext,
         render_context: &mut bevy::render::renderer::RenderContext<'w>,
-        view_target: bevy::ecs::query::QueryItem<'w, Self::ViewQuery>,
+        (view_target, _ambient_light): bevy::ecs::query::QueryItem<'w, Self::ViewQuery>,
         world: &'w World,
     ) -> Result<(), bevy::render::render_graph::NodeRunError> {
         let lighting_pipeline = world.resource::<LightingPipeline>();

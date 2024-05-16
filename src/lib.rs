@@ -20,7 +20,10 @@ impl Plugin for Light2dPlugin {
             return;
         };
 
-        render_app.add_systems(ExtractSchedule, (extract_camera, extract_point_lights));
+        render_app.add_systems(
+            ExtractSchedule,
+            (extract_ambient_light, extract_point_lights),
+        );
 
         render_app.add_systems(
             Render,
@@ -55,16 +58,12 @@ fn extract_point_lights(
     }
 }
 
-fn extract_camera(
+fn extract_ambient_light(
     mut commands: Commands,
-    camera_query: Extract<Query<(Entity, &Camera, &GlobalTransform, &AmbientLight2d)>>,
+    ambient_light_query: Extract<Query<(Entity, &AmbientLight2d)>>,
 ) {
-    for (entity, camera, global_transform, ambient_light) in &camera_query {
-        commands
-            .get_or_spawn(entity)
-            .insert(camera.clone())
-            .insert(*global_transform)
-            .insert(*ambient_light);
+    for (entity, ambient_light) in &ambient_light_query {
+        commands.get_or_spawn(entity).insert(*ambient_light);
     }
 }
 
@@ -89,7 +88,6 @@ fn prepare_ambient_light(
 fn prepare_lights(
     render_device: Res<RenderDevice>,
     render_queue: Res<RenderQueue>,
-    camera_query: Query<(&Camera, &GlobalTransform), With<AmbientLight2d>>,
     point_light_query: Query<(&PointLight2d, &GlobalTransform)>,
     mut lighting_pass_assets: ResMut<LightingPassAssets>,
 ) {
@@ -98,20 +96,9 @@ fn prepare_lights(
     // Resources are global state, so we need to clear the data from the previous frame.
     point_light_buffer.data.clear();
 
-    // TODO: Better error when camera count is not equal to one.
-    let (camera, camera_global_transform) = camera_query.single();
-
     for (point_light, point_light_global_transform) in &point_light_query {
-        // TODO: Something smarter than unwrap.
-        let point_light_position = camera
-            .world_to_viewport(
-                camera_global_transform,
-                point_light_global_transform.translation(),
-            )
-            .unwrap();
-
         point_light_buffer.data.push(GpuPointLight2d {
-            center: point_light_position,
+            center: point_light_global_transform.translation().xy(),
             radius: point_light.radius,
             color: point_light.color.rgb_to_vec3(),
             energy: point_light.energy,

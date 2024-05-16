@@ -19,6 +19,22 @@ struct AmbientLight2d {
     brightness: f32
 }
 
+fn world_to_ndc(world_position: vec2<f32>, view_projection: mat4x4<f32>) -> vec2<f32> {
+    return (view_projection * vec4<f32>(world_position, 0.0, 1.0)).xy;
+}
+
+fn ndc_to_screen(ndc: vec2<f32>, screen_size: vec2<f32>) -> vec2<f32> {
+    let screen_position: vec2<f32> = (ndc + 1.0) * 0.5 * screen_size;
+    return vec2(screen_position.x, (screen_size.y - screen_position.y));
+}
+
+fn world_to_screen(
+    world_position: vec2<f32>,
+    screen_size: vec2<f32>,
+    view_projection: mat4x4<f32>
+) -> vec2<f32> {
+    return ndc_to_screen(world_to_ndc(world_position, view_projection), screen_size);
+}
 
 @group(0) @binding(0)
 var screen_texture: texture_2d<f32>;
@@ -47,9 +63,14 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
 
         let point_light = point_light_buffer.data[i];
 
-        // Compute the distance between the current position and the current
-        // light's center.
-        let distance = distance(point_light.center, vo.position.xy);
+        // Our point light position is still in world space. We need to convert
+        // it to screen space in order to do things like compute distances (let
+        // alone render it in the correct place).
+        let point_light_screen_center =
+            world_to_screen(point_light.center, view.viewport.zw, view.projection);
+
+        // Compute the distance between the current position and the light's center.
+        let distance = distance(point_light_screen_center, vo.position.xy);
 
         // If we're within the light's radius, it should provide some level
         // of illumination.
