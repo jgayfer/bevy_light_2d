@@ -8,7 +8,8 @@ bevy = { version = "0.13", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline",
     "bevy_winit",
-    "bevy_sprite"
+    "bevy_sprite",
+    "x11"
 ] }
 
 [profile.dev]
