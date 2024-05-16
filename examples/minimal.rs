@@ -23,7 +23,7 @@ fn setup(mut commands: Commands) {
     commands.spawn(PointLight2dBundle {
         point_light: PointLight2d {
             color: Color::LIME_GREEN,
-            radius: 100.,
+            radius: 50.,
             energy: 1.0,
         },
         transform: Transform::from_xyz(50., 25., 0.),
@@ -33,7 +33,7 @@ fn setup(mut commands: Commands) {
     commands.spawn(PointLight2dBundle {
         point_light: PointLight2d {
             color: Color::YELLOW,
-            radius: 100.,
+            radius: 50.,
             energy: 1.0,
         },
         transform: Transform::from_xyz(25., 50., 0.),

@@ -49,7 +49,7 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
 
         // Compute the distance between the current position and the current
         // light's center.
-        let distance = distance(point_light.center * 2., vo.position.xy);
+        let distance = distance(point_light.center, vo.position.xy);
 
         // If we're within the light's radius, it should provide some level
         // of illumination.
