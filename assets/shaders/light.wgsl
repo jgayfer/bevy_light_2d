@@ -49,6 +49,9 @@ var<uniform> ambient_light: AmbientLight2d;
 
 @fragment
 fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
+    let screen_size = 2. * vec2f(view.inverse_projection[0][0], view.inverse_projection[1][1]);
+    let scale_factor = screen_size.y / view.viewport.w;
+
     let texture = textureSample(screen_texture, texture_sampler, vo.uv);
 
     // The color of the main texture, before applying any lighting effects.
@@ -70,7 +73,9 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
             world_to_screen(point_light.center, view.viewport.zw, view.projection);
 
         // Compute the distance between the current position and the light's center.
-        let distance = distance(point_light_screen_center, vo.position.xy);
+        // We multiply by the scale factor as otherwise our distance will always be
+        // represented in actual pixels.
+        let distance = distance(point_light_screen_center, vo.position.xy) * scale_factor;
 
         // If we're within the light's radius, it should provide some level
         // of illumination.
