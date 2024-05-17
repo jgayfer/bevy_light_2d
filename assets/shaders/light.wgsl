@@ -38,12 +38,16 @@ fn world_to_screen(
 
 @group(0) @binding(0)
 var screen_texture: texture_2d<f32>;
+
 @group(0) @binding(1)
 var texture_sampler: sampler;
+
 @group(0) @binding(2)
 var<uniform> view: View;
+
 @group(0) @binding(3)
 var<storage> point_light_buffer: PointLight2dBuffer;
+
 @group(0) @binding(4)
 var<uniform> ambient_light: AmbientLight2d;
 
@@ -52,14 +56,8 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
     let screen_size = 2. * vec2f(view.inverse_projection[0][0], view.inverse_projection[1][1]);
     let scale_factor = screen_size.y / view.viewport.w;
 
-    let texture = textureSample(screen_texture, texture_sampler, vo.uv);
-
-    // The color of the main texture, before applying any lighting effects.
-    var color = texture.rgb;
-
-    // Blend in the ambient light, dividing by 100 as the input value is
-    // interpreted as a percentage (e.g. 100 brightness is full brightness).
-    color *= ambient_light.color * ambient_light.brightness / 100;
+    // Setup the color to add to this position from lights sources.
+    var light_color = vec3(0.0);
 
     // For each light, determine its illumination if we're within range of it.
     for (var i = 0u; i < arrayLength(&point_light_buffer.data); i++) {
@@ -87,7 +85,7 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
 
             // Add in the color from the light, taking into account the light's
             // energy and how far away it is.
-            color +=
+            light_color +=
                 point_light.color
                 * point_light.energy
                 * distance_multiplier
@@ -95,5 +93,11 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
         }
     }
 
-    return vec4(color, texture.a);
+    // Compute ambient light, dividing by 100 as the input value is
+    // interpreted as a percentage (e.g. 100 brightness is full brightness).
+    let ambient_color = ambient_light.color * ambient_light.brightness / 100;
+
+    return textureSample(screen_texture, texture_sampler, vo.uv)
+        * vec4(ambient_color, 1.0)
+        + vec4(light_color, 0.0);
 }
