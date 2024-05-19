@@ -1,8 +1,9 @@
 use bevy::app::Plugin;
 use bevy::core_pipeline::core_2d::graph::{Core2d, Node2d};
 use bevy::prelude::*;
+use bevy::render::extract_component::UniformComponentPlugin;
 use bevy::render::render_graph::{RenderGraphApp, ViewNodeRunner};
-use bevy::render::render_resource::{ShaderType, StorageBuffer, UniformBuffer};
+use bevy::render::render_resource::{ShaderType, StorageBuffer};
 use bevy::render::renderer::{RenderDevice, RenderQueue};
 use bevy::render::{Extract, Render, RenderApp, RenderSet};
 use render::lighting::{LightingNode, LightingPass, LightingPipeline};
@@ -16,19 +17,18 @@ pub struct Light2dPlugin;
 
 impl Plugin for Light2dPlugin {
     fn build(&self, app: &mut App) {
+        app.add_plugins(UniformComponentPlugin::<GpuAmbientLight2d>::default());
+
         let Ok(render_app) = app.get_sub_app_mut(RenderApp) else {
             return;
         };
 
         render_app.add_systems(
             ExtractSchedule,
-            (extract_ambient_light, extract_point_lights),
+            (extract_point_lights, extract_ambient_light),
         );
 
-        render_app.add_systems(
-            Render,
-            (prepare_lights, prepare_ambient_light).in_set(RenderSet::Prepare),
-        );
+        render_app.add_systems(Render, (prepare_lights).in_set(RenderSet::Prepare));
 
         render_app.add_render_graph_node::<ViewNodeRunner<LightingNode>>(Core2d, LightingPass);
 
@@ -63,26 +63,13 @@ fn extract_ambient_light(
     ambient_light_query: Extract<Query<(Entity, &AmbientLight2d)>>,
 ) {
     for (entity, ambient_light) in &ambient_light_query {
-        commands.get_or_spawn(entity).insert(*ambient_light);
+        commands.get_or_spawn(entity).insert(GpuAmbientLight2d {
+            // We don't really want anything other than rgba colors in the shader,
+            // so let's just extract the color as one.
+            color: ambient_light.color.rgba_linear_to_vec4(),
+            brightness: ambient_light.brightness,
+        });
     }
-}
-
-fn prepare_ambient_light(
-    render_device: Res<RenderDevice>,
-    render_queue: Res<RenderQueue>,
-    ambient_light_query: Query<&AmbientLight2d>,
-    mut lighting_pass_assets: ResMut<LightingPassAssets>,
-) {
-    let ambient_light = ambient_light_query.single();
-
-    lighting_pass_assets.ambient_light.set(GpuAmbientLight2d {
-        color: ambient_light.color.rgb_to_vec3(),
-        brightness: ambient_light.brightness,
-    });
-
-    lighting_pass_assets
-        .ambient_light
-        .write_buffer(&render_device, &render_queue);
 }
 
 fn prepare_lights(
@@ -113,7 +100,6 @@ fn prepare_lights(
 #[derive(Default, Resource)]
 pub struct LightingPassAssets {
     pub point_lights: StorageBuffer<GpuPointLight2dBuffer>,
-    pub ambient_light: UniformBuffer<GpuAmbientLight2d>,
 }
 
 #[derive(Default, Clone, ShaderType)]
@@ -130,8 +116,8 @@ pub struct GpuPointLight2d {
     pub energy: f32,
 }
 
-#[derive(Default, Clone, ShaderType)]
+#[derive(Component, Default, Clone, ShaderType)]
 pub struct GpuAmbientLight2d {
-    pub color: Vec3,
+    pub color: Vec4,
     pub brightness: f32,
 }

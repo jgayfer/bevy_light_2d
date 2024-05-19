@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::render::extract_component::{ComponentUniforms, DynamicUniformIndex};
 use bevy::render::render_graph::ViewNode;
 
 use bevy::render::render_resource::{
@@ -6,7 +7,7 @@ use bevy::render::render_resource::{
 };
 use bevy::render::view::{ViewTarget, ViewUniforms};
 
-use crate::{AmbientLight2d, LightingPassAssets};
+use crate::{GpuAmbientLight2d, LightingPassAssets};
 
 use super::LightingPipeline;
 
@@ -14,13 +15,16 @@ use super::LightingPipeline;
 pub struct LightingNode;
 
 impl ViewNode for LightingNode {
-    type ViewQuery = (&'static ViewTarget, &'static AmbientLight2d);
+    type ViewQuery = (
+        &'static ViewTarget,
+        &'static DynamicUniformIndex<GpuAmbientLight2d>,
+    );
 
     fn run<'w>(
         &self,
         _graph: &mut bevy::render::render_graph::RenderGraphContext,
         render_context: &mut bevy::render::renderer::RenderContext<'w>,
-        (view_target, _ambient_light): bevy::ecs::query::QueryItem<'w, Self::ViewQuery>,
+        (view_target, ambient_index): bevy::ecs::query::QueryItem<'w, Self::ViewQuery>,
         world: &'w World,
     ) -> Result<(), bevy::render::render_graph::NodeRunError> {
         let lighting_pipeline = world.resource::<LightingPipeline>();
@@ -45,8 +49,8 @@ impl ViewNode for LightingNode {
         };
 
         let Some(ambient_light_uniform) = world
-            .resource::<LightingPassAssets>()
-            .ambient_light
+            .resource::<ComponentUniforms<GpuAmbientLight2d>>()
+            .uniforms()
             .binding()
         else {
             return Ok(());
@@ -80,7 +84,7 @@ impl ViewNode for LightingNode {
 
         // Setup fullscreen triangle.
         render_pass.set_render_pipeline(pipeline);
-        render_pass.set_bind_group(0, &bind_group, &[]);
+        render_pass.set_bind_group(0, &bind_group, &[ambient_index.index()]);
         render_pass.draw(0..3, 0..1);
 
         Ok(())

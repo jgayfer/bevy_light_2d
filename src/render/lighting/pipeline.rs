@@ -34,7 +34,7 @@ impl FromWorld for LightingPipeline {
                     sampler(SamplerBindingType::Filtering),
                     uniform_buffer::<ViewUniform>(false),
                     storage_buffer_read_only::<GpuPointLight2dBuffer>(false),
-                    uniform_buffer::<GpuAmbientLight2d>(false),
+                    uniform_buffer::<GpuAmbientLight2d>(true),
                 ),
             ),
         );
