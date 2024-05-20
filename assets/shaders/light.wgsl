@@ -15,8 +15,7 @@ struct PointLight2dBuffer {
 }
 
 struct AmbientLight2d {
-    color: vec3f,
-    brightness: f32
+    color: vec3f
 }
 
 fn world_to_ndc(world_position: vec2<f32>, view_projection: mat4x4<f32>) -> vec2<f32> {
@@ -97,11 +96,7 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
         }
     }
 
-    // Compute ambient light, dividing by 100 as the input value is
-    // interpreted as a percentage (e.g. 100 brightness is full brightness).
-    let ambient_color = ambient_light.color * ambient_light.brightness / 100;
-
     return textureSample(screen_texture, texture_sampler, vo.uv)
-        * vec4(ambient_color, 1.0)
+        * vec4(ambient_light.color, 1.0)
         + vec4(light_color, 0.0);
 }

@@ -5,7 +5,10 @@ use bevy::render::extract_component::UniformComponentPlugin;
 use bevy::render::render_graph::{RenderGraphApp, ViewNodeRunner};
 use bevy::render::render_resource::{ShaderType, StorageBuffer};
 use bevy::render::renderer::{RenderDevice, RenderQueue};
-use bevy::render::{Extract, Render, RenderApp, RenderSet};
+use bevy::render::{Render, RenderApp, RenderSet};
+use render::extract::{
+    extract_ambient_lights, extract_point_lights, ExtractedAmbientLight2d, ExtractedPointLight2d,
+};
 use render::lighting::{LightingNode, LightingPass, LightingPipeline};
 
 mod component;
@@ -17,7 +20,7 @@ pub struct Light2dPlugin;
 
 impl Plugin for Light2dPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(UniformComponentPlugin::<GpuAmbientLight2d>::default());
+        app.add_plugins(UniformComponentPlugin::<ExtractedAmbientLight2d>::default());
 
         let Ok(render_app) = app.get_sub_app_mut(RenderApp) else {
             return;
@@ -25,7 +28,7 @@ impl Plugin for Light2dPlugin {
 
         render_app.add_systems(
             ExtractSchedule,
-            (extract_point_lights, extract_ambient_light),
+            (extract_point_lights, extract_ambient_lights),
         );
 
         render_app.add_systems(Render, (prepare_lights).in_set(RenderSet::Prepare));
@@ -46,36 +49,10 @@ impl Plugin for Light2dPlugin {
     }
 }
 
-fn extract_point_lights(
-    mut commands: Commands,
-    point_light_query: Extract<Query<(Entity, &PointLight2d, &GlobalTransform)>>,
-) {
-    for (entity, point_light, global_transform) in &point_light_query {
-        commands
-            .get_or_spawn(entity)
-            .insert(*point_light)
-            .insert(*global_transform);
-    }
-}
-
-fn extract_ambient_light(
-    mut commands: Commands,
-    ambient_light_query: Extract<Query<(Entity, &AmbientLight2d)>>,
-) {
-    for (entity, ambient_light) in &ambient_light_query {
-        commands.get_or_spawn(entity).insert(GpuAmbientLight2d {
-            // We don't really want anything other than rgb colors in the shader,
-            // so let's just extract the color as one.
-            color: ambient_light.color.rgb_to_vec3(),
-            brightness: ambient_light.brightness,
-        });
-    }
-}
-
 fn prepare_lights(
     render_device: Res<RenderDevice>,
     render_queue: Res<RenderQueue>,
-    point_light_query: Query<(&PointLight2d, &GlobalTransform)>,
+    point_light_query: Query<&ExtractedPointLight2d>,
     mut lighting_pass_assets: ResMut<LightingPassAssets>,
 ) {
     let point_light_buffer = lighting_pass_assets.point_lights.get_mut();
@@ -83,11 +60,11 @@ fn prepare_lights(
     // Resources are global state, so we need to clear the data from the previous frame.
     point_light_buffer.clear();
 
-    for (point_light, point_light_global_transform) in &point_light_query {
+    for point_light in &point_light_query {
         point_light_buffer.push(GpuPointLight2d {
-            center: point_light_global_transform.translation().xy(),
+            center: point_light.transform.translation().xy(),
             radius: point_light.radius,
-            color: point_light.color.rgb_to_vec3(),
+            color: point_light.color,
             energy: point_light.energy,
         });
     }

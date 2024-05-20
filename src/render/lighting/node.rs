@@ -7,7 +7,8 @@ use bevy::render::render_resource::{
 };
 use bevy::render::view::{ViewTarget, ViewUniforms};
 
-use crate::{GpuAmbientLight2d, LightingPassAssets};
+use crate::render::extract::ExtractedAmbientLight2d;
+use crate::{LightingPassAssets};
 
 use super::LightingPipeline;
 
@@ -17,7 +18,7 @@ pub struct LightingNode;
 impl ViewNode for LightingNode {
     type ViewQuery = (
         &'static ViewTarget,
-        &'static DynamicUniformIndex<GpuAmbientLight2d>,
+        &'static DynamicUniformIndex<ExtractedAmbientLight2d>,
     );
 
     fn run<'w>(
@@ -49,7 +50,7 @@ impl ViewNode for LightingNode {
         };
 
         let Some(ambient_light_uniform) = world
-            .resource::<ComponentUniforms<GpuAmbientLight2d>>()
+            .resource::<ComponentUniforms<ExtractedAmbientLight2d>>()
             .uniforms()
             .binding()
         else {
