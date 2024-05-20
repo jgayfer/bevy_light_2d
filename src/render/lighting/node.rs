@@ -8,7 +8,7 @@ use bevy::render::render_resource::{
 use bevy::render::view::{ViewTarget, ViewUniforms};
 
 use crate::render::extract::ExtractedAmbientLight2d;
-use crate::{LightingPassAssets};
+use crate::LightingPassAssets;
 
 use super::LightingPipeline;
 
