@@ -64,9 +64,9 @@ fn extract_ambient_light(
 ) {
     for (entity, ambient_light) in &ambient_light_query {
         commands.get_or_spawn(entity).insert(GpuAmbientLight2d {
-            // We don't really want anything other than rgba colors in the shader,
+            // We don't really want anything other than rgb colors in the shader,
             // so let's just extract the color as one.
-            color: ambient_light.color.rgba_linear_to_vec4(),
+            color: ambient_light.color.rgb_to_vec3(),
             brightness: ambient_light.brightness,
         });
     }
@@ -118,6 +118,6 @@ pub struct GpuPointLight2d {
 
 #[derive(Component, Default, Clone, ShaderType)]
 pub struct GpuAmbientLight2d {
-    pub color: Vec4,
+    pub color: Vec3,
     pub brightness: f32,
 }
