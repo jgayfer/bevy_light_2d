@@ -1,7 +1,9 @@
 use bevy::{
+    core_pipeline::core_2d::Camera2d,
     ecs::{
         component::Component,
         entity::Entity,
+        query::{With, Without},
         system::{Commands, Query},
     },
     math::Vec3,
@@ -41,12 +43,23 @@ pub fn extract_point_lights(
 pub fn extract_ambient_lights(
     mut commands: Commands,
     ambient_light_query: Extract<Query<(Entity, &AmbientLight2d)>>,
+    camera_query: Extract<Query<Entity, (With<Camera2d>, Without<AmbientLight2d>)>>,
 ) {
     for (entity, ambient_light) in &ambient_light_query {
         commands
             .get_or_spawn(entity)
             .insert(ExtractedAmbientLight2d {
                 color: ambient_light.color.rgb_to_vec3() * ambient_light.brightness / 100.0,
+            });
+    }
+
+    // Our lighting pass only runs on views with an ambient light component,
+    // so let's add a no-op ambient light to any 2d cameras don't have one.
+    for entity in &camera_query {
+        commands
+            .get_or_spawn(entity)
+            .insert(ExtractedAmbientLight2d {
+                color: Vec3::splat(1.0),
             });
     }
 }
