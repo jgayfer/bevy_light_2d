@@ -81,10 +81,10 @@ fn prepare_lights(
     let point_light_buffer = lighting_pass_assets.point_lights.get_mut();
 
     // Resources are global state, so we need to clear the data from the previous frame.
-    point_light_buffer.data.clear();
+    point_light_buffer.clear();
 
     for (point_light, point_light_global_transform) in &point_light_query {
-        point_light_buffer.data.push(GpuPointLight2d {
+        point_light_buffer.push(GpuPointLight2d {
             center: point_light_global_transform.translation().xy(),
             radius: point_light.radius,
             color: point_light.color.rgb_to_vec3(),
@@ -99,13 +99,7 @@ fn prepare_lights(
 
 #[derive(Default, Resource)]
 pub struct LightingPassAssets {
-    pub point_lights: StorageBuffer<GpuPointLight2dBuffer>,
-}
-
-#[derive(Default, Clone, ShaderType)]
-pub struct GpuPointLight2dBuffer {
-    #[size(runtime)]
-    pub data: Vec<GpuPointLight2d>,
+    pub point_lights: StorageBuffer<Vec<GpuPointLight2d>>,
 }
 
 #[derive(Default, Clone, ShaderType)]

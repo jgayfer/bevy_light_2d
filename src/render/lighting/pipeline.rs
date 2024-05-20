@@ -12,7 +12,7 @@ use bevy::render::renderer::RenderDevice;
 use bevy::render::texture::BevyDefault;
 use bevy::render::view::ViewUniform;
 
-use crate::{GpuAmbientLight2d, GpuPointLight2dBuffer};
+use crate::{GpuAmbientLight2d, GpuPointLight2d};
 
 #[derive(Resource)]
 pub struct LightingPipeline {
@@ -33,7 +33,7 @@ impl FromWorld for LightingPipeline {
                     texture_2d(TextureSampleType::Float { filterable: true }),
                     sampler(SamplerBindingType::Filtering),
                     uniform_buffer::<ViewUniform>(false),
-                    storage_buffer_read_only::<GpuPointLight2dBuffer>(false),
+                    storage_buffer_read_only::<Vec<GpuPointLight2d>>(false),
                     uniform_buffer::<GpuAmbientLight2d>(true),
                 ),
             ),
