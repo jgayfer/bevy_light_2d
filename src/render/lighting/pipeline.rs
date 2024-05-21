@@ -13,7 +13,7 @@ use bevy::render::texture::BevyDefault;
 use bevy::render::view::ViewUniform;
 
 use crate::render::extract::ExtractedAmbientLight2d;
-use crate::GpuPointLight2d;
+use crate::render::gpu::GpuPointLight2d;
 
 #[derive(Resource)]
 pub struct LightingPipeline {
