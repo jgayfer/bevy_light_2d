@@ -82,16 +82,16 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
         // of illumination.
         if distance < point_light.radius {
 
-            // Compute light color falloff (a value between 0.0 and 1.0) with
-            // an inverse square on the distance from the light's center.
-            let falloff = 1.0 / (1.0 + 1.0 * distance + 1.0 * distance * distance);
+            // Compute light color falloff (a value between 0.0 and 1.0).
+            let attenuation =
+                attenuation(distance, point_light.radius, point_light.energy, 0.0);
 
             // Add in the color from the light, taking into account the light's
             // energy and how far away it is.
             light_color +=
                 point_light.color
                 * point_light.energy
-                * falloff
+                * attenuation
                 * LIGHT_SOURCE_MULTIPLIER;
         }
     }
@@ -99,4 +99,19 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
     return textureSample(screen_texture, texture_sampler, vo.uv)
         * vec4(ambient_light.color, 1.0)
         + vec4(light_color, 0.0);
+}
+
+fn square(x: f32) -> f32 {
+    return x * x;
+}
+
+// Compute light attenutation.
+// See https://lisyarus.github.io/blog/posts/point-light-attenuation.html
+fn attenuation(distance: f32, radius: f32, energy: f32, falloff: f32) -> f32 {
+    let s = distance / radius;
+    if (s > 1.0) {
+        return 0.0;
+    }
+    let s2 = square(s);
+    return energy * square(1 - s2) / (1 + falloff * s2);
 }
