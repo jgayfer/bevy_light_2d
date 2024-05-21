@@ -86,9 +86,3 @@ pub struct GpuPointLight2d {
     pub color: Vec3,
     pub energy: f32,
 }
-
-#[derive(Component, Default, Clone, ShaderType)]
-pub struct GpuAmbientLight2d {
-    pub color: Vec3,
-    pub brightness: f32,
-}
