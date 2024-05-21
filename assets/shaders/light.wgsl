@@ -82,16 +82,16 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
         // of illumination.
         if distance < point_light.radius {
 
-            // Compute light color falloff (a value between 0.0 and 1.0).
-            // The closer to the light we are, the higher the multiplier.
-            let distance_multiplier = (point_light.radius - distance) / 100;
+            // Compute light color falloff (a value between 0.0 and 1.0) with
+            // an inverse square on the distance from the light's center.
+            let falloff = 1.0 / (1.0 + 1.0 * distance + 1.0 * distance * distance);
 
             // Add in the color from the light, taking into account the light's
             // energy and how far away it is.
             light_color +=
                 point_light.color
                 * point_light.energy
-                * distance_multiplier
+                * falloff
                 * LIGHT_SOURCE_MULTIPLIER;
         }
     }
