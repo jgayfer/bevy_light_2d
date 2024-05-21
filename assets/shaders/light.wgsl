@@ -86,7 +86,6 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
             // energy and how far away it is.
             light_color +=
                 point_light.color
-                * point_light.energy
                 * attenuation
                 * LIGHT_SOURCE_MULTIPLIER;
         }
