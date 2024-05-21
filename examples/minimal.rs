@@ -9,7 +9,13 @@ fn main() {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn((Camera2dBundle::default(), AmbientLight2d::default()));
+    commands.spawn((
+        Camera2dBundle::default(),
+        AmbientLight2d {
+            brightness: 0.8,
+            ..default()
+        },
+    ));
 
     commands.spawn(SpriteBundle {
         sprite: Sprite {

@@ -52,7 +52,7 @@ pub fn extract_ambient_lights(
         commands
             .get_or_spawn(entity)
             .insert(ExtractedAmbientLight2d {
-                color: ambient_light.color.rgb_to_vec3() * ambient_light.brightness / 100.0,
+                color: ambient_light.color.rgb_to_vec3() * ambient_light.brightness,
             });
     }
 

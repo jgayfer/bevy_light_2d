@@ -44,7 +44,7 @@ impl Default for AmbientLight2d {
     fn default() -> Self {
         Self {
             color: Color::WHITE,
-            brightness: 80.0,
+            brightness: 1.0,
         }
     }
 }
