@@ -10,7 +10,7 @@ use bevy::{
 #[derive(Component, Default, Clone, Copy)]
 pub struct PointLight2d {
     pub color: Color,
-    pub energy: f32,
+    pub intensity: f32,
     pub radius: f32,
 }
 

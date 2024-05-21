@@ -17,7 +17,7 @@ pub struct GpuPointLight2d {
     pub center: Vec2,
     pub radius: f32,
     pub color: Vec3,
-    pub energy: f32,
+    pub intensity: f32,
 }
 
 pub fn prepare_point_lights(
@@ -36,7 +36,7 @@ pub fn prepare_point_lights(
             center: point_light.transform.translation().xy(),
             radius: point_light.radius,
             color: point_light.color,
-            energy: point_light.energy,
+            intensity: point_light.intensity,
         });
     }
 

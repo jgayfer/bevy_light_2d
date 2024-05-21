@@ -18,7 +18,7 @@ pub struct ExtractedPointLight2d {
     pub transform: GlobalTransform,
     pub radius: f32,
     pub color: Vec3,
-    pub energy: f32,
+    pub intensity: f32,
 }
 
 #[derive(Component, Default, Clone, ShaderType)]
@@ -38,7 +38,7 @@ pub fn extract_point_lights(
             color: point_light.color.rgb_to_vec3(),
             transform: *global_transform,
             radius: point_light.radius,
-            energy: point_light.energy,
+            intensity: point_light.intensity,
         });
     }
 }

@@ -24,7 +24,7 @@ fn setup(mut commands: Commands) {
         point_light: PointLight2d {
             color: Color::LIME_GREEN,
             radius: 50.,
-            energy: 1.0,
+            intensity: 1.0,
         },
         transform: Transform::from_xyz(50., 25., 0.),
         ..default()
@@ -34,7 +34,7 @@ fn setup(mut commands: Commands) {
         point_light: PointLight2d {
             color: Color::YELLOW,
             radius: 50.,
-            energy: 1.0,
+            intensity: 1.0,
         },
         transform: Transform::from_xyz(25., 50., 0.),
         ..default()
