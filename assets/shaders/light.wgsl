@@ -10,10 +10,6 @@ struct PointLight2d {
     energy: f32,
 }
 
-struct PointLight2dBuffer {
-    data: array<PointLight2d>
-}
-
 struct AmbientLight2d {
     color: vec3f
 }
@@ -51,7 +47,7 @@ var texture_sampler: sampler;
 var<uniform> view: View;
 
 @group(0) @binding(3)
-var<storage> point_light_buffer: PointLight2dBuffer;
+var<storage> point_lights: array<PointLight2d>;
 
 @group(0) @binding(4)
 var<uniform> ambient_light: AmbientLight2d;
@@ -62,9 +58,9 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
     var light_color = vec3(0.0);
 
     // For each light, determine its illumination if we're within range of it.
-    for (var i = 0u; i < arrayLength(&point_light_buffer.data); i++) {
+    for (var i = 0u; i < arrayLength(&point_lights); i++) {
 
-        let point_light = point_light_buffer.data[i];
+        let point_light = point_lights[i];
 
         // Our point light position is still in world space. We need to convert
         // it to screen space in order to do things like compute distances (let
