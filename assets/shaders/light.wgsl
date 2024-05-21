@@ -1,8 +1,6 @@
 #import bevy_core_pipeline::fullscreen_vertex_shader::FullscreenVertexOutput
 #import bevy_render::view::View
 
-const LIGHT_SOURCE_MULTIPLIER: f32 = 0.5;
-
 struct PointLight2d {
     center: vec2f,
     radius: f32,
@@ -82,12 +80,8 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
             let attenuation =
                 attenuation(distance, point_light.radius, point_light.energy, 0.0);
 
-            // Add in the color from the light, taking into account the light's
-            // energy and how far away it is.
-            light_color +=
-                point_light.color
-                * attenuation
-                * LIGHT_SOURCE_MULTIPLIER;
+            // Add in the color from the light, taking into account its attenuation.
+            light_color += point_light.color * attenuation;
         }
     }
 
