@@ -12,6 +12,9 @@ bevy = { version = "0.13", default-features = false, features = [
     "x11"
 ] }
 
+[lints.clippy]
+type_complexity = "allow"
+
 [profile.dev]
 opt-level = 1
 
