@@ -7,11 +7,21 @@ use bevy::{
     transform::components::{GlobalTransform, Transform},
 };
 
-#[derive(Component, Default, Clone, Copy)]
+#[derive(Component, Clone, Copy)]
 pub struct PointLight2d {
     pub color: Color,
     pub intensity: f32,
     pub radius: f32,
+}
+
+impl Default for PointLight2d {
+    fn default() -> Self {
+        Self {
+            color: Color::WHITE,
+            intensity: 1.0,
+            radius: 0.5,
+        }
+    }
 }
 
 #[derive(Bundle, Default)]
