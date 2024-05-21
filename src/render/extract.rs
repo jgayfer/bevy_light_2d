@@ -7,7 +7,7 @@ use bevy::{
         system::{Commands, Query},
     },
     math::Vec3,
-    render::{render_resource::ShaderType, Extract},
+    render::{render_resource::ShaderType, view::ViewVisibility, Extract},
     transform::components::GlobalTransform,
 };
 
@@ -28,9 +28,12 @@ pub struct ExtractedAmbientLight2d {
 
 pub fn extract_point_lights(
     mut commands: Commands,
-    point_light_query: Extract<Query<(Entity, &PointLight2d, &GlobalTransform)>>,
+    point_light_query: Extract<Query<(Entity, &PointLight2d, &GlobalTransform, &ViewVisibility)>>,
 ) {
-    for (entity, point_light, global_transform) in &point_light_query {
+    for (entity, point_light, global_transform, view_visibility) in &point_light_query {
+        if !view_visibility.get() {
+            continue;
+        }
         commands.get_or_spawn(entity).insert(ExtractedPointLight2d {
             color: point_light.color.rgb_to_vec3(),
             transform: *global_transform,
