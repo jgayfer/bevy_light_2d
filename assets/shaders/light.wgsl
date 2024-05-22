@@ -6,6 +6,7 @@ struct PointLight2d {
     radius: f32,
     color: vec4<f32>,
     intensity: f32,
+    falloff: f32
 }
 
 struct AmbientLight2d {
@@ -77,8 +78,12 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
         if distance < point_light.radius {
 
             // Compute light color falloff (a value between 0.0 and 1.0).
-            let attenuation =
-                attenuation(distance, point_light.radius, point_light.intensity, 0.0);
+            let attenuation = attenuation(
+                distance,
+                point_light.radius,
+                point_light.intensity,
+                point_light.falloff
+            );
 
             // Add in the color from the light, taking into account its attenuation.
             light_color += point_light.color.rgb * attenuation;

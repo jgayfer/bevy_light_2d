@@ -19,6 +19,7 @@ pub struct ExtractedPointLight2d {
     pub radius: f32,
     pub color: Vec4,
     pub intensity: f32,
+    pub falloff: f32,
 }
 
 #[derive(Component, Default, Clone, ShaderType)]
@@ -39,6 +40,7 @@ pub fn extract_point_lights(
             transform: *global_transform,
             radius: point_light.radius,
             intensity: point_light.intensity,
+            falloff: point_light.falloff,
         });
     }
 }

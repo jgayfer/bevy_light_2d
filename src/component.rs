@@ -12,6 +12,7 @@ pub struct PointLight2d {
     pub color: Color,
     pub intensity: f32,
     pub radius: f32,
+    pub falloff: f32,
 }
 
 impl Default for PointLight2d {
@@ -20,6 +21,7 @@ impl Default for PointLight2d {
             color: Color::WHITE,
             intensity: 1.0,
             radius: 0.5,
+            falloff: 0.0,
         }
     }
 }

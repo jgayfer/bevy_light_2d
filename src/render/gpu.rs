@@ -18,6 +18,7 @@ pub struct GpuPointLight2d {
     pub radius: f32,
     pub color: Vec4,
     pub intensity: f32,
+    pub falloff: f32,
 }
 
 pub fn prepare_point_lights(
@@ -37,6 +38,7 @@ pub fn prepare_point_lights(
             radius: point_light.radius,
             color: point_light.color,
             intensity: point_light.intensity,
+            falloff: point_light.falloff,
         });
     }
 

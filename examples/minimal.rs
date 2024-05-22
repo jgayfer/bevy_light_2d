@@ -31,6 +31,7 @@ fn setup(mut commands: Commands) {
             color: Color::LIME_GREEN,
             radius: 50.,
             intensity: 1.0,
+            ..default()
         },
         transform: Transform::from_xyz(50., 25., 0.),
         ..default()
@@ -41,6 +42,7 @@ fn setup(mut commands: Commands) {
             color: Color::YELLOW,
             radius: 50.,
             intensity: 1.0,
+            falloff: 10.0,
         },
         transform: Transform::from_xyz(25., 50., 0.),
         ..default()
