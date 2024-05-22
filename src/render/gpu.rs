@@ -16,7 +16,7 @@ pub struct LightingPassAssets {
 pub struct GpuPointLight2d {
     pub center: Vec2,
     pub radius: f32,
-    pub color: Vec3,
+    pub color: Vec4,
     pub intensity: f32,
 }
 

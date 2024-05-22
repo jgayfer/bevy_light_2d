@@ -6,7 +6,7 @@ use bevy::{
         query::{With, Without},
         system::{Commands, Query},
     },
-    math::Vec3,
+    math::Vec4,
     render::{render_resource::ShaderType, view::ViewVisibility, Extract},
     transform::components::GlobalTransform,
 };
@@ -17,13 +17,13 @@ use crate::{AmbientLight2d, PointLight2d};
 pub struct ExtractedPointLight2d {
     pub transform: GlobalTransform,
     pub radius: f32,
-    pub color: Vec3,
+    pub color: Vec4,
     pub intensity: f32,
 }
 
 #[derive(Component, Default, Clone, ShaderType)]
 pub struct ExtractedAmbientLight2d {
-    pub color: Vec3,
+    pub color: Vec4,
 }
 
 pub fn extract_point_lights(
@@ -35,7 +35,7 @@ pub fn extract_point_lights(
             continue;
         }
         commands.get_or_spawn(entity).insert(ExtractedPointLight2d {
-            color: point_light.color.rgb_to_vec3(),
+            color: point_light.color.rgba_linear_to_vec4(),
             transform: *global_transform,
             radius: point_light.radius,
             intensity: point_light.intensity,
@@ -52,7 +52,7 @@ pub fn extract_ambient_lights(
         commands
             .get_or_spawn(entity)
             .insert(ExtractedAmbientLight2d {
-                color: ambient_light.color.rgb_to_vec3() * ambient_light.brightness,
+                color: ambient_light.color.rgba_linear_to_vec4() * ambient_light.brightness,
             });
     }
 
@@ -62,7 +62,7 @@ pub fn extract_ambient_lights(
         commands
             .get_or_spawn(entity)
             .insert(ExtractedAmbientLight2d {
-                color: Vec3::splat(1.0),
+                color: Vec4::new(1.0, 1.0, 1.0, 0.0),
             });
     }
 }

@@ -4,12 +4,12 @@
 struct PointLight2d {
     center: vec2f,
     radius: f32,
-    color: vec3f,
+    color: vec4<f32>,
     intensity: f32,
 }
 
 struct AmbientLight2d {
-    color: vec3f
+    color: vec3<f32>
 }
 
 fn world_to_ndc(world_position: vec2<f32>, view_projection: mat4x4<f32>) -> vec2<f32> {
@@ -81,12 +81,12 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
                 attenuation(distance, point_light.radius, point_light.intensity, 0.0);
 
             // Add in the color from the light, taking into account its attenuation.
-            light_color += point_light.color * attenuation;
+            light_color += point_light.color.rgb * attenuation;
         }
     }
 
     return textureSample(screen_texture, texture_sampler, vo.uv)
-        * vec4(ambient_light.color, 1.0)
+        * vec4(ambient_light.color.rgb, 1.0)
         + vec4(light_color, 0.0);
 }
 
