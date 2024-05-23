@@ -1,5 +1,6 @@
 use bevy::{
     ecs::{bundle::Bundle, component::Component},
+    reflect::Reflect,
     render::{
         color::Color,
         view::{InheritedVisibility, ViewVisibility, Visibility},
@@ -7,7 +8,7 @@ use bevy::{
     transform::components::{GlobalTransform, Transform},
 };
 
-#[derive(Component, Clone, Copy)]
+#[derive(Component, Clone, Copy, Reflect)]
 pub struct PointLight2d {
     pub color: Color,
     pub intensity: f32,
@@ -36,7 +37,7 @@ pub struct PointLight2dBundle {
     pub view_visibility: ViewVisibility,
 }
 
-#[derive(Component, Clone, Copy)]
+#[derive(Component, Clone, Copy, Reflect)]
 pub struct AmbientLight2d {
     pub color: Color,
     pub brightness: f32,

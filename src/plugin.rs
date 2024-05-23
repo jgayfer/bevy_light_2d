@@ -9,10 +9,13 @@ use bevy::{
     },
 };
 
-use crate::render::{
-    extract::{extract_ambient_lights, extract_point_lights, ExtractedAmbientLight2d},
-    gpu::{prepare_point_lights, LightingPassAssets},
-    lighting::{LightingNode, LightingPass, LightingPipeline, LIGHTING_SHADER},
+use crate::{
+    render::{
+        extract::{extract_ambient_lights, extract_point_lights, ExtractedAmbientLight2d},
+        gpu::{prepare_point_lights, LightingPassAssets},
+        lighting::{LightingNode, LightingPass, LightingPipeline, LIGHTING_SHADER},
+    },
+    AmbientLight2d, PointLight2d,
 };
 
 pub struct Light2dPlugin;
@@ -26,7 +29,9 @@ impl Plugin for Light2dPlugin {
             Shader::from_wgsl
         );
 
-        app.add_plugins(UniformComponentPlugin::<ExtractedAmbientLight2d>::default());
+        app.add_plugins(UniformComponentPlugin::<ExtractedAmbientLight2d>::default())
+            .register_type::<AmbientLight2d>()
+            .register_type::<PointLight2d>();
 
         let Ok(render_app) = app.get_sub_app_mut(RenderApp) else {
             return;
