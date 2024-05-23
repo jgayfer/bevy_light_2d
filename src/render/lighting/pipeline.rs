@@ -17,6 +17,9 @@ use crate::render::gpu::GpuPointLight2d;
 
 use super::LIGHTING_SHADER;
 
+const LIGHTING_PIPELINE: &str = "lighting_pipeline";
+const LIGHTING_BIND_GROUP_LAYOUT: &str = "lighting_bind_group_layout";
+
 #[derive(Resource)]
 pub struct LightingPipeline {
     pub layout: BindGroupLayout,
@@ -29,7 +32,7 @@ impl FromWorld for LightingPipeline {
         let render_device = world.resource::<RenderDevice>();
 
         let layout = render_device.create_bind_group_layout(
-            "lighting_bind_group_layout",
+            LIGHTING_BIND_GROUP_LAYOUT,
             &BindGroupLayoutEntries::sequential(
                 ShaderStages::FRAGMENT,
                 (
@@ -48,7 +51,7 @@ impl FromWorld for LightingPipeline {
             world
                 .resource_mut::<PipelineCache>()
                 .queue_render_pipeline(RenderPipelineDescriptor {
-                    label: Some("lighting_pipeline".into()),
+                    label: Some(LIGHTING_PIPELINE.into()),
                     layout: vec![layout.clone()],
                     vertex: fullscreen_shader_vertex_state(),
                     fragment: Some(FragmentState {

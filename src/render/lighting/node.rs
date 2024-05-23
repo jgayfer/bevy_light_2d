@@ -12,6 +12,9 @@ use crate::render::gpu::GpuPointLights;
 
 use super::LightingPipeline;
 
+const LIGHTING_PASS: &str = "lighting_pass";
+const LIGHTING_BIND_GROUP: &str = "lighting_bind_group";
+
 #[derive(Default)]
 pub struct LightingNode;
 
@@ -56,7 +59,7 @@ impl ViewNode for LightingNode {
         let post_process = view_target.post_process_write();
 
         let bind_group = render_context.render_device().create_bind_group(
-            "lighting_bind_group",
+            LIGHTING_BIND_GROUP,
             &lighting_pipeline.layout,
             &BindGroupEntries::sequential((
                 post_process.source,
@@ -68,7 +71,7 @@ impl ViewNode for LightingNode {
         );
 
         let mut render_pass = render_context.begin_tracked_render_pass(RenderPassDescriptor {
-            label: Some("lighting_pass"),
+            label: Some(LIGHTING_PASS),
             color_attachments: &[Some(RenderPassColorAttachment {
                 view: post_process.destination,
                 resolve_target: None,
