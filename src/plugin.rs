@@ -10,12 +10,12 @@ use bevy::{
 };
 
 use crate::{
+    component::{AmbientLight2d, PointLight2d},
     render::{
         extract::{extract_ambient_lights, extract_point_lights, ExtractedAmbientLight2d},
         gpu::{prepare_point_lights, GpuPointLights},
         lighting::{LightingNode, LightingPass, LightingPipeline, LIGHTING_SHADER},
     },
-    AmbientLight2d, PointLight2d,
 };
 
 pub struct Light2dPlugin;

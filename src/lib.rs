@@ -1,6 +1,8 @@
-mod component;
-mod plugin;
+pub mod component;
+pub mod plugin;
 mod render;
 
-pub use component::{AmbientLight2d, PointLight2d, PointLight2dBundle};
-pub use plugin::Light2dPlugin;
+pub mod prelude {
+    pub use crate::component::{AmbientLight2d, PointLight2d, PointLight2dBundle};
+    pub use crate::plugin::Light2dPlugin;
+}

@@ -11,7 +11,7 @@ use bevy::{
     transform::components::GlobalTransform,
 };
 
-use crate::{AmbientLight2d, PointLight2d};
+use crate::component::{AmbientLight2d, PointLight2d};
 
 #[derive(Component, Default, Clone)]
 pub struct ExtractedPointLight2d {

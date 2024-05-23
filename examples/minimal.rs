@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_light_2d::{AmbientLight2d, Light2dPlugin, PointLight2d, PointLight2dBundle};
+use bevy_light_2d::prelude::*;
 
 fn main() {
     App::new()
