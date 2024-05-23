@@ -8,7 +8,7 @@ use bevy::{
     transform::components::{GlobalTransform, Transform},
 };
 
-#[derive(Component, Clone, Copy, Reflect)]
+#[derive(Component, Clone, Reflect)]
 pub struct PointLight2d {
     pub color: Color,
     pub intensity: f32,
@@ -37,7 +37,7 @@ pub struct PointLight2dBundle {
     pub view_visibility: ViewVisibility,
 }
 
-#[derive(Component, Clone, Copy, Reflect)]
+#[derive(Component, Clone, Reflect)]
 pub struct AmbientLight2d {
     pub color: Color,
     pub brightness: f32,
