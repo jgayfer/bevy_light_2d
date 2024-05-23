@@ -8,7 +8,7 @@ use bevy::render::render_resource::{
 use bevy::render::view::{ViewTarget, ViewUniforms};
 
 use crate::render::extract::ExtractedAmbientLight2d;
-use crate::render::gpu::LightingPassAssets;
+use crate::render::gpu::GpuPointLights;
 
 use super::LightingPipeline;
 
@@ -41,11 +41,7 @@ impl ViewNode for LightingNode {
             return Ok(());
         };
 
-        let Some(point_light_buffer) = world
-            .resource::<LightingPassAssets>()
-            .point_lights
-            .binding()
-        else {
+        let Some(point_light_buffer) = world.resource::<GpuPointLights>().buffer.binding() else {
             return Ok(());
         };
 

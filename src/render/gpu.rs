@@ -8,8 +8,8 @@ use bevy::{
 };
 
 #[derive(Default, Resource)]
-pub struct LightingPassAssets {
-    pub point_lights: StorageBuffer<Vec<GpuPointLight2d>>,
+pub struct GpuPointLights {
+    pub buffer: StorageBuffer<Vec<GpuPointLight2d>>,
 }
 
 #[derive(Default, Clone, ShaderType)]
@@ -25,9 +25,9 @@ pub fn prepare_point_lights(
     render_device: Res<RenderDevice>,
     render_queue: Res<RenderQueue>,
     point_light_query: Query<&ExtractedPointLight2d>,
-    mut lighting_pass_assets: ResMut<LightingPassAssets>,
+    mut gpu_point_lights: ResMut<GpuPointLights>,
 ) {
-    let point_light_buffer = lighting_pass_assets.point_lights.get_mut();
+    let point_light_buffer = gpu_point_lights.buffer.get_mut();
 
     // Resources are global state, so we need to clear the data from the previous frame.
     point_light_buffer.clear();
@@ -42,7 +42,7 @@ pub fn prepare_point_lights(
         });
     }
 
-    lighting_pass_assets
-        .point_lights
+    gpu_point_lights
+        .buffer
         .write_buffer(&render_device, &render_queue);
 }

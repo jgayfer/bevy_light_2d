@@ -12,7 +12,7 @@ use bevy::{
 use crate::{
     render::{
         extract::{extract_ambient_lights, extract_point_lights, ExtractedAmbientLight2d},
-        gpu::{prepare_point_lights, LightingPassAssets},
+        gpu::{prepare_point_lights, GpuPointLights},
         lighting::{LightingNode, LightingPass, LightingPipeline, LIGHTING_SHADER},
     },
     AmbientLight2d, PointLight2d,
@@ -54,6 +54,6 @@ impl Plugin for Light2dPlugin {
 
         render_app
             .init_resource::<LightingPipeline>()
-            .init_resource::<LightingPassAssets>();
+            .init_resource::<GpuPointLights>();
     }
 }
