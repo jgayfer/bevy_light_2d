@@ -15,6 +15,8 @@ use bevy::render::view::ViewUniform;
 use crate::render::extract::ExtractedAmbientLight2d;
 use crate::render::gpu::GpuPointLight2d;
 
+use super::LIGHTING_SHADER;
+
 #[derive(Resource)]
 pub struct LightingPipeline {
     pub layout: BindGroupLayout,
@@ -40,8 +42,6 @@ impl FromWorld for LightingPipeline {
             ),
         );
 
-        let shader = world.resource::<AssetServer>().load("shaders/light.wgsl");
-
         let sampler = render_device.create_sampler(&SamplerDescriptor::default());
 
         let pipeline_id =
@@ -52,7 +52,7 @@ impl FromWorld for LightingPipeline {
                     layout: vec![layout.clone()],
                     vertex: fullscreen_shader_vertex_state(),
                     fragment: Some(FragmentState {
-                        shader,
+                        shader: LIGHTING_SHADER,
                         shader_defs: vec![],
                         entry_point: "fragment".into(),
                         targets: vec![Some(ColorTargetState {

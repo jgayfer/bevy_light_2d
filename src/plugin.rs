@@ -1,4 +1,5 @@
 use bevy::{
+    asset::load_internal_asset,
     core_pipeline::core_2d::graph::{Core2d, Node2d},
     prelude::*,
     render::{
@@ -11,13 +12,20 @@ use bevy::{
 use crate::render::{
     extract::{extract_ambient_lights, extract_point_lights, ExtractedAmbientLight2d},
     gpu::{prepare_point_lights, LightingPassAssets},
-    lighting::{LightingNode, LightingPass, LightingPipeline},
+    lighting::{LightingNode, LightingPass, LightingPipeline, LIGHTING_SHADER},
 };
 
 pub struct Light2dPlugin;
 
 impl Plugin for Light2dPlugin {
     fn build(&self, app: &mut App) {
+        load_internal_asset!(
+            app,
+            LIGHTING_SHADER,
+            "render/lighting/lighting.wgsl",
+            Shader::from_wgsl
+        );
+
         app.add_plugins(UniformComponentPlugin::<ExtractedAmbientLight2d>::default());
 
         let Ok(render_app) = app.get_sub_app_mut(RenderApp) else {
