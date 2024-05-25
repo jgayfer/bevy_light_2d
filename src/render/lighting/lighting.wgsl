@@ -53,8 +53,8 @@ var<uniform> ambient_light: AmbientLight2d;
 
 @fragment
 fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
-    // Setup the color to add to this position from lights sources.
-    var light_color = vec3(0.0);
+    // Setup aggregate color from light sources to multiply the main texture by.
+    var light_color = vec3(1.0);
 
     // For each light, determine its illumination if we're within range of it.
     for (var i = 0u; i < arrayLength(&point_lights); i++) {
@@ -92,7 +92,7 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
 
     return textureSample(screen_texture, texture_sampler, vo.uv)
         * vec4(ambient_light.color.rgb, 1.0)
-        + vec4(light_color, 0.0);
+        * vec4(light_color, 1.0);
 }
 
 fn square(x: f32) -> f32 {
