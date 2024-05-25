@@ -83,7 +83,6 @@ impl ViewNode for LightingNode {
             occlusion_query_set: None,
         });
 
-        // Setup fullscreen triangle.
         render_pass.set_render_pipeline(pipeline);
         render_pass.set_bind_group(0, &bind_group, &[view_offset.offset, ambient_index.index()]);
         render_pass.draw(0..3, 0..1);
