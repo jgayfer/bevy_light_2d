@@ -5,7 +5,7 @@ use bevy::render::render_graph::ViewNode;
 use bevy::render::render_resource::{
     BindGroupEntries, Operations, PipelineCache, RenderPassColorAttachment, RenderPassDescriptor,
 };
-use bevy::render::view::{ViewTarget, ViewUniforms};
+use bevy::render::view::{ViewTarget, ViewUniformOffset, ViewUniforms};
 
 use crate::render::extract::ExtractedAmbientLight2d;
 use crate::render::gpu::GpuPointLights;
@@ -22,13 +22,14 @@ impl ViewNode for LightingNode {
     type ViewQuery = (
         &'static ViewTarget,
         &'static DynamicUniformIndex<ExtractedAmbientLight2d>,
+        &'static ViewUniformOffset,
     );
 
     fn run<'w>(
         &self,
         _graph: &mut bevy::render::render_graph::RenderGraphContext,
         render_context: &mut bevy::render::renderer::RenderContext<'w>,
-        (view_target, ambient_index): bevy::ecs::query::QueryItem<'w, Self::ViewQuery>,
+        (view_target, ambient_index, view_offset): bevy::ecs::query::QueryItem<'w, Self::ViewQuery>,
         world: &'w World,
     ) -> Result<(), bevy::render::render_graph::NodeRunError> {
         let lighting_pipeline = world.resource::<LightingPipeline>();
@@ -84,7 +85,7 @@ impl ViewNode for LightingNode {
 
         // Setup fullscreen triangle.
         render_pass.set_render_pipeline(pipeline);
-        render_pass.set_bind_group(0, &bind_group, &[ambient_index.index()]);
+        render_pass.set_bind_group(0, &bind_group, &[view_offset.offset, ambient_index.index()]);
         render_pass.draw(0..3, 0..1);
 
         Ok(())

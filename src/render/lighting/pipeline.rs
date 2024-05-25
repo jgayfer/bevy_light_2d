@@ -38,7 +38,7 @@ impl FromWorld for LightingPipeline {
                 (
                     texture_2d(TextureSampleType::Float { filterable: true }),
                     sampler(SamplerBindingType::Filtering),
-                    uniform_buffer::<ViewUniform>(false),
+                    uniform_buffer::<ViewUniform>(true),
                     storage_buffer_read_only::<Vec<GpuPointLight2d>>(false),
                     uniform_buffer::<ExtractedAmbientLight2d>(true),
                 ),
