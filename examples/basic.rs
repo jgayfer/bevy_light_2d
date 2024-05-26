@@ -13,8 +13,8 @@ fn setup(mut commands: Commands) {
 
     commands.spawn(PointLight2dBundle {
         point_light: PointLight2d {
-            color: Color::YELLOW,
-            radius: 50.,
+            intensity: 3.0,
+            radius: 100.0,
             ..default()
         },
         ..default()

@@ -12,14 +12,14 @@ fn setup(mut commands: Commands) {
     commands.spawn((
         Camera2dBundle::default(),
         AmbientLight2d {
-            brightness: 0.8,
+            brightness: 0.1,
             ..default()
         },
     ));
 
     commands.spawn(SpriteBundle {
         sprite: Sprite {
-            custom_size: Some(Vec2::splat(100.)),
+            custom_size: Some(Vec2::splat(150.)),
             color: Color::WHITE,
             ..default()
         },
@@ -28,23 +28,34 @@ fn setup(mut commands: Commands) {
 
     commands.spawn(PointLight2dBundle {
         point_light: PointLight2d {
-            color: Color::LIME_GREEN,
+            color: Color::RED,
             radius: 50.,
-            intensity: 1.0,
+            intensity: 5.0,
             ..default()
         },
-        transform: Transform::from_xyz(50., 25., 0.),
+        transform: Transform::from_xyz(-50., 25., 0.),
         ..default()
     });
 
     commands.spawn(PointLight2dBundle {
         point_light: PointLight2d {
-            color: Color::YELLOW,
+            color: Color::WHITE,
             radius: 50.,
-            intensity: 1.0,
-            falloff: 10.0,
+            intensity: 5.0,
+            falloff: 5.0,
         },
         transform: Transform::from_xyz(25., 50., 0.),
+        ..default()
+    });
+
+    commands.spawn(PointLight2dBundle {
+        point_light: PointLight2d {
+            color: Color::GREEN,
+            radius: 75.,
+            intensity: 5.0,
+            ..default()
+        },
+        transform: Transform::from_xyz(-10., -25., 0.),
         ..default()
     });
 }
