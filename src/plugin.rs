@@ -1,3 +1,5 @@
+//! A module which contains the main [`Light2dPlugin`].
+
 use bevy::{
     asset::load_internal_asset,
     core_pipeline::core_2d::graph::{Core2d, Node2d},
@@ -18,6 +20,7 @@ use crate::{
     },
 };
 
+/// A plugin that provides 2d lighting for an app.
 pub struct Light2dPlugin;
 
 impl Plugin for Light2dPlugin {
