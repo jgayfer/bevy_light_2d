@@ -1,7 +1,7 @@
 # `bevy_light_2d`
 
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/jgayfer/bevy_light_2d/blob/master/LICENSE)
-![build](https://github.com/jgayfer/bevy_light_2d/actions/workflows/build.yml/badge.svg)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/jgayfer/bevy_light_2d/build.yml)
 
 A general purpose 2d lighting plugin for [`bevy`](https://bevyengine.org/).
 Designed to be simple to use, yet expressive enough to fit a variety of needs.
