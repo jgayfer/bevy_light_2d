@@ -11,6 +11,7 @@ Designed to be simple to use, yet expressive enough to fit a variety of needs.
 - Component driven design
 - Configurable point lights
 - Camera specific ambient light
+- Single camera rendering
 
 ## Usage
 
@@ -39,8 +40,8 @@ fn setup(mut commands: Commands) {
     
     commands.spawn(PointLight2dBundle {
         point_light: PointLight2d {
-            color: Color::YELLOW,
-            radius: 50.,
+            radius: 100.0,
+            intensity: 3.0,
             ..default()
         },
         ..default()
