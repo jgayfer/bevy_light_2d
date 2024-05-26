@@ -26,3 +26,11 @@ opt-level = 1
 
 [profile.dev.package."*"]
 opt-level = 3
+
+[[example]]
+name = "basic"
+path = "examples/basic.rs"
+
+[[example]]
+name = "multiple"
+path = "examples/multiple.rs"
