@@ -71,3 +71,11 @@ general application over depth of features.
 | bevy | bevy_light_2d |
 |------|---------------|
 | 0.13 | 0.1           |
+
+## Acknowledgements
+
+I'd like to thank the authors of the below crates; they were a significant source of inspiration.
+
+- [`bevy-magic-light-2d`](https://github.com/zaycev/bevy-magic-light-2d)
+- [`bevy_2d_screen_space_lightmaps`](https://github.com/goto64/bevy_2d_screen_space_lightmaps)
+- [`bevy_incandescent`](https://github.com/443eb9/bevy_incandescent)
