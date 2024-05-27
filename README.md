@@ -17,7 +17,7 @@ Designed to be simple to use, yet expressive enough to fit a variety of needs.
 
 ## Usage
 
-In the [`basic`](./examples/basic.rs) example, all we need is the plugin, a camera, and a light source.
+In the `basic` example, all we need is the plugin, a camera, and a light source.
 
 ```toml
 # Cargo.toml
