@@ -8,6 +8,8 @@
 A general purpose 2d lighting plugin for [`bevy`](https://bevyengine.org/).
 Designed to be simple to use, yet expressive enough to fit a variety of needs.
 
+<img src="https://github.com/jgayfer/bevy_light_2d/blob/main/static/dungeon.gif" width="400">
+
 ## Features
 
 - Component driven design
@@ -79,3 +81,7 @@ I'd like to thank the authors of the below crates; they were a significant sourc
 - [`bevy-magic-light-2d`](https://github.com/zaycev/bevy-magic-light-2d)
 - [`bevy_2d_screen_space_lightmaps`](https://github.com/goto64/bevy_2d_screen_space_lightmaps)
 - [`bevy_incandescent`](https://github.com/443eb9/bevy_incandescent)
+
+## Asset credits
+
+- [Pixel Dungeon](https://pixel-poem.itch.io/dungeon-assetpuck) by [`pixel_poem`](https://pixel-poem.itch.io/)

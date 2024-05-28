@@ -8,6 +8,7 @@ authors = ["James Gayfer"]
 repository = "https://github.com/jgayfer/bevy_light_2d"
 license-file = "LICENSE"
 readme = "README.md"
+exclude = ["assets/*", "static/*"]
 
 [dependencies]
 bevy = { version = "0.13", default-features = false, features = [
@@ -15,6 +16,7 @@ bevy = { version = "0.13", default-features = false, features = [
     "bevy_core_pipeline",
     "bevy_winit",
     "bevy_sprite",
+    "png",
     "x11"
 ] }
 
@@ -34,3 +36,7 @@ path = "examples/basic.rs"
 [[example]]
 name = "multiple"
 path = "examples/multiple.rs"
+
+[[example]]
+name = "dungeon"
+path = "examples/dungeon.rs"
