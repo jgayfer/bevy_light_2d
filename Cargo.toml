@@ -6,7 +6,7 @@ categories = ["game-engines", "graphics", "rendering", "gamedev"]
 description = "General purpose 2d lighting for the Bevy game engine."
 authors = ["James Gayfer"]
 repository = "https://github.com/jgayfer/bevy_light_2d"
-license-file = "LICENSE"
+license = "MIT"
 readme = "README.md"
 exclude = ["assets/*", "static/*"]
 
