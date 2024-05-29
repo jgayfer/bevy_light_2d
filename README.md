@@ -13,13 +13,13 @@ Designed to be simple to use, yet expressive enough to fit a variety of needs.
 ## Features
 
 - Component driven design
-- Configurable point lights
-- Camera specific ambient light
+- Configurable [point lights](https://docs.rs/bevy_light_2d/0.1.0/bevy_light_2d/light/struct.PointLight2d.html)
+- Camera specific [ambient light](https://docs.rs/bevy_light_2d/0.1.0/bevy_light_2d/light/struct.AmbientLight2d.html)
 - Single camera rendering
 
 ## Usage
 
-In the `basic` example, all we need is the plugin, a camera, and a light source.
+In the [`basic`](https://github.com/jgayfer/bevy_light_2d/blob/main/examples/basic.rs) example, all we need is the plugin, a camera, and a light source.
 
 ```toml
 # Cargo.toml
@@ -52,6 +52,8 @@ fn setup(mut commands: Commands) {
     });
 }
 ```
+
+To see an in depth example example, run `cargo run --example dungeon`.
 
 ## Motiviation
 
