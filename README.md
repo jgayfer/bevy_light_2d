@@ -86,4 +86,4 @@ I'd like to thank the authors of the below crates; they were a significant sourc
 
 ## Asset credits
 
-- [Pixel Dungeon](https://pixel-poem.itch.io/dungeon-assetpuck) by [`pixel_poem`](https://pixel-poem.itch.io/)
+- [Pixel Dungeon](https://pixel-poem.itch.io/dungeon-assetpuck) by [Pixel Poem](https://pixel-poem.itch.io/)
