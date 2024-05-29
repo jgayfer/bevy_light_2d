@@ -53,7 +53,7 @@ fn setup(mut commands: Commands) {
 }
 ```
 
-To see an in depth example example, run `cargo run --example dungeon`.
+To see an in depth example, use `cargo run --example dungeon`.
 
 ## Motiviation
 
