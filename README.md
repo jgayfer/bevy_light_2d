@@ -8,7 +8,7 @@
 General purpose 2D lighting for the [`bevy`](https://bevyengine.org/) game engine.
 Designed to be simple to use, yet expressive enough to fit a variety of needs.
 
-<img src="https://github.com/jgayfer/bevy_light_2d/blob/main/static/dungeon.gif" width="400">
+<img src="https://github.com/jgayfer/bevy_light_2d/blob/main/static/dungeon.gif?raw=true" width="400">
 
 ## Features
 
