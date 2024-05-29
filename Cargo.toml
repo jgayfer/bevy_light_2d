@@ -11,12 +11,15 @@ readme = "README.md"
 exclude = ["assets/*", "static/*"]
 
 [dependencies]
-bevy = { version = "0.13", default-features = false, features = [
+bevy = { version = "0.14.0-rc.2", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline",
     "bevy_winit",
     "bevy_sprite",
+    "bevy_pbr",
     "png",
+    "ktx2",
+    "zstd",
     "x11"
 ] }
 

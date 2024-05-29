@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{color::palettes::css::YELLOW, prelude::*};
 use bevy_light_2d::prelude::*;
 
 const TILE_INDEX: f32 = 0.0;
@@ -16,7 +16,7 @@ fn main() {
         .add_systems(Startup, (setup_dungeon_tileset, spawn_tiles).chain())
         .add_systems(Startup, (setup_candle_spritesheet, spawn_candles).chain())
         .add_systems(Update, animate_candles)
-        .run()
+        .run();
 }
 
 #[derive(Resource, Default)]
@@ -50,7 +50,7 @@ fn setup_camera(mut commands: Commands) {
 }
 
 fn set_clear_color(mut clear_color: ResMut<ClearColor>) {
-    clear_color.0 = Color::rgb_u8(37, 19, 26);
+    clear_color.0 = Color::srgb_u8(37, 19, 26);
 }
 
 fn animate_candles(
@@ -71,7 +71,7 @@ fn spawn_candles(mut commands: Commands, spritesheet: Res<CandleSpritesheet>) {
             transform: Transform::from_xyz(0.0, 4.0, ENTITY_INDEX),
             point_light: PointLight2d {
                 radius: 48.0,
-                color: Color::YELLOW,
+                color: Color::Srgba(YELLOW),
                 intensity: 25.0,
                 falloff: 4.0,
             },
@@ -83,13 +83,13 @@ fn spawn_candles(mut commands: Commands, spritesheet: Res<CandleSpritesheet>) {
         .spawn((
             Candle,
             AnimationTimer(Timer::from_seconds(0.2, TimerMode::Repeating)),
-            SpriteSheetBundle {
+            SpriteBundle {
                 transform: Transform::from_xyz(0., 2., ENTITY_INDEX),
                 texture: spritesheet.texture.clone(),
-                atlas: TextureAtlas {
-                    layout: spritesheet.layout.clone(),
-                    ..default()
-                },
+                ..default()
+            },
+            TextureAtlas {
+                layout: spritesheet.layout.clone(),
                 ..default()
             },
         ))
@@ -164,18 +164,20 @@ fn spawn_from_atlas(
     atlas_handle: Handle<TextureAtlasLayout>,
     texture: Handle<Image>,
 ) {
-    commands.spawn(SpriteSheetBundle {
-        transform: Transform {
-            translation,
+    commands.spawn((
+        SpriteBundle {
+            transform: Transform {
+                translation,
+                ..default()
+            },
+            texture,
             ..default()
         },
-        texture,
-        atlas: TextureAtlas {
+        TextureAtlas {
             index: sprite_index,
             layout: atlas_handle,
         },
-        ..default()
-    });
+    ));
 }
 
 fn setup_dungeon_tileset(
@@ -185,7 +187,7 @@ fn setup_dungeon_tileset(
 ) {
     dungeon_tileset.texture = asset_server.load("dungeon_tiles.png");
     dungeon_tileset.layout = texture_atlas_layouts.add(TextureAtlasLayout::from_grid(
-        Vec2::new(16.0, 16.0),
+        UVec2::new(16, 16),
         10,
         10,
         None,
@@ -200,7 +202,7 @@ fn setup_candle_spritesheet(
 ) {
     candle_spritesheet.texture = asset_server.load("candle.png");
     candle_spritesheet.layout = texture_atlas_layouts.add(TextureAtlasLayout::from_grid(
-        Vec2::new(16.0, 16.0),
+        UVec2::new(16, 16),
         4,
         1,
         None,

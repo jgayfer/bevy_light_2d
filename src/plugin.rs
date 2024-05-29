@@ -7,6 +7,7 @@ use bevy::{
     render::{
         extract_component::UniformComponentPlugin,
         render_graph::{RenderGraphApp, ViewNodeRunner},
+        view::{check_visibility, VisibilitySystems},
         Render, RenderApp, RenderSet,
     },
 };
@@ -34,9 +35,13 @@ impl Plugin for Light2dPlugin {
 
         app.add_plugins(UniformComponentPlugin::<ExtractedAmbientLight2d>::default())
             .register_type::<AmbientLight2d>()
-            .register_type::<PointLight2d>();
+            .register_type::<PointLight2d>()
+            .add_systems(
+                PostUpdate,
+                check_visibility::<With<PointLight2d>>.in_set(VisibilitySystems::CheckVisibility),
+            );
 
-        let Ok(render_app) = app.get_sub_app_mut(RenderApp) else {
+        let Some(render_app) = app.get_sub_app_mut(RenderApp) else {
             return;
         };
 
@@ -47,11 +52,11 @@ impl Plugin for Light2dPlugin {
             )
             .add_systems(Render, (prepare_point_lights).in_set(RenderSet::Prepare))
             .add_render_graph_node::<ViewNodeRunner<LightingNode>>(Core2d, LightingPass)
-            .add_render_graph_edge(Core2d, Node2d::MainPass, LightingPass);
+            .add_render_graph_edge(Core2d, Node2d::MainTransparentPass, LightingPass);
     }
 
     fn finish(&self, app: &mut App) {
-        let Ok(render_app) = app.get_sub_app_mut(RenderApp) else {
+        let Some(render_app) = app.get_sub_app_mut(RenderApp) else {
             return;
         };
 

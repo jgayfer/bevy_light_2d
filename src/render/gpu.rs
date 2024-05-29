@@ -16,7 +16,7 @@ pub struct GpuPointLights {
 pub struct GpuPointLight2d {
     pub center: Vec2,
     pub radius: f32,
-    pub color: Vec4,
+    pub color: LinearRgba,
     pub intensity: f32,
     pub falloff: f32,
 }
