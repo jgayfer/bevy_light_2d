@@ -57,9 +57,9 @@ To see an in depth example example, run `cargo run --example dungeon`.
 
 ## Motiviation
 
-When I first started experimenting with Bevy, the lack of a first party 2d
+When I first started experimenting with Bevy, the lack of a first party 2D
 lighting implementation left me wanting. While there were some rather impressive
-experimental 2d lighting crates out there, there wasn't much in the way
+experimental 2D lighting crates out there, there wasn't much in the way
 of drop in options available.
 
 My goal with this crate is to fill that void, prioritizing ease of use and
