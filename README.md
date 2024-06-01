@@ -1,5 +1,6 @@
 # `bevy_light_2d`
 
+![Discord](https://img.shields.io/discord/805147867924267018?logo=discord&color=7289DA)
 [![Crates.io](https://img.shields.io/crates/v/bevy_light_2d)](https://crates.io/crates/bevy_light_2d)
 [![docs](https://docs.rs/bevy_light_2d/badge.svg)](https://docs.rs/bevy_light_2d/)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/jgayfer/bevy_light_2d/blob/master/LICENSE)
