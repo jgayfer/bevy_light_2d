@@ -4,6 +4,7 @@
 [![docs](https://docs.rs/bevy_light_2d/badge.svg)](https://docs.rs/bevy_light_2d/)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/jgayfer/bevy_light_2d/blob/master/LICENSE)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/jgayfer/bevy_light_2d/build.yml)
+[![Crates.io](https://img.shields.io/crates/d/bevy_light_2d)](https://crates.io/crates/bevy_light_2d)
 
 General purpose 2D lighting for the [`bevy`](https://bevyengine.org/) game engine.
 Designed to be simple to use, yet expressive enough to fit a variety of needs.
