@@ -65,7 +65,7 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
         // it to screen space in order to do things like compute distances (let
         // alone render it in the correct place).
         let point_light_screen_center =
-            world_to_screen(point_light.center, view.viewport.zw, view.projection);
+            world_to_screen(point_light.center, view.viewport.zw, view.view_proj);
 
         // Compute the distance between the current position and the light's center.
         // We multiply by the scale factor as otherwise our distance will always be
