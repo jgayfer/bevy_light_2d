@@ -57,6 +57,10 @@ fn setup(mut commands: Commands) {
 
 To see an in depth example, use `cargo run --example dungeon`.
 
+## Web support
+
+⚠️ Currently only WebGPU is supported. You'll need to enable the `webgpu` flag from Bevy.
+
 ## Motiviation
 
 When I first started experimenting with Bevy, the lack of a first party 2D
