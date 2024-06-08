@@ -1,6 +1,11 @@
 #import bevy_core_pipeline::fullscreen_vertex_shader::FullscreenVertexOutput
 #import bevy_render::view::View
 
+// We're currently only using a single uniform binding for point lights in 
+// WebGL2, which is limited to 4kb in BatchedUniformBuffer, so we need to
+// ensure our point lights can fit in 4kb.
+const MAX_POINT_LIGHTS: u32 = 82u;
+
 struct PointLight2d {
     center: vec2f,
     radius: f32,
@@ -46,18 +51,33 @@ var texture_sampler: sampler;
 var<uniform> view: View;
 
 @group(0) @binding(3)
-var<storage> point_lights: array<PointLight2d>;
-
-@group(0) @binding(4)
 var<uniform> ambient_light: AmbientLight2d;
+
+// WebGL2 does not support storage buffers, so we fall back to a fixed length
+// array in a uniform buffer.
+#if AVAILABLE_STORAGE_BUFFER_BINDINGS >= 6
+    @group(0) @binding(4)
+    var<storage> point_lights: array<PointLight2d>;
+#else
+    @group(0) @binding(4)
+    var<uniform> point_lights: array<PointLight2d, MAX_POINT_LIGHTS>;
+#endif
 
 @fragment
 fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
     // Setup aggregate color from light sources to multiply the main texture by.
     var light_color = vec3(1.0);
 
+    // WebGL2 does not support storage buffers (or runtime sized arrays), so we
+    // need to use a fixed number of point lights.
+#if AVAILABLE_STORAGE_BUFFER_BINDINGS >= 6
+    let point_light_count = arrayLength(&point_lights);
+#else
+    let point_light_count = MAX_POINT_LIGHTS;
+#endif
+
     // For each light, determine its illumination if we're within range of it.
-    for (var i = 0u; i < arrayLength(&point_lights); i++) {
+    for (var i = 0u; i < point_light_count; i++) {
 
         let point_light = point_lights[i];
 

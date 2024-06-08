@@ -6,16 +6,19 @@ use bevy::{
     prelude::*,
     render::{
         extract_component::UniformComponentPlugin,
+        gpu_component_array_buffer::GpuComponentArrayBufferPlugin,
         render_graph::{RenderGraphApp, ViewNodeRunner},
-        Render, RenderApp, RenderSet,
+        RenderApp,
     },
 };
 
 use crate::{
     light::{AmbientLight2d, PointLight2d},
     render::{
-        extract::{extract_ambient_lights, extract_point_lights, ExtractedAmbientLight2d},
-        gpu::{prepare_point_lights, GpuPointLights},
+        extract::{
+            extract_ambient_lights, extract_point_lights, ExtractedAmbientLight2d,
+            ExtractedPointLight2d,
+        },
         lighting::{LightingNode, LightingPass, LightingPipeline, LIGHTING_SHADER},
     },
 };
@@ -32,9 +35,12 @@ impl Plugin for Light2dPlugin {
             Shader::from_wgsl
         );
 
-        app.add_plugins(UniformComponentPlugin::<ExtractedAmbientLight2d>::default())
-            .register_type::<AmbientLight2d>()
-            .register_type::<PointLight2d>();
+        app.add_plugins((
+            UniformComponentPlugin::<ExtractedAmbientLight2d>::default(),
+            GpuComponentArrayBufferPlugin::<ExtractedPointLight2d>::default(),
+        ))
+        .register_type::<AmbientLight2d>()
+        .register_type::<PointLight2d>();
 
         let Ok(render_app) = app.get_sub_app_mut(RenderApp) else {
             return;
@@ -45,7 +51,6 @@ impl Plugin for Light2dPlugin {
                 ExtractSchedule,
                 (extract_point_lights, extract_ambient_lights),
             )
-            .add_systems(Render, (prepare_point_lights).in_set(RenderSet::Prepare))
             .add_render_graph_node::<ViewNodeRunner<LightingNode>>(Core2d, LightingPass)
             .add_render_graph_edge(Core2d, Node2d::MainPass, LightingPass);
     }
@@ -55,8 +60,6 @@ impl Plugin for Light2dPlugin {
             return;
         };
 
-        render_app
-            .init_resource::<LightingPipeline>()
-            .init_resource::<GpuPointLights>();
+        render_app.init_resource::<LightingPipeline>();
     }
 }
