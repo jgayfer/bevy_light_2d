@@ -1,19 +1,17 @@
 use bevy::core_pipeline::fullscreen_vertex_shader::fullscreen_shader_vertex_state;
 use bevy::prelude::*;
-use bevy::render::render_resource::binding_types::{
-    sampler, storage_buffer_read_only, texture_2d, uniform_buffer,
-};
+use bevy::render::render_resource::binding_types::{sampler, texture_2d, uniform_buffer};
 use bevy::render::render_resource::{
     BindGroupLayout, BindGroupLayoutEntries, CachedRenderPipelineId, ColorTargetState, ColorWrites,
-    FragmentState, MultisampleState, PipelineCache, PrimitiveState, RenderPipelineDescriptor,
-    Sampler, SamplerBindingType, SamplerDescriptor, ShaderStages, TextureFormat, TextureSampleType,
+    FragmentState, GpuArrayBuffer, MultisampleState, PipelineCache, PrimitiveState,
+    RenderPipelineDescriptor, Sampler, SamplerBindingType, SamplerDescriptor, ShaderStages,
+    TextureFormat, TextureSampleType,
 };
 use bevy::render::renderer::RenderDevice;
 use bevy::render::texture::BevyDefault;
 use bevy::render::view::ViewUniform;
 
-use crate::render::extract::ExtractedAmbientLight2d;
-use crate::render::gpu::GpuPointLight2d;
+use crate::render::extract::{ExtractedAmbientLight2d, ExtractedPointLight2d};
 
 use super::LIGHTING_SHADER;
 
@@ -39,8 +37,8 @@ impl FromWorld for LightingPipeline {
                     texture_2d(TextureSampleType::Float { filterable: true }),
                     sampler(SamplerBindingType::Filtering),
                     uniform_buffer::<ViewUniform>(true),
-                    storage_buffer_read_only::<Vec<GpuPointLight2d>>(false),
                     uniform_buffer::<ExtractedAmbientLight2d>(true),
+                    GpuArrayBuffer::<ExtractedPointLight2d>::binding_layout(render_device),
                 ),
             ),
         );

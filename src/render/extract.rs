@@ -1,21 +1,13 @@
 use bevy::{
-    core_pipeline::core_2d::Camera2d,
-    ecs::{
-        component::Component,
-        entity::Entity,
-        query::{With, Without},
-        system::{Commands, Query},
-    },
-    math::Vec4,
-    render::{render_resource::ShaderType, view::ViewVisibility, Extract},
-    transform::components::GlobalTransform,
+    prelude::*,
+    render::{render_resource::ShaderType, Extract},
 };
 
 use crate::light::{AmbientLight2d, PointLight2d};
 
-#[derive(Component, Default, Clone)]
+#[derive(Component, Default, Clone, ShaderType)]
 pub struct ExtractedPointLight2d {
-    pub transform: GlobalTransform,
+    pub transform: Vec2,
     pub radius: f32,
     pub color: Vec4,
     pub intensity: f32,
@@ -37,7 +29,7 @@ pub fn extract_point_lights(
         }
         commands.get_or_spawn(entity).insert(ExtractedPointLight2d {
             color: point_light.color.rgba_linear_to_vec4(),
-            transform: *global_transform,
+            transform: global_transform.translation().xy(),
             radius: point_light.radius,
             intensity: point_light.intensity,
             falloff: point_light.falloff,
