@@ -22,6 +22,7 @@ bevy = { version = "0.14.0-rc.2", default-features = false, features = [
     "zstd",
     "x11"
 ] }
+smallvec = "1.13"
 
 [lints.clippy]
 type_complexity = "allow"

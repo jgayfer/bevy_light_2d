@@ -59,7 +59,7 @@ To see an in depth example, use `cargo run --example dungeon`.
 
 ## Web support
 
-⚠️ Currently only WebGPU is supported. You'll need to enable the `webgpu` flag from Bevy.
+WebGL2 and WebGPU are both supported.
 
 ## Motiviation
 
