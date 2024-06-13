@@ -15,8 +15,8 @@ Designed to be simple to use, yet expressive enough to fit a variety of needs.
 ## Features
 
 - Component driven design
-- Configurable [point lights](https://docs.rs/bevy_light_2d/0.1.0/bevy_light_2d/light/struct.PointLight2d.html)
-- Camera specific [ambient light](https://docs.rs/bevy_light_2d/0.1.0/bevy_light_2d/light/struct.AmbientLight2d.html)
+- Configurable [point lights](https://docs.rs/bevy_light_2d/0.2.0/bevy_light_2d/light/struct.PointLight2d.html)
+- Camera specific [ambient light](https://docs.rs/bevy_light_2d/0.2.0/bevy_light_2d/light/struct.AmbientLight2d.html)
 - Single camera rendering
 
 ## Usage
@@ -26,8 +26,8 @@ In the [`basic`](https://github.com/jgayfer/bevy_light_2d/blob/main/examples/bas
 ```toml
 # Cargo.toml
 [dependencies]
-bevy = "0.13"
-bevy_light_2d = "0.1"
+bevy = "0.14"
+bevy_light_2d = "0.2"
 ```
 
 ```rust
@@ -80,6 +80,7 @@ general application over depth of features.
 
 | bevy | bevy_light_2d |
 |------|---------------|
+| 0.14 | 0.2           |
 | 0.13 | 0.1           |
 
 ## Acknowledgements
