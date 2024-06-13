@@ -16,11 +16,12 @@ bevy = { version = "0.14.0-rc.2", default-features = false, features = [
     "bevy_core_pipeline",
     "bevy_winit",
     "bevy_sprite",
-    "bevy_pbr",
     "png",
+    "x11",
+    # TODO: Remove. See https://github.com/bevyengine/bevy/issues/13728.
     "ktx2",
     "zstd",
-    "x11"
+    "bevy_pbr"
 ] }
 smallvec = "1.13"
 
