@@ -8,7 +8,8 @@ use bevy::{
         extract_component::UniformComponentPlugin,
         gpu_component_array_buffer::GpuComponentArrayBufferPlugin,
         render_graph::{RenderGraphApp, ViewNodeRunner},
-        RenderApp,
+        render_resource::SpecializedRenderPipelines,
+        Render, RenderApp, RenderSet,
     },
 };
 
@@ -19,7 +20,10 @@ use crate::{
             extract_ambient_lights, extract_point_lights, ExtractedAmbientLight2d,
             ExtractedPointLight2d,
         },
-        lighting::{LightingNode, LightingPass, LightingPipeline, LIGHTING_SHADER},
+        lighting::{
+            prepare_lighting_pipelines, LightingNode, LightingPass, LightingPipeline,
+            LIGHTING_SHADER,
+        },
     },
 };
 
@@ -47,9 +51,14 @@ impl Plugin for Light2dPlugin {
         };
 
         render_app
+            .init_resource::<SpecializedRenderPipelines<LightingPipeline>>()
             .add_systems(
                 ExtractSchedule,
                 (extract_point_lights, extract_ambient_lights),
+            )
+            .add_systems(
+                Render,
+                prepare_lighting_pipelines.in_set(RenderSet::Prepare),
             )
             .add_render_graph_node::<ViewNodeRunner<LightingNode>>(Core2d, LightingPass)
             .add_render_graph_edge(Core2d, Node2d::MainPass, LightingPass);

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - WebGL2 support (#7).
 
+### Fixed
+
+- Crash when HDR was enabled (#11).
+
 ## [0.1.3] - 2024-06-02
 
 ### Fixed
