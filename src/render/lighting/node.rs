@@ -12,7 +12,7 @@ use smallvec::{smallvec, SmallVec};
 
 use crate::render::extract::{ExtractedAmbientLight2d, ExtractedPointLight2d};
 
-use super::LightingPipeline;
+use super::{LightingPipeline, LightingPipelineId};
 
 const LIGHTING_PASS: &str = "lighting_pass";
 const LIGHTING_BIND_GROUP: &str = "lighting_bind_group";
@@ -25,21 +25,24 @@ impl ViewNode for LightingNode {
         &'static ViewTarget,
         &'static DynamicUniformIndex<ExtractedAmbientLight2d>,
         &'static ViewUniformOffset,
+        &'static LightingPipelineId,
     );
 
     fn run<'w>(
         &self,
         _graph: &mut bevy::render::render_graph::RenderGraphContext,
         render_context: &mut bevy::render::renderer::RenderContext<'w>,
-        (view_target, ambient_index, view_offset): bevy::ecs::query::QueryItem<'w, Self::ViewQuery>,
+        (view_target, ambient_index, view_offset, pipeline_id): bevy::ecs::query::QueryItem<
+            'w,
+            Self::ViewQuery,
+        >,
         world: &'w World,
     ) -> Result<(), bevy::render::render_graph::NodeRunError> {
         let lighting_pipeline = world.resource::<LightingPipeline>();
 
         let pipeline_cache = world.resource::<PipelineCache>();
 
-        let Some(pipeline) = pipeline_cache.get_render_pipeline(lighting_pipeline.pipeline_id)
-        else {
+        let Some(pipeline) = pipeline_cache.get_render_pipeline(pipeline_id.0) else {
             return Ok(());
         };
 
