@@ -14,6 +14,14 @@ exclude = ["assets/*", "static/*"]
 bevy = { version = "0.14.0-rc.2", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline",
+    "bevy_winit"
+] }
+smallvec = "1.13"
+
+[dev-dependencies]
+bevy = { version = "0.14.0-rc.2", default-features = false, features = [
+    "bevy_render",
+    "bevy_core_pipeline",
     "bevy_winit",
     "bevy_sprite",
     "png",
@@ -23,7 +31,6 @@ bevy = { version = "0.14.0-rc.2", default-features = false, features = [
     "zstd",
     "bevy_pbr"
 ] }
-smallvec = "1.13"
 
 [lints.clippy]
 type_complexity = "allow"
