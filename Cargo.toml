@@ -14,6 +14,13 @@ exclude = ["assets/*", "static/*"]
 bevy = { version = "0.13", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline",
+    "bevy_winit"
+] }
+
+[dev-dependencies]
+bevy = { version = "0.13", default-features = false, features = [
+    "bevy_render",
+    "bevy_core_pipeline",
     "bevy_winit",
     "bevy_sprite",
     "png",
