@@ -13,12 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Update Bevy version from `0.13` to `0.14` (#1).
-- Update `PointLight2d#color` to use the new [`bevy::color`](https://bevyengine.org/learn/migration-guides/0-13-to-0-14/#overhaul-color) module.
-- Moved the following `bevy` features to `dev-dependencies`:
-  - `bevy_sprite`
-  - `png`
-  - `x11`
+- Updated Bevy version from `0.13` to `0.14` (#1).
+- Updated `PointLight2d#color` to use the new [`bevy::color`](https://bevyengine.org/learn/migration-guides/0-13-to-0-14/#overhaul-color) module (#1).
+- Moved `bevy_sprite`, `png`, and `x11` Bevy features to `dev-dependencies` (#12).
 
 ### Fixed
 
