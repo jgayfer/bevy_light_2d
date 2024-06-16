@@ -13,10 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Moved the following `bevy` features to `dev-dependencies`:
-  - `bevy_sprite`
-  - `png`
-  - `x11`
+- Moved `bevy_sprite`, `png`, and `x11` Bevy features to `dev-dependencies` (#12).
 
 ### Fixed
 
