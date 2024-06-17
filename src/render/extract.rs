@@ -28,7 +28,7 @@ pub fn extract_point_lights(
             continue;
         }
         commands.get_or_spawn(entity).insert(ExtractedPointLight2d {
-            color: point_light.color.linear(),
+            color: point_light.color.to_linear(),
             transform: global_transform.translation().xy(),
             radius: point_light.radius,
             intensity: point_light.intensity,
@@ -46,7 +46,7 @@ pub fn extract_ambient_lights(
         commands
             .get_or_spawn(entity)
             .insert(ExtractedAmbientLight2d {
-                color: ambient_light.color.linear() * ambient_light.brightness,
+                color: ambient_light.color.to_linear() * ambient_light.brightness,
             });
     }
 
