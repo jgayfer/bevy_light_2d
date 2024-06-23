@@ -65,6 +65,11 @@ var<uniform> ambient_light: AmbientLight2d;
 
 @fragment
 fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
+    let col = textureSample(screen_texture, texture_sampler, vo.uv);
+    // We can just return early if the texture has 0 alpha
+    if col[3] == 0.0 {
+       return col;
+    }
     // Setup aggregate color from light sources to multiply the main texture by.
     var light_color = vec3(1.0);
 
@@ -110,7 +115,7 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
         }
     }
 
-    return textureSample(screen_texture, texture_sampler, vo.uv)
+    return col
         * vec4(ambient_light.color.rgb, 1.0)
         * vec4(light_color, 1.0);
 }
