@@ -14,7 +14,8 @@ exclude = ["assets/*", "static/*"]
 bevy = { version = "0.14.0-rc.4", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline",
-    "bevy_winit"
+    "bevy_winit",
+    "x11"
 ] }
 smallvec = "1.13"
 
