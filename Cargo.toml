@@ -11,7 +11,7 @@ readme = "README.md"
 exclude = ["assets/*", "static/*"]
 
 [dependencies]
-bevy = { version = "0.14.0-rc.3", default-features = false, features = [
+bevy = { version = "0.14.0-rc.4", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline",
     "bevy_winit"
@@ -19,17 +19,13 @@ bevy = { version = "0.14.0-rc.3", default-features = false, features = [
 smallvec = "1.13"
 
 [dev-dependencies]
-bevy = { version = "0.14.0-rc.3", default-features = false, features = [
+bevy = { version = "0.14.0-rc.4", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline",
     "bevy_winit",
     "bevy_sprite",
     "png",
-    "x11",
-    # TODO: Remove. See https://github.com/bevyengine/bevy/issues/13728.
-    "ktx2",
-    "zstd",
-    "bevy_pbr"
+    "x11"
 ] }
 
 [lints.clippy]
