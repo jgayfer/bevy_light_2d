@@ -1,12 +1,10 @@
 //! A module which contains lighting components.
 
 use bevy::{
+    color::Color,
     ecs::{bundle::Bundle, component::Component},
     reflect::Reflect,
-    render::{
-        color::Color,
-        view::{InheritedVisibility, ViewVisibility, Visibility},
-    },
+    render::view::{InheritedVisibility, ViewVisibility, Visibility},
     transform::components::{GlobalTransform, Transform},
 };
 

@@ -9,14 +9,14 @@ use crate::light::{AmbientLight2d, PointLight2d};
 pub struct ExtractedPointLight2d {
     pub transform: Vec2,
     pub radius: f32,
-    pub color: Vec4,
+    pub color: LinearRgba,
     pub intensity: f32,
     pub falloff: f32,
 }
 
 #[derive(Component, Default, Clone, ShaderType)]
 pub struct ExtractedAmbientLight2d {
-    pub color: Vec4,
+    pub color: LinearRgba,
 }
 
 pub fn extract_point_lights(
@@ -28,7 +28,7 @@ pub fn extract_point_lights(
             continue;
         }
         commands.get_or_spawn(entity).insert(ExtractedPointLight2d {
-            color: point_light.color.rgba_linear_to_vec4(),
+            color: point_light.color.to_linear(),
             transform: global_transform.translation().xy(),
             radius: point_light.radius,
             intensity: point_light.intensity,
@@ -46,7 +46,7 @@ pub fn extract_ambient_lights(
         commands
             .get_or_spawn(entity)
             .insert(ExtractedAmbientLight2d {
-                color: ambient_light.color.rgba_linear_to_vec4() * ambient_light.brightness,
+                color: ambient_light.color.to_linear() * ambient_light.brightness,
             });
     }
 
@@ -56,7 +56,7 @@ pub fn extract_ambient_lights(
         commands
             .get_or_spawn(entity)
             .insert(ExtractedAmbientLight2d {
-                color: Vec4::new(1.0, 1.0, 1.0, 0.0),
+                color: Color::WHITE.into(),
             });
     }
 }

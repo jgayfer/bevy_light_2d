@@ -5,7 +5,7 @@ fn main() {
     App::new()
         .add_plugins((DefaultPlugins, Light2dPlugin))
         .add_systems(Startup, setup)
-        .run()
+        .run();
 }
 
 fn setup(mut commands: Commands) {
