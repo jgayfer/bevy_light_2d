@@ -2,7 +2,7 @@
 name = "bevy_light_2d"
 version = "0.2.0-rc.3"
 edition = "2021"
-categories = ["game-engines", "graphics", "rendering", "gamedev"]
+categories = ["game-engines", "graphics", "rendering"]
 description = "General purpose 2d lighting for the Bevy game engine."
 authors = ["James Gayfer"]
 repository = "https://github.com/jgayfer/bevy_light_2d"
