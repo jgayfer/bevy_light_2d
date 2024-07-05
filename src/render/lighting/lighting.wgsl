@@ -15,7 +15,7 @@ struct PointLight2d {
 }
 
 struct AmbientLight2d {
-    color: vec3<f32>
+    color: vec4<f32>
 }
 
 fn world_to_ndc(world_position: vec2<f32>, view_projection: mat4x4<f32>) -> vec2<f32> {
@@ -37,7 +37,7 @@ fn world_to_screen(
 
 fn scale_factor(view: View) -> f32 {
     let screen_size =
-        2.0 * vec2f(view.inverse_projection[0][0], view.inverse_projection[1][1]);
+        2.0 * vec2f(view.view_from_clip[0][0], view.view_from_clip[1][1]);
     return screen_size.y / view.viewport.w;
 }
 
@@ -85,7 +85,7 @@ fn fragment(vo: FullscreenVertexOutput) -> @location(0) vec4<f32> {
         // it to screen space in order to do things like compute distances (let
         // alone render it in the correct place).
         let point_light_screen_center =
-            world_to_screen(point_light.center, view.viewport.zw, view.view_proj);
+            world_to_screen(point_light.center, view.viewport.zw, view.clip_from_world);
 
         // Compute the distance between the current position and the light's center.
         // We multiply by the scale factor as otherwise our distance will always be

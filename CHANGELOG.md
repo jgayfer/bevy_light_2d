@@ -7,12 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2024-07-04
+
 ### Added
 
 - WebGL2 support (#7).
 
 ### Changed
 
+- Updated Bevy version from `0.13` to `0.14` (#9).
+- Updated `PointLight2d#color` to use the new [`bevy::color`](https://bevyengine.org/learn/migration-guides/0-13-to-0-14/#overhaul-color) module (#9).
 - Moved `bevy_sprite`, `png`, and `x11` Bevy features to `dev-dependencies` (#12).
 
 ### Fixed

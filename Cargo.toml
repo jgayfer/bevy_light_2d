@@ -1,8 +1,8 @@
 [package]
 name = "bevy_light_2d"
-version = "0.1.3"
+version = "0.2.0"
 edition = "2021"
-categories = ["game-engines", "graphics", "rendering", "gamedev"]
+categories = ["game-engines", "graphics", "rendering"]
 description = "General purpose 2d lighting for the Bevy game engine."
 authors = ["James Gayfer"]
 repository = "https://github.com/jgayfer/bevy_light_2d"
@@ -11,14 +11,16 @@ readme = "README.md"
 exclude = ["assets/*", "static/*"]
 
 [dependencies]
-bevy = { version = "0.13", default-features = false, features = [
+bevy = { version = "0.14", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline",
-    "bevy_winit"
+    "bevy_winit",
+    "x11"
 ] }
+smallvec = "1.13"
 
 [dev-dependencies]
-bevy = { version = "0.13", default-features = false, features = [
+bevy = { version = "0.14", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline",
     "bevy_winit",

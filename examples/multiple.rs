@@ -5,7 +5,7 @@ fn main() {
     App::new()
         .add_plugins((DefaultPlugins, Light2dPlugin))
         .add_systems(Startup, setup)
-        .run()
+        .run();
 }
 
 fn setup(mut commands: Commands) {
@@ -28,7 +28,7 @@ fn setup(mut commands: Commands) {
 
     commands.spawn(PointLight2dBundle {
         point_light: PointLight2d {
-            color: Color::RED,
+            color: Color::Srgba(Srgba::RED),
             radius: 50.,
             intensity: 5.0,
             ..default()
@@ -50,7 +50,7 @@ fn setup(mut commands: Commands) {
 
     commands.spawn(PointLight2dBundle {
         point_light: PointLight2d {
-            color: Color::GREEN,
+            color: Color::Srgba(Srgba::GREEN),
             radius: 75.,
             intensity: 5.0,
             ..default()
