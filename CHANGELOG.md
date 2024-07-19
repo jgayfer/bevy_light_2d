@@ -7,10 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2024-07-19
+
 ### Fixed
 
 - Ambient light not working when there are no point lights (#17).
-
 
 ## [0.2.0] - 2024-07-04
 
