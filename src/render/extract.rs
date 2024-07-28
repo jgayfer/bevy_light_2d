@@ -5,7 +5,7 @@ use bevy::{
 
 use crate::light::{AmbientLight2d, PointLight2d};
 
-#[derive(Component, Default, Clone, ShaderType, Copy)]
+#[derive(Component, Default, Clone, ShaderType)]
 pub struct ExtractedPointLight2d {
     pub transform: Vec2,
     pub radius: f32,

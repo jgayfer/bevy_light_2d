@@ -6,9 +6,9 @@ use bevy::{
     prelude::*,
     render::{
         extract_component::UniformComponentPlugin,
+        gpu_component_array_buffer::GpuComponentArrayBufferPlugin,
         render_graph::{RenderGraphApp, ViewNodeRunner},
         render_resource::SpecializedRenderPipelines,
-        renderer::RenderDevice,
         view::{check_visibility, VisibilitySystems},
         Render, RenderApp, RenderSet,
     },
@@ -17,12 +17,14 @@ use bevy::{
 use crate::{
     light::{AmbientLight2d, PointLight2d},
     render::{
-        extract::{extract_ambient_lights, extract_point_lights, ExtractedAmbientLight2d},
+        extract::{
+            extract_ambient_lights, extract_point_lights, ExtractedAmbientLight2d,
+            ExtractedPointLight2d,
+        },
         lighting::{
             prepare_lighting_pipelines, LightingNode, LightingPass, LightingPipeline,
             LIGHTING_SHADER,
         },
-        prepare::{prepare_point_lights, GpuPointLights},
     },
 };
 
@@ -38,13 +40,16 @@ impl Plugin for Light2dPlugin {
             Shader::from_wgsl
         );
 
-        app.add_plugins(UniformComponentPlugin::<ExtractedAmbientLight2d>::default())
-            .register_type::<AmbientLight2d>()
-            .register_type::<PointLight2d>()
-            .add_systems(
-                PostUpdate,
-                check_visibility::<With<PointLight2d>>.in_set(VisibilitySystems::CheckVisibility),
-            );
+        app.add_plugins((
+            UniformComponentPlugin::<ExtractedAmbientLight2d>::default(),
+            GpuComponentArrayBufferPlugin::<ExtractedPointLight2d>::default(),
+        ))
+        .register_type::<AmbientLight2d>()
+        .register_type::<PointLight2d>()
+        .add_systems(
+            PostUpdate,
+            check_visibility::<With<PointLight2d>>.in_set(VisibilitySystems::CheckVisibility),
+        );
 
         let Some(render_app) = app.get_sub_app_mut(RenderApp) else {
             return;
@@ -60,10 +65,6 @@ impl Plugin for Light2dPlugin {
                 Render,
                 prepare_lighting_pipelines.in_set(RenderSet::Prepare),
             )
-            .add_systems(
-                Render,
-                prepare_point_lights.in_set(RenderSet::PrepareResources),
-            )
             .add_render_graph_node::<ViewNodeRunner<LightingNode>>(Core2d, LightingPass)
             .add_render_graph_edge(Core2d, Node2d::EndMainPass, LightingPass);
     }
@@ -74,9 +75,5 @@ impl Plugin for Light2dPlugin {
         };
 
         render_app.init_resource::<LightingPipeline>();
-
-        render_app.insert_resource(GpuPointLights::new(
-            render_app.world().resource::<RenderDevice>(),
-        ));
     }
 }
