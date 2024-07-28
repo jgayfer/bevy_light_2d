@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Point lights not despawning (#19).
+
 ## [0.2.1] - 2024-07-19
 
 ### Fixed

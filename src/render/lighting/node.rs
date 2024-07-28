@@ -3,14 +3,14 @@ use bevy::render::extract_component::{ComponentUniforms, DynamicUniformIndex};
 use bevy::render::render_graph::ViewNode;
 
 use bevy::render::render_resource::{
-    BindGroupEntries, Operations, PipelineCache, RenderPassColorAttachment, RenderPassDescriptor,
+    BindGroupEntries, GpuArrayBuffer, Operations, PipelineCache, RenderPassColorAttachment,
+    RenderPassDescriptor,
 };
 use bevy::render::renderer::RenderDevice;
 use bevy::render::view::{ViewTarget, ViewUniformOffset, ViewUniforms};
 use smallvec::{smallvec, SmallVec};
 
-use crate::render::extract::ExtractedAmbientLight2d;
-use crate::render::prepare::GpuPointLights;
+use crate::render::extract::{ExtractedAmbientLight2d, ExtractedPointLight2d};
 
 use super::{LightingPipeline, LightingPipelineId};
 
@@ -58,7 +58,10 @@ impl ViewNode for LightingNode {
             return Ok(());
         };
 
-        let Some(point_light_binding) = world.resource::<GpuPointLights>().binding() else {
+        let Some(point_light_binding) = world
+            .resource::<GpuArrayBuffer<ExtractedPointLight2d>>()
+            .binding()
+        else {
             return Ok(());
         };
 
