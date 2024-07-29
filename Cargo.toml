@@ -12,21 +12,23 @@ exclude = ["assets/*", "static/*"]
 
 [dependencies]
 bevy = { version = "0.14", default-features = false, features = [
+    "bevy_pbr",
     "bevy_render",
     "bevy_core_pipeline",
     "bevy_winit",
-    "x11"
+    "x11",
 ] }
 smallvec = "1.13"
 
 [dev-dependencies]
 bevy = { version = "0.14", default-features = false, features = [
+    "bevy_pbr",
     "bevy_render",
     "bevy_core_pipeline",
     "bevy_winit",
     "bevy_sprite",
     "png",
-    "x11"
+    "x11",
 ] }
 
 [lints.clippy]

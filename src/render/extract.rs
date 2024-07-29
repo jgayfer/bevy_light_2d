@@ -3,7 +3,7 @@ use bevy::{
     render::{render_resource::ShaderType, Extract},
 };
 
-use crate::light::{AmbientLight2d, PointLight2d};
+use crate::light::{AmbientLight2d, LightOccluder2d, PointLight2d};
 
 #[derive(Component, Default, Clone, ShaderType)]
 pub struct ExtractedPointLight2d {
@@ -12,6 +12,12 @@ pub struct ExtractedPointLight2d {
     pub color: LinearRgba,
     pub intensity: f32,
     pub falloff: f32,
+}
+
+#[derive(Component, Default, Clone, ShaderType)]
+pub struct ExtractedLightOccluder2d {
+    pub half_size: Vec2,
+    pub center: Vec2,
 }
 
 #[derive(Component, Default, Clone, ShaderType)]
@@ -45,6 +51,30 @@ pub fn extract_point_lights(
         falloff: 0.0,
         color: LinearRgba::BLACK,
     });
+}
+
+pub fn extract_light_occluders(
+    mut commands: Commands,
+    light_occluders_query: Extract<
+        Query<(Entity, &LightOccluder2d, &GlobalTransform, &ViewVisibility)>,
+    >,
+) {
+    for (entity, light_occluder, global_transform, view_visibility) in &light_occluders_query {
+        if !view_visibility.get() {
+            continue;
+        }
+
+        commands
+            .get_or_spawn(entity)
+            .insert(ExtractedLightOccluder2d {
+                half_size: light_occluder.half_size,
+                center: global_transform.translation().xy(),
+            });
+    }
+
+    // BufferVec won't write to the GPU if there aren't any point lights.
+    // For now we can spawn an empty point light to get around this.
+    commands.spawn(ExtractedLightOccluder2d::default());
 }
 
 pub fn extract_ambient_lights(

@@ -1,12 +1,13 @@
 use bevy::{
-    ecs::{
-        entity::Entity,
-        query::With,
-        system::{Commands, Query, Res, ResMut},
-    },
+    prelude::*,
     render::{
-        render_resource::{PipelineCache, SpecializedRenderPipelines},
-        view::ExtractedView,
+        render_resource::{
+            PipelineCache, SpecializedRenderPipelines, TextureDescriptor, TextureDimension,
+            TextureUsages,
+        },
+        renderer::RenderDevice,
+        texture::{CachedTexture, TextureCache},
+        view::{ExtractedView, ViewTarget},
     },
 };
 
@@ -31,5 +32,36 @@ pub fn prepare_lighting_pipelines(
         commands
             .entity(entity)
             .insert(LightingPipelineId(pipeline_id));
+    }
+}
+
+#[derive(Component)]
+pub struct Lighting2dAuxiliaryTextures {
+    pub sdf: CachedTexture,
+}
+
+pub fn prepare_lighting_auxiliary_textures(
+    mut commands: Commands,
+    render_device: Res<RenderDevice>,
+    mut texture_cache: ResMut<TextureCache>,
+    view_targets: Query<(Entity, &ViewTarget)>,
+) {
+    for (entity, view_target) in &view_targets {
+        let texture_descriptor = TextureDescriptor {
+            label: Some("auxiliary texture"),
+            size: view_target.main_texture().size(),
+            mip_level_count: 1,
+            sample_count: view_target.main_texture().sample_count(),
+            dimension: TextureDimension::D2,
+            format: view_target.main_texture_format(),
+            usage: TextureUsages::RENDER_ATTACHMENT | TextureUsages::TEXTURE_BINDING,
+            view_formats: &[],
+        };
+
+        let texture = texture_cache.get(&render_device, texture_descriptor);
+
+        commands
+            .entity(entity)
+            .insert(Lighting2dAuxiliaryTextures { sdf: texture });
     }
 }
