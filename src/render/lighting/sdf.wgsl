@@ -5,7 +5,22 @@
     position_ndc_to_world
 }
 
-@group(0) @binding(1) var<storage> occluders: array<LightOccluder2d>;
+// We're currently only using a single uniform binding for occluders in
+// WebGL2, which is limited to 4kb in BatchedUniformBuffer, so we need to
+// ensure our occluders can fit in 4kb.
+//
+// As each occluder is 16 bytes, we can fit 4096 / 16 = 256 occluders.
+const MAX_OCCLUDERS: u32 = 256u;
+
+// WebGL2 does not support storage buffers, so we fall back to a fixed length
+// array in a uniform buffer.
+#if AVAILABLE_STORAGE_BUFFER_BINDINGS >= 6
+    @group(0) @binding(1)
+    var<storage> occluders: array<LightOccluder2d>;
+#else
+    @group(0) @binding(1)
+    var<uniform> occluders: array<LightOccluder2d, MAX_OCCLUDERS>;
+#endif
 
 @fragment
 fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
@@ -13,7 +28,15 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
 
     var sdf = occluder_sd(pos, occluders[0]);
 
-    for (var i = 1u; i < arrayLength(&occluders); i++) {
+    // WebGL2 does not support storage buffers (or runtime sized arrays), so we
+    // need to use a fixed number of occluders.
+#if AVAILABLE_STORAGE_BUFFER_BINDINGS >= 6
+    let occluder_count = arrayLength(&occluders);
+#else
+    let occluder_count = MAX_OCCLUDERS;
+#endif
+
+    for (var i = 1u; i < occluder_count; i++) {
         sdf = min(sdf, occluder_sd(pos, occluders[i]));
     }
 
