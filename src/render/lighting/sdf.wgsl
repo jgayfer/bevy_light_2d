@@ -1,8 +1,21 @@
 #import bevy_core_pipeline::fullscreen_vertex_shader::FullscreenVertexOutput
+#import bevy_render::view::View
 #import bevy_light_2d::types::LightOccluder2d
-#import bevy_pbr::view_transformations::{
-    frag_coord_to_ndc,
-    position_ndc_to_world
+
+fn frag_coord_to_uv(frag_coord: vec2<f32>) -> vec2<f32> {
+    return (frag_coord - view.viewport.xy) / view.viewport.zw;
+}
+
+fn frag_coord_to_ndc(frag_coord: vec2<f32>) -> vec2<f32> {
+    return uv_to_ndc(frag_coord_to_uv(frag_coord.xy));
+}
+
+fn uv_to_ndc(uv: vec2<f32>) -> vec2<f32> {
+    return uv * vec2(2.0, -2.0) + vec2(-1.0, 1.0);
+}
+
+fn ndc_to_world(ndc_position: vec2<f32>) -> vec2<f32> {
+    return (view.world_from_clip * vec4(ndc_position, 0.0, 1.0)).xy;
 }
 
 // We're currently only using a single uniform binding for occluders in
@@ -11,6 +24,9 @@
 //
 // As each occluder is 16 bytes, we can fit 4096 / 16 = 256 occluders.
 const MAX_OCCLUDERS: u32 = 256u;
+
+@group(0) @binding(0)
+var<uniform> view: View;
 
 // WebGL2 does not support storage buffers, so we fall back to a fixed length
 // array in a uniform buffer.
@@ -24,7 +40,7 @@ const MAX_OCCLUDERS: u32 = 256u;
 
 @fragment
 fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
-    let pos = position_ndc_to_world(frag_coord_to_ndc(in.position)).xy;
+    let pos = ndc_to_world(frag_coord_to_ndc(in.position.xy));
 
     var sdf = occluder_sd(pos, occluders[0]);
 
