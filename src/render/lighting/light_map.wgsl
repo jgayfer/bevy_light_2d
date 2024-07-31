@@ -102,6 +102,8 @@ fn square(x: f32) -> f32 {
     return x * x;
 }
 
+// Compute light attenutation.
+// See https://lisyarus.github.io/blog/posts/point-light-attenuation.html
 fn attenuation(light: PointLight2d, dist: f32) -> f32 {
     let s = dist / light.radius;
     if s > 1.0 {

@@ -165,7 +165,6 @@ impl ViewNode for LightingNode {
 
         drop(light_map_pass);
 
-        // Main pass (should be replaced by lighting, blur and post process)
         let post_process = view_target.post_process_write();
 
         let bind_group = render_context.render_device().create_bind_group(
@@ -173,11 +172,8 @@ impl ViewNode for LightingNode {
             &pipeline.layout,
             &BindGroupEntries::sequential((
                 post_process.source,
+                &aux_textures.light_map.default_view,
                 &pipeline.sampler,
-                view_uniform_binding,
-                ambient_light_uniform,
-                point_light_binding,
-                &aux_textures.sdf.default_view,
             )),
         );
 
@@ -193,24 +189,8 @@ impl ViewNode for LightingNode {
             occlusion_query_set: None,
         });
 
-        let mut dynamic_offsets: SmallVec<[u32; 3]> =
-            smallvec![view_offset.offset, ambient_index.index()];
-
-        // Storage buffers aren't available in WebGL2. We fall back to a
-        // dynamic uniform buffer, and therefore need to provide the offset.
-        // We're providing a value of 0 here as we're limiting the number of
-        // point lights to only those that can reasonably fit in a single binding.
-        if world
-            .resource::<RenderDevice>()
-            .limits()
-            .max_storage_buffers_per_shader_stage
-            == 0
-        {
-            dynamic_offsets.push(0);
-        }
-
         render_pass.set_render_pipeline(lighting_pipeline);
-        render_pass.set_bind_group(0, &bind_group, &dynamic_offsets);
+        render_pass.set_bind_group(0, &bind_group, &[]);
         render_pass.draw(0..3, 0..1);
 
         Ok(())
