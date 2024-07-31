@@ -22,8 +22,9 @@ use crate::{
             ExtractedAmbientLight2d, ExtractedLightOccluder2d, ExtractedPointLight2d,
         },
         lighting::{
-            prepare_lighting_auxiliary_textures, prepare_lighting_pipelines, LightingNode,
-            LightingPass, LightingPipeline, SdfPipeline, LIGHTING_SHADER, SDF_SHADER, TYPES_SHADER,
+            prepare_lighting_auxiliary_textures, prepare_lighting_pipelines, LightMapPipeline,
+            LightingNode, LightingPass, LightingPipeline, SdfPipeline, LIGHTING_SHADER,
+            LIGHT_MAP_SHADER, SDF_SHADER, TYPES_SHADER,
         },
     },
 };
@@ -49,6 +50,12 @@ impl Plugin for Light2dPlugin {
             app,
             LIGHTING_SHADER,
             "render/lighting/lighting.wgsl",
+            Shader::from_wgsl
+        );
+        load_internal_asset!(
+            app,
+            LIGHT_MAP_SHADER,
+            "render/lighting/light_map.wgsl",
             Shader::from_wgsl
         );
 
@@ -98,6 +105,7 @@ impl Plugin for Light2dPlugin {
 
         render_app
             .init_resource::<LightingPipeline>()
-            .init_resource::<SdfPipeline>();
+            .init_resource::<SdfPipeline>()
+            .init_resource::<LightMapPipeline>();
     }
 }

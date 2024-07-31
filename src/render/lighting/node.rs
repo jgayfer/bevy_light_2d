@@ -15,10 +15,15 @@ use crate::render::extract::{
     ExtractedAmbientLight2d, ExtractedLightOccluder2d, ExtractedPointLight2d,
 };
 
-use super::{Lighting2dAuxiliaryTextures, LightingPipeline, LightingPipelineId, SdfPipeline};
+use super::{
+    LightMapPipeline, Lighting2dAuxiliaryTextures, LightingPipeline, LightingPipelineId,
+    SdfPipeline,
+};
 
 const SDF_PASS: &str = "sdf_pass";
 const SDF_BIND_GROUP: &str = "sdf_bind_group";
+const LIGHT_MAP_PASS: &str = "light_map_pass";
+const LIGHT_MAP_BIND_GROUP: &str = "light_map_bind_group";
 const LIGHTING_PASS: &str = "lighting_pass";
 const LIGHTING_BIND_GROUP: &str = "lighting_bind_group";
 
@@ -45,12 +50,14 @@ impl ViewNode for LightingNode {
         world: &'w World,
     ) -> Result<(), bevy::render::render_graph::NodeRunError> {
         let sdf_pipeline_resource = world.resource::<SdfPipeline>();
+        let light_map_pipeline_resource = world.resource::<LightMapPipeline>();
         let pipeline = world.resource::<LightingPipeline>();
         let pipeline_cache = world.resource::<PipelineCache>();
 
         let (
             Some(sdf_pipeline),
             Some(lighting_pipeline),
+            Some(light_map_pipeline),
             Some(view_uniform_binding),
             Some(ambient_light_uniform),
             Some(point_light_binding),
@@ -58,6 +65,7 @@ impl ViewNode for LightingNode {
         ) = (
             pipeline_cache.get_render_pipeline(sdf_pipeline_resource.pipeline_id),
             pipeline_cache.get_render_pipeline(pipeline_id.0),
+            pipeline_cache.get_render_pipeline(light_map_pipeline_resource.pipeline_id),
             world.resource::<ViewUniforms>().uniforms.binding(),
             world
                 .resource::<ComponentUniforms<ExtractedAmbientLight2d>>()
@@ -111,6 +119,51 @@ impl ViewNode for LightingNode {
         sdf_pass.draw(0..3, 0..1);
 
         drop(sdf_pass);
+
+        // Light map
+        let light_map_bind_group = render_context.render_device().create_bind_group(
+            LIGHT_MAP_BIND_GROUP,
+            &light_map_pipeline_resource.layout,
+            &BindGroupEntries::sequential((
+                view_uniform_binding.clone(),
+                ambient_light_uniform.clone(),
+                point_light_binding.clone(),
+                &aux_textures.sdf.default_view,
+                &light_map_pipeline_resource.sdf_sampler,
+            )),
+        );
+
+        let mut light_map_pass = render_context.begin_tracked_render_pass(RenderPassDescriptor {
+            label: Some(LIGHT_MAP_PASS),
+            color_attachments: &[Some(RenderPassColorAttachment {
+                view: &aux_textures.light_map.default_view,
+                resolve_target: None,
+                ops: Operations::default(),
+            })],
+            ..default()
+        });
+
+        let mut light_map_offsets: SmallVec<[u32; 3]> =
+            smallvec![view_offset.offset, ambient_index.index()];
+
+        // Storage buffers aren't available in WebGL2. We fall back to a
+        // dynamic uniform buffer, and therefore need to provide the offset.
+        // We're providing a value of 0 here as we're limiting the number of
+        // point lights to only those that can reasonably fit in a single binding.
+        if world
+            .resource::<RenderDevice>()
+            .limits()
+            .max_storage_buffers_per_shader_stage
+            == 0
+        {
+            light_map_offsets.push(0);
+        }
+
+        light_map_pass.set_render_pipeline(light_map_pipeline);
+        light_map_pass.set_bind_group(0, &light_map_bind_group, &light_map_offsets);
+        light_map_pass.draw(0..3, 0..1);
+
+        drop(light_map_pass);
 
         // Main pass (should be replaced by lighting, blur and post process)
         let post_process = view_target.post_process_write();

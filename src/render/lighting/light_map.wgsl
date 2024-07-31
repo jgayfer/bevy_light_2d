@@ -1,0 +1,152 @@
+#import bevy_core_pipeline::fullscreen_vertex_shader::FullscreenVertexOutput
+#import bevy_render::view::View
+
+fn world_to_ndc(world_position: vec2<f32>) -> vec2<f32> {
+    return (view.clip_from_world * vec4(world_position, 0.0, 1.0)).xy;
+}
+
+fn ndc_to_world(ndc_position: vec2<f32>) -> vec2<f32> {
+    return (view.world_from_clip * vec4(ndc_position, 0.0, 1.0)).xy;
+}
+
+fn frag_coord_to_uv(frag_coord: vec2<f32>) -> vec2<f32> {
+    return (frag_coord - view.viewport.xy) / view.viewport.zw;
+}
+
+fn frag_coord_to_ndc(frag_coord: vec2<f32>) -> vec2<f32> {
+    return uv_to_ndc(frag_coord_to_uv(frag_coord.xy));
+}
+
+fn uv_to_ndc(uv: vec2<f32>) -> vec2<f32> {
+    return uv * vec2(2.0, -2.0) + vec2(-1.0, 1.0);
+}
+
+fn ndc_to_uv(ndc: vec2<f32>) -> vec2<f32> {
+    return ndc * vec2(0.5, -0.5) + vec2(0.5);
+}
+
+// We're currently only using a single uniform binding for point lights in 
+// WebGL2, which is limited to 4kb in BatchedUniformBuffer, so we need to
+// ensure our point lights can fit in 4kb.
+const MAX_POINT_LIGHTS: u32 = 82u;
+
+struct PointLight2d {
+    center: vec2f,
+    radius: f32,
+    color: vec4<f32>,
+    intensity: f32,
+    falloff: f32
+}
+
+struct AmbientLight2d {
+    color: vec4<f32>
+}
+
+@group(0) @binding(0)
+var<uniform> view: View;
+
+@group(0) @binding(1)
+var<uniform> ambient_light: AmbientLight2d;
+
+// WebGL2 does not support storage buffers, so we fall back to a fixed length
+// array in a uniform buffer.
+#if AVAILABLE_STORAGE_BUFFER_BINDINGS >= 6
+    @group(0) @binding(2)
+    var<storage> point_lights: array<PointLight2d>;
+#else
+    @group(0) @binding(2)
+    var<uniform> point_lights: array<PointLight2d, MAX_POINT_LIGHTS>;
+#endif
+
+@group(0) @binding(3)
+var sdf: texture_2d<f32>;
+
+@group(0) @binding(4)
+var sdf_sampler: sampler;
+
+@fragment
+fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
+    let pos = ndc_to_world(frag_coord_to_ndc(in.position.xy));
+
+    var lighting_color = ambient_light.color;
+
+    if get_distance(pos) <= 0.0 {
+        return lighting_color;
+    }
+
+    // WebGL2 does not support storage buffers (or runtime sized arrays), so we
+    // need to use a fixed number of point lights.
+#if AVAILABLE_STORAGE_BUFFER_BINDINGS >= 6
+    let point_light_count = arrayLength(&point_lights);
+#else
+    let point_light_count = MAX_POINT_LIGHTS;
+#endif
+
+    for (var i = 0u; i < point_light_count; i++) {
+        let light = point_lights[i];
+        let dist = distance(light.center, pos);
+
+        if dist < light.radius {
+            let raymarch = raymarch(pos, light.center);
+
+            if raymarch > 0.0 {
+                lighting_color += light.color * attenuation(light, dist);
+            }
+        }
+    }
+
+    return lighting_color;
+}
+
+fn square(x: f32) -> f32 {
+    return x * x;
+}
+
+fn attenuation(light: PointLight2d, dist: f32) -> f32 {
+    let s = dist / light.radius;
+    if s > 1.0 {
+        return 0.0;
+    }
+    let s2 = square(s);
+    return light.intensity * square(1 - s2) / (1 + light.falloff * s2);
+}
+
+fn get_distance(pos: vec2<f32>) -> f32 {
+    let uv = ndc_to_uv(world_to_ndc(pos));
+    let dist = textureSample(sdf, sdf_sampler, uv).r;
+    return dist;
+}
+
+fn distance_squared(a: vec2<f32>, b: vec2<f32>) -> f32 {
+    let c = a - b;
+    return dot(c, c);
+}
+
+fn raymarch(ray_origin: vec2<f32>, ray_target: vec2<f32>) -> f32 {
+    let ray_direction = normalize(ray_target - ray_origin);
+    let stop_at = distance_squared(ray_origin, ray_target);
+
+    var ray_progress: f32 = 0.0;
+    var pos = vec2<f32>(0.0);
+
+    for (var i = 0; i < 32; i++) {
+        pos = ray_origin + ray_progress * ray_direction;
+
+        if (ray_progress * ray_progress >= stop_at) {
+            // ray found target
+            return 1.0;
+        }
+
+        let dist = get_distance(pos);
+
+        if dist <= 0.0 {
+            break;
+        }
+
+        ray_progress += dist;
+    }
+
+    // ray found occluder
+    return 0.0;
+}
+

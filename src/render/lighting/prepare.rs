@@ -3,7 +3,7 @@ use bevy::{
     render::{
         render_resource::{
             PipelineCache, SpecializedRenderPipelines, TextureDescriptor, TextureDimension,
-            TextureUsages,
+            TextureFormat, TextureUsages,
         },
         renderer::RenderDevice,
         texture::{CachedTexture, TextureCache},
@@ -35,9 +35,31 @@ pub fn prepare_lighting_pipelines(
     }
 }
 
+fn create_aux_texture(
+    view_target: &ViewTarget,
+    texture_cache: &mut TextureCache,
+    render_device: &RenderDevice,
+    label: &'static str,
+) -> CachedTexture {
+    texture_cache.get(
+        render_device,
+        TextureDescriptor {
+            label: Some(label),
+            size: view_target.main_texture().size(),
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: TextureDimension::D2,
+            format: TextureFormat::Rgba16Float,
+            usage: TextureUsages::RENDER_ATTACHMENT | TextureUsages::TEXTURE_BINDING,
+            view_formats: &[],
+        },
+    )
+}
+
 #[derive(Component)]
 pub struct Lighting2dAuxiliaryTextures {
     pub sdf: CachedTexture,
+    pub light_map: CachedTexture,
 }
 
 pub fn prepare_lighting_auxiliary_textures(
@@ -47,21 +69,14 @@ pub fn prepare_lighting_auxiliary_textures(
     view_targets: Query<(Entity, &ViewTarget)>,
 ) {
     for (entity, view_target) in &view_targets {
-        let texture_descriptor = TextureDescriptor {
-            label: Some("auxiliary texture"),
-            size: view_target.main_texture().size(),
-            mip_level_count: 1,
-            sample_count: view_target.main_texture().sample_count(),
-            dimension: TextureDimension::D2,
-            format: view_target.main_texture_format(),
-            usage: TextureUsages::RENDER_ATTACHMENT | TextureUsages::TEXTURE_BINDING,
-            view_formats: &[],
-        };
-
-        let texture = texture_cache.get(&render_device, texture_descriptor);
-
-        commands
-            .entity(entity)
-            .insert(Lighting2dAuxiliaryTextures { sdf: texture });
+        commands.entity(entity).insert(Lighting2dAuxiliaryTextures {
+            sdf: create_aux_texture(view_target, &mut texture_cache, &render_device, "sdf"),
+            light_map: create_aux_texture(
+                view_target,
+                &mut texture_cache,
+                &render_device,
+                "light_map",
+            ),
+        });
     }
 }
