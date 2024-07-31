@@ -68,11 +68,11 @@ var sdf_sampler: sampler;
 fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
     let pos = ndc_to_world(frag_coord_to_ndc(in.position.xy));
 
-    var lighting_color = ambient_light.color;
-
     if get_distance(pos) <= 0.0 {
-        return lighting_color;
+        return ambient_light.color;
     }
+
+    var lighting_color = vec4(1.0);
 
     // WebGL2 does not support storage buffers (or runtime sized arrays), so we
     // need to use a fixed number of point lights.
@@ -95,7 +95,7 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
         }
     }
 
-    return lighting_color;
+    return ambient_light.color * lighting_color;
 }
 
 fn square(x: f32) -> f32 {
