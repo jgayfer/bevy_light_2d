@@ -124,6 +124,7 @@ impl ViewNode for LightingNode {
                 view_uniform_binding,
                 ambient_light_uniform,
                 point_light_binding,
+                &aux_textures.sdf.default_view,
             )),
         );
 

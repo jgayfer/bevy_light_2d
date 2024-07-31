@@ -122,6 +122,7 @@ impl FromWorld for LightingPipeline {
                     uniform_buffer::<ViewUniform>(true),
                     uniform_buffer::<ExtractedAmbientLight2d>(true),
                     GpuArrayBuffer::<ExtractedPointLight2d>::binding_layout(render_device),
+                    texture_2d(TextureSampleType::Float { filterable: true }),
                 ),
             ),
         );
