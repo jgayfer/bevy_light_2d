@@ -12,10 +12,9 @@ use bevy::render::view::{ViewUniformOffset, ViewUniforms};
 use smallvec::{smallvec, SmallVec};
 
 use crate::render::extract::{ExtractedAmbientLight2d, ExtractedPointLight2d};
-use crate::render::lighting::Lighting2dAuxiliaryTextures;
 use crate::render::sdf::SdfTexture;
 
-use super::LightMapPipeline;
+use super::{LightMapPipeline, LightMapTexture};
 
 const LIGHT_MAP_PASS: &str = "light_map_pass";
 const LIGHT_MAP_BIND_GROUP: &str = "light_map_bind_group";
@@ -27,7 +26,7 @@ impl ViewNode for LightMapNode {
     type ViewQuery = (
         Read<DynamicUniformIndex<ExtractedAmbientLight2d>>,
         Read<ViewUniformOffset>,
-        Read<Lighting2dAuxiliaryTextures>,
+        Read<LightMapTexture>,
         Read<SdfTexture>,
     );
 
@@ -35,7 +34,7 @@ impl ViewNode for LightMapNode {
         &self,
         _graph: &mut bevy::render::render_graph::RenderGraphContext,
         render_context: &mut bevy::render::renderer::RenderContext<'w>,
-        (ambient_index, view_offset, aux_textures, sdf_texture): bevy::ecs::query::QueryItem<
+        (ambient_index, view_offset, light_map_texture, sdf_texture): bevy::ecs::query::QueryItem<
             'w,
             Self::ViewQuery,
         >,
@@ -79,7 +78,7 @@ impl ViewNode for LightMapNode {
         let mut light_map_pass = render_context.begin_tracked_render_pass(RenderPassDescriptor {
             label: Some(LIGHT_MAP_PASS),
             color_attachments: &[Some(RenderPassColorAttachment {
-                view: &aux_textures.light_map.default_view,
+                view: &light_map_texture.light_map.default_view,
                 resolve_target: None,
                 ops: Operations::default(),
             })],

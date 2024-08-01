@@ -22,10 +22,13 @@ use crate::{
             extract_ambient_lights, extract_light_occluders, extract_point_lights,
             ExtractedAmbientLight2d, ExtractedLightOccluder2d, ExtractedPointLight2d,
         },
-        light_map::{LightMapNode, LightMapPass, LightMapPipeline, LIGHT_MAP_SHADER},
+        light_map::{
+            prepare_light_map_texture, LightMapNode, LightMapPass, LightMapPipeline,
+            LIGHT_MAP_SHADER,
+        },
         lighting::{
-            prepare_lighting_auxiliary_textures, prepare_lighting_pipelines, LightingNode,
-            LightingPass, LightingPipeline, LIGHTING_SHADER, TYPES_SHADER,
+            prepare_lighting_pipelines, LightingNode, LightingPass, LightingPipeline,
+            LIGHTING_SHADER, TYPES_SHADER,
         },
         sdf::{prepare_sdf_texture, SdfNode, SdfPass, SdfPipeline, SDF_SHADER},
     },
@@ -90,10 +93,10 @@ impl Plugin for Light2dPlugin {
                 Render,
                 (
                     prepare_lighting_pipelines.in_set(RenderSet::Prepare),
-                    prepare_lighting_auxiliary_textures
+                    prepare_sdf_texture
                         .after(prepare_view_targets)
                         .in_set(RenderSet::ManageViews),
-                    prepare_sdf_texture
+                    prepare_light_map_texture
                         .after(prepare_view_targets)
                         .in_set(RenderSet::ManageViews),
                 ),

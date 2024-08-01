@@ -1,13 +1,8 @@
 use bevy::{
     prelude::*,
     render::{
-        render_resource::{
-            PipelineCache, SpecializedRenderPipelines, TextureDescriptor, TextureDimension,
-            TextureFormat, TextureUsages,
-        },
-        renderer::RenderDevice,
-        texture::{CachedTexture, TextureCache},
-        view::{ExtractedView, ViewTarget},
+        render_resource::{PipelineCache, SpecializedRenderPipelines},
+        view::ExtractedView,
     },
 };
 
@@ -32,49 +27,5 @@ pub fn prepare_lighting_pipelines(
         commands
             .entity(entity)
             .insert(LightingPipelineId(pipeline_id));
-    }
-}
-
-fn create_aux_texture(
-    view_target: &ViewTarget,
-    texture_cache: &mut TextureCache,
-    render_device: &RenderDevice,
-    label: &'static str,
-) -> CachedTexture {
-    texture_cache.get(
-        render_device,
-        TextureDescriptor {
-            label: Some(label),
-            size: view_target.main_texture().size(),
-            mip_level_count: 1,
-            sample_count: 1,
-            dimension: TextureDimension::D2,
-            format: TextureFormat::Rgba16Float,
-            usage: TextureUsages::RENDER_ATTACHMENT | TextureUsages::TEXTURE_BINDING,
-            view_formats: &[],
-        },
-    )
-}
-
-#[derive(Component)]
-pub struct Lighting2dAuxiliaryTextures {
-    pub light_map: CachedTexture,
-}
-
-pub fn prepare_lighting_auxiliary_textures(
-    mut commands: Commands,
-    render_device: Res<RenderDevice>,
-    mut texture_cache: ResMut<TextureCache>,
-    view_targets: Query<(Entity, &ViewTarget)>,
-) {
-    for (entity, view_target) in &view_targets {
-        commands.entity(entity).insert(Lighting2dAuxiliaryTextures {
-            light_map: create_aux_texture(
-                view_target,
-                &mut texture_cache,
-                &render_device,
-                "light_map",
-            ),
-        });
     }
 }

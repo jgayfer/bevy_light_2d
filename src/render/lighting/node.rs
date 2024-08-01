@@ -7,7 +7,9 @@ use bevy::render::render_resource::{
 };
 use bevy::render::view::ViewTarget;
 
-use super::{Lighting2dAuxiliaryTextures, LightingPipeline, LightingPipelineId};
+use crate::render::light_map::LightMapTexture;
+
+use super::{LightingPipeline, LightingPipelineId};
 
 const LIGHTING_PASS: &str = "lighting_pass";
 const LIGHTING_BIND_GROUP: &str = "lighting_bind_group";
@@ -19,14 +21,17 @@ impl ViewNode for LightingNode {
     type ViewQuery = (
         Read<ViewTarget>,
         Read<LightingPipelineId>,
-        Read<Lighting2dAuxiliaryTextures>,
+        Read<LightMapTexture>,
     );
 
     fn run<'w>(
         &self,
         _graph: &mut bevy::render::render_graph::RenderGraphContext,
         render_context: &mut bevy::render::renderer::RenderContext<'w>,
-        (view_target, pipeline_id, aux_textures): bevy::ecs::query::QueryItem<'w, Self::ViewQuery>,
+        (view_target, pipeline_id, light_map_texture): bevy::ecs::query::QueryItem<
+            'w,
+            Self::ViewQuery,
+        >,
         world: &'w World,
     ) -> Result<(), bevy::render::render_graph::NodeRunError> {
         let pipeline = world.resource::<LightingPipeline>();
@@ -43,7 +48,7 @@ impl ViewNode for LightingNode {
             &pipeline.layout,
             &BindGroupEntries::sequential((
                 post_process.source,
-                &aux_textures.light_map.default_view,
+                &light_map_texture.light_map.default_view,
                 &pipeline.sampler,
             )),
         );
