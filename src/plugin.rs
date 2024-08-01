@@ -15,7 +15,7 @@ use bevy::{
 };
 
 use crate::{
-    light::{AmbientLight2d, PointLight2d},
+    light::{AmbientLight2d, LightOccluder2d, PointLight2d},
     render::{
         extract::{
             extract_ambient_lights, extract_light_occluders, extract_point_lights,
@@ -68,7 +68,11 @@ impl Plugin for Light2dPlugin {
         .register_type::<PointLight2d>()
         .add_systems(
             PostUpdate,
-            check_visibility::<With<PointLight2d>>.in_set(VisibilitySystems::CheckVisibility),
+            (
+                check_visibility::<With<PointLight2d>>,
+                check_visibility::<With<LightOccluder2d>>,
+            )
+                .in_set(VisibilitySystems::CheckVisibility),
         );
 
         let Some(render_app) = app.get_sub_app_mut(RenderApp) else {
