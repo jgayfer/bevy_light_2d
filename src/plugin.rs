@@ -42,12 +42,7 @@ impl Plugin for Light2dPlugin {
             "render/lighting/types.wgsl",
             Shader::from_wgsl
         );
-        load_internal_asset!(
-            app,
-            SDF_SHADER,
-            "render/lighting/sdf.wgsl",
-            Shader::from_wgsl
-        );
+        load_internal_asset!(app, SDF_SHADER, "render/sdf/sdf.wgsl", Shader::from_wgsl);
         load_internal_asset!(
             app,
             LIGHTING_SHADER,
