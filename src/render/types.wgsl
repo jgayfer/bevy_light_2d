@@ -15,9 +15,9 @@ struct LightOccluder2d {
 }
 
 struct PointLight2d {
-    center: vec2<f32>,
-    color: vec4<f32>,
-    falloff: f32,
-    intensity: f32,
+    center: vec2f,
     radius: f32,
+    color: vec4<f32>,
+    intensity: f32,
+    falloff: f32
 }

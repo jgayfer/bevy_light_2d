@@ -1,5 +1,6 @@
 #import bevy_core_pipeline::fullscreen_vertex_shader::FullscreenVertexOutput
 #import bevy_render::view::View
+#import bevy_light_2d::types::{AmbientLight2d, PointLight2d};
 
 fn world_to_ndc(world_position: vec2<f32>) -> vec2<f32> {
     return (view.clip_from_world * vec4(world_position, 0.0, 1.0)).xy;
@@ -29,18 +30,6 @@ fn ndc_to_uv(ndc: vec2<f32>) -> vec2<f32> {
 // WebGL2, which is limited to 4kb in BatchedUniformBuffer, so we need to
 // ensure our point lights can fit in 4kb.
 const MAX_POINT_LIGHTS: u32 = 82u;
-
-struct PointLight2d {
-    center: vec2f,
-    radius: f32,
-    color: vec4<f32>,
-    intensity: f32,
-    falloff: f32
-}
-
-struct AmbientLight2d {
-    color: vec4<f32>
-}
 
 @group(0) @binding(0)
 var<uniform> view: View;
