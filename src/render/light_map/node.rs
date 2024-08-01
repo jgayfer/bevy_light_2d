@@ -13,6 +13,7 @@ use smallvec::{smallvec, SmallVec};
 
 use crate::render::extract::{ExtractedAmbientLight2d, ExtractedPointLight2d};
 use crate::render::lighting::Lighting2dAuxiliaryTextures;
+use crate::render::sdf::SdfTexture;
 
 use super::LightMapPipeline;
 
@@ -27,13 +28,14 @@ impl ViewNode for LightMapNode {
         Read<DynamicUniformIndex<ExtractedAmbientLight2d>>,
         Read<ViewUniformOffset>,
         Read<Lighting2dAuxiliaryTextures>,
+        Read<SdfTexture>,
     );
 
     fn run<'w>(
         &self,
         _graph: &mut bevy::render::render_graph::RenderGraphContext,
         render_context: &mut bevy::render::renderer::RenderContext<'w>,
-        (ambient_index, view_offset, aux_textures): bevy::ecs::query::QueryItem<
+        (ambient_index, view_offset, aux_textures, sdf_texture): bevy::ecs::query::QueryItem<
             'w,
             Self::ViewQuery,
         >,
@@ -69,7 +71,7 @@ impl ViewNode for LightMapNode {
                 view_uniform_binding.clone(),
                 ambient_light_uniform.clone(),
                 point_light_binding.clone(),
-                &aux_textures.sdf.default_view,
+                &sdf_texture.sdf.default_view,
                 &light_map_pipeline.sdf_sampler,
             )),
         );

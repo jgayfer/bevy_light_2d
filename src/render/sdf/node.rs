@@ -12,9 +12,8 @@ use smallvec::{smallvec, SmallVec};
 
 use crate::render::extract::ExtractedLightOccluder2d;
 
-use crate::render::lighting::Lighting2dAuxiliaryTextures;
-
 use super::pipeline::SdfPipeline;
+use super::SdfTexture;
 
 const SDF_PASS: &str = "sdf_pass";
 const SDF_BIND_GROUP: &str = "sdf_bind_group";
@@ -23,13 +22,13 @@ const SDF_BIND_GROUP: &str = "sdf_bind_group";
 pub struct SdfNode;
 
 impl ViewNode for SdfNode {
-    type ViewQuery = (Read<ViewUniformOffset>, Read<Lighting2dAuxiliaryTextures>);
+    type ViewQuery = (Read<ViewUniformOffset>, Read<SdfTexture>);
 
     fn run<'w>(
         &self,
         _graph: &mut bevy::render::render_graph::RenderGraphContext,
         render_context: &mut bevy::render::renderer::RenderContext<'w>,
-        (view_offset, aux_textures): bevy::ecs::query::QueryItem<'w, Self::ViewQuery>,
+        (view_offset, sdf_texture): bevy::ecs::query::QueryItem<'w, Self::ViewQuery>,
         world: &'w World,
     ) -> Result<(), bevy::render::render_graph::NodeRunError> {
         let sdf_pipeline = world.resource::<SdfPipeline>();
@@ -54,7 +53,7 @@ impl ViewNode for SdfNode {
         let mut sdf_pass = render_context.begin_tracked_render_pass(RenderPassDescriptor {
             label: Some(SDF_PASS),
             color_attachments: &[Some(RenderPassColorAttachment {
-                view: &aux_textures.sdf.default_view,
+                view: &sdf_texture.sdf.default_view,
                 resolve_target: None,
                 ops: Operations::default(),
             })],

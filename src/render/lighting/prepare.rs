@@ -58,7 +58,6 @@ fn create_aux_texture(
 
 #[derive(Component)]
 pub struct Lighting2dAuxiliaryTextures {
-    pub sdf: CachedTexture,
     pub light_map: CachedTexture,
 }
 
@@ -70,7 +69,6 @@ pub fn prepare_lighting_auxiliary_textures(
 ) {
     for (entity, view_target) in &view_targets {
         commands.entity(entity).insert(Lighting2dAuxiliaryTextures {
-            sdf: create_aux_texture(view_target, &mut texture_cache, &render_device, "sdf"),
             light_map: create_aux_texture(
                 view_target,
                 &mut texture_cache,

@@ -27,7 +27,7 @@ use crate::{
             prepare_lighting_auxiliary_textures, prepare_lighting_pipelines, LightingNode,
             LightingPass, LightingPipeline, LIGHTING_SHADER, TYPES_SHADER,
         },
-        sdf::{SdfNode, SdfPass, SdfPipeline, SDF_SHADER},
+        sdf::{prepare_sdf_texture, SdfNode, SdfPass, SdfPipeline, SDF_SHADER},
     },
 };
 
@@ -91,6 +91,9 @@ impl Plugin for Light2dPlugin {
                 (
                     prepare_lighting_pipelines.in_set(RenderSet::Prepare),
                     prepare_lighting_auxiliary_textures
+                        .after(prepare_view_targets)
+                        .in_set(RenderSet::ManageViews),
+                    prepare_sdf_texture
                         .after(prepare_view_targets)
                         .in_set(RenderSet::ManageViews),
                 ),
