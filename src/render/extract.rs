@@ -78,7 +78,7 @@ pub fn extract_light_occluders(
     }
 
     // BufferVec won't write to the GPU if there aren't any point lights.
-    // For now we can spawn an empty point light to get around this.
+    // For now we can spawn an empty occluder to get around this.
     commands.spawn(ExtractedLightOccluder2d::default());
 }
 
