@@ -69,7 +69,7 @@ pub fn extract_light_occluders(
 
         let extracted_occluder = match light_occluder {
             LightOccluder2d::Rectangle { half_size } => ExtractedLightOccluder2d {
-                half_size: half_size.clone(),
+                half_size: *half_size,
                 center: global_transform.translation().xy(),
             },
         };

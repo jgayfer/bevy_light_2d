@@ -22,10 +22,10 @@ use crate::{
             extract_ambient_lights, extract_light_occluders, extract_point_lights,
             ExtractedAmbientLight2d, ExtractedLightOccluder2d, ExtractedPointLight2d,
         },
+        light_map::{LightMapNode, LightMapPass, LightMapPipeline, LIGHT_MAP_SHADER},
         lighting::{
-            prepare_lighting_auxiliary_textures, prepare_lighting_pipelines, LightMapPipeline,
-            LightingNode, LightingPass, LightingPipeline, LIGHTING_SHADER, LIGHT_MAP_SHADER,
-            TYPES_SHADER,
+            prepare_lighting_auxiliary_textures, prepare_lighting_pipelines, LightingNode,
+            LightingPass, LightingPipeline, LIGHTING_SHADER, TYPES_SHADER,
         },
         sdf::{SdfNode, SdfPass, SdfPipeline, SDF_SHADER},
     },
@@ -57,7 +57,7 @@ impl Plugin for Light2dPlugin {
         load_internal_asset!(
             app,
             LIGHT_MAP_SHADER,
-            "render/lighting/light_map.wgsl",
+            "render/light_map/light_map.wgsl",
             Shader::from_wgsl
         );
 
@@ -102,7 +102,11 @@ impl Plugin for Light2dPlugin {
             )
             .add_render_graph_node::<ViewNodeRunner<LightingNode>>(Core2d, LightingPass)
             .add_render_graph_node::<ViewNodeRunner<SdfNode>>(Core2d, SdfPass)
-            .add_render_graph_edges(Core2d, (Node2d::EndMainPass, SdfPass, LightingPass));
+            .add_render_graph_node::<ViewNodeRunner<LightMapNode>>(Core2d, LightMapPass)
+            .add_render_graph_edges(
+                Core2d,
+                (Node2d::EndMainPass, SdfPass, LightMapPass, LightingPass),
+            );
     }
 
     fn finish(&self, app: &mut App) {

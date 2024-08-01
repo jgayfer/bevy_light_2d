@@ -19,8 +19,6 @@ pub const TYPES_SHADER: Handle<Shader> =
     Handle::weak_from_u128(134542958402584092759402858489640143033);
 pub const LIGHTING_SHADER: Handle<Shader> =
     Handle::weak_from_u128(111120241052143214281687226997564407636);
-pub const LIGHT_MAP_SHADER: Handle<Shader> =
-    Handle::weak_from_u128(320609826414128764415270070474935914193);
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, RenderLabel)]
 pub struct LightingPass;
