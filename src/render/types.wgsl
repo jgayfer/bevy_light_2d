@@ -1,10 +1,5 @@
 #define_import_path bevy_light_2d::types
 
-struct LightingSettings {
-    // blur circle of confusion
-    coc: f32,
-}
-
 struct AmbientLight2d {
     color: vec4<f32>,
 }
