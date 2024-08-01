@@ -17,8 +17,6 @@ pub use prepare::*;
 
 pub const TYPES_SHADER: Handle<Shader> =
     Handle::weak_from_u128(134542958402584092759402858489640143033);
-pub const SDF_SHADER: Handle<Shader> =
-    Handle::weak_from_u128(231804371047309214783091483091843019281);
 pub const LIGHTING_SHADER: Handle<Shader> =
     Handle::weak_from_u128(111120241052143214281687226997564407636);
 pub const LIGHT_MAP_SHADER: Handle<Shader> =

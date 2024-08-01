@@ -23,9 +23,10 @@ use crate::{
         },
         lighting::{
             prepare_lighting_auxiliary_textures, prepare_lighting_pipelines, LightMapPipeline,
-            LightingNode, LightingPass, LightingPipeline, SdfPipeline, LIGHTING_SHADER,
-            LIGHT_MAP_SHADER, SDF_SHADER, TYPES_SHADER,
+            LightingNode, LightingPass, LightingPipeline, LIGHTING_SHADER, LIGHT_MAP_SHADER,
+            TYPES_SHADER,
         },
+        sdf::{SdfNode, SdfPass, SdfPipeline, SDF_SHADER},
     },
 };
 
@@ -99,7 +100,8 @@ impl Plugin for Light2dPlugin {
                 ),
             )
             .add_render_graph_node::<ViewNodeRunner<LightingNode>>(Core2d, LightingPass)
-            .add_render_graph_edge(Core2d, Node2d::EndMainPass, LightingPass);
+            .add_render_graph_node::<ViewNodeRunner<SdfNode>>(Core2d, SdfPass)
+            .add_render_graph_edges(Core2d, (Node2d::EndMainPass, SdfPass, LightingPass));
     }
 
     fn finish(&self, app: &mut App) {
