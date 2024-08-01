@@ -3,7 +3,6 @@
 use bevy::{
     color::Color,
     ecs::{bundle::Bundle, component::Component},
-    math::Vec2,
     reflect::Reflect,
     render::view::{InheritedVisibility, ViewVisibility, Visibility},
     transform::components::{GlobalTransform, Transform},
@@ -87,35 +86,4 @@ impl Default for AmbientLight2d {
             brightness: 1.0,
         }
     }
-}
-
-/// A light occluder component
-#[derive(Component, Default, Clone, Reflect)]
-pub struct LightOccluder2d {
-    /// The half size of the occluder axis aligned bounding box (AABB)
-    pub half_size: Vec2,
-}
-
-impl LightOccluder2d {
-    /// Returns a new light occluder instance from a given half_size
-    pub fn new(half_size: Vec2) -> Self {
-        Self { half_size }
-    }
-}
-
-/// A bundle of components for rendering a [`LightOccluder2d`] entity.
-#[derive(Bundle, Default)]
-pub struct LightOccluder2dBundle {
-    /// Specifies the rendering properties of the light occluder
-    pub light_occluder: LightOccluder2d,
-    /// The local transform of the light occluder, relative to its parent.
-    pub transform: Transform,
-    /// The absolute transform of the light occluder. This should generally not be written to directly.
-    pub global_transform: GlobalTransform,
-    /// User indication of whether an entity is visible.
-    pub visibility: Visibility,
-    /// Inherited visibility of an entity.
-    pub inherited_visibility: InheritedVisibility,
-    /// Algorithmically-computed indication of whether an entity is visible and should be extracted for rendering.
-    pub view_visibility: ViewVisibility,
 }

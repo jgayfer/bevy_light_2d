@@ -3,7 +3,10 @@ use bevy::{
     render::{render_resource::ShaderType, Extract},
 };
 
-use crate::light::{AmbientLight2d, LightOccluder2d, PointLight2d};
+use crate::{
+    light::{AmbientLight2d, PointLight2d},
+    occluder::LightOccluder2d,
+};
 
 #[derive(Component, Default, Clone, ShaderType)]
 pub struct ExtractedPointLight2d {
@@ -64,12 +67,14 @@ pub fn extract_light_occluders(
             continue;
         }
 
-        commands
-            .get_or_spawn(entity)
-            .insert(ExtractedLightOccluder2d {
-                half_size: light_occluder.half_size,
+        let extracted_occluder = match light_occluder {
+            LightOccluder2d::Rectangle { half_size } => ExtractedLightOccluder2d {
+                half_size: half_size.clone(),
                 center: global_transform.translation().xy(),
-            });
+            },
+        };
+
+        commands.get_or_spawn(entity).insert(extracted_occluder);
     }
 
     // BufferVec won't write to the GPU if there aren't any point lights.

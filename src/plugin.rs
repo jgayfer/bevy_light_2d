@@ -15,7 +15,8 @@ use bevy::{
 };
 
 use crate::{
-    light::{AmbientLight2d, LightOccluder2d, PointLight2d},
+    light::{AmbientLight2d, PointLight2d},
+    occluder::LightOccluder2d,
     render::{
         extract::{
             extract_ambient_lights, extract_light_occluders, extract_point_lights,
