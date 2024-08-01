@@ -28,9 +28,10 @@ use crate::{
         },
         lighting::{
             prepare_lighting_pipelines, LightingNode, LightingPass, LightingPipeline,
-            LIGHTING_SHADER, TYPES_SHADER,
+            LIGHTING_SHADER,
         },
         sdf::{prepare_sdf_texture, SdfNode, SdfPass, SdfPipeline, SDF_SHADER},
+        TYPES_SHADER,
     },
 };
 
@@ -39,12 +40,7 @@ pub struct Light2dPlugin;
 
 impl Plugin for Light2dPlugin {
     fn build(&self, app: &mut App) {
-        load_internal_asset!(
-            app,
-            TYPES_SHADER,
-            "render/lighting/types.wgsl",
-            Shader::from_wgsl
-        );
+        load_internal_asset!(app, TYPES_SHADER, "render/types.wgsl", Shader::from_wgsl);
         load_internal_asset!(app, SDF_SHADER, "render/sdf/sdf.wgsl", Shader::from_wgsl);
         load_internal_asset!(
             app,

@@ -15,8 +15,6 @@ pub use node::LightingNode;
 pub use pipeline::*;
 pub use prepare::*;
 
-pub const TYPES_SHADER: Handle<Shader> =
-    Handle::weak_from_u128(134542958402584092759402858489640143033);
 pub const LIGHTING_SHADER: Handle<Shader> =
     Handle::weak_from_u128(111120241052143214281687226997564407636);
 
