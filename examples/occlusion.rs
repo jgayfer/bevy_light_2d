@@ -14,8 +14,8 @@ fn setup(mut commands: Commands) {
 
     commands.spawn(PointLight2dBundle {
         point_light: PointLight2d {
-            intensity: 10.0,
-            radius: 700.0,
+            intensity: 20.0,
+            radius: 1000.0,
             falloff: 10.0,
             ..default()
         },
@@ -30,7 +30,39 @@ fn setup(mut commands: Commands) {
         light_occluder: LightOccluder2d::Rectangle {
             half_size: Vec2::splat(25.0),
         },
-        transform: Transform::from_xyz(25.0, 5.0, 0.0),
+        transform: Transform::from_xyz(-400.0, -50.0, 0.0),
+        ..default()
+    });
+
+    commands.spawn(LightOccluder2dBundle {
+        light_occluder: LightOccluder2d::Rectangle {
+            half_size: Vec2::splat(25.0),
+        },
+        transform: Transform::from_xyz(-200.0, -50.0, 0.0),
+        ..default()
+    });
+
+    commands.spawn(LightOccluder2dBundle {
+        light_occluder: LightOccluder2d::Rectangle {
+            half_size: Vec2::splat(25.0),
+        },
+        transform: Transform::from_xyz(0.0, -50.0, 0.0),
+        ..default()
+    });
+
+    commands.spawn(LightOccluder2dBundle {
+        light_occluder: LightOccluder2d::Rectangle {
+            half_size: Vec2::splat(25.0),
+        },
+        transform: Transform::from_xyz(200.0, -50.0, 0.0),
+        ..default()
+    });
+
+    commands.spawn(LightOccluder2dBundle {
+        light_occluder: LightOccluder2d::Rectangle {
+            half_size: Vec2::splat(25.0),
+        },
+        transform: Transform::from_xyz(400.0, -50.0, 0.0),
         ..default()
     });
 }
