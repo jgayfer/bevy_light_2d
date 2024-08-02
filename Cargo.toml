@@ -49,3 +49,7 @@ path = "examples/multiple.rs"
 [[example]]
 name = "dungeon"
 path = "examples/dungeon.rs"
+
+[[example]]
+name = "occlusion"
+path = "examples/occlusion.rs"
