@@ -1,30 +1,12 @@
 #import bevy_core_pipeline::fullscreen_vertex_shader::FullscreenVertexOutput
 #import bevy_render::view::View
 #import bevy_light_2d::types::{AmbientLight2d, PointLight2d};
-
-fn world_to_ndc(world_position: vec2<f32>) -> vec2<f32> {
-    return (view.clip_from_world * vec4(world_position, 0.0, 1.0)).xy;
-}
-
-fn ndc_to_world(ndc_position: vec2<f32>) -> vec2<f32> {
-    return (view.world_from_clip * vec4(ndc_position, 0.0, 1.0)).xy;
-}
-
-fn frag_coord_to_uv(frag_coord: vec2<f32>) -> vec2<f32> {
-    return (frag_coord - view.viewport.xy) / view.viewport.zw;
-}
-
-fn frag_coord_to_ndc(frag_coord: vec2<f32>) -> vec2<f32> {
-    return uv_to_ndc(frag_coord_to_uv(frag_coord.xy));
-}
-
-fn uv_to_ndc(uv: vec2<f32>) -> vec2<f32> {
-    return uv * vec2(2.0, -2.0) + vec2(-1.0, 1.0);
-}
-
-fn ndc_to_uv(ndc: vec2<f32>) -> vec2<f32> {
-    return ndc * vec2(0.5, -0.5) + vec2(0.5);
-}
+#import bevy_light_2d::view_transformations::{
+    frag_coord_to_ndc,
+    ndc_to_world,
+    ndc_to_uv,
+    world_to_ndc
+};
 
 // We're currently only using a single uniform binding for point lights in 
 // WebGL2, which is limited to 4kb in BatchedUniformBuffer, so we need to

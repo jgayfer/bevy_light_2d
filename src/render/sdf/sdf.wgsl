@@ -1,22 +1,7 @@
 #import bevy_core_pipeline::fullscreen_vertex_shader::FullscreenVertexOutput
 #import bevy_render::view::View
 #import bevy_light_2d::types::LightOccluder2d
-
-fn frag_coord_to_uv(frag_coord: vec2<f32>) -> vec2<f32> {
-    return (frag_coord - view.viewport.xy) / view.viewport.zw;
-}
-
-fn frag_coord_to_ndc(frag_coord: vec2<f32>) -> vec2<f32> {
-    return uv_to_ndc(frag_coord_to_uv(frag_coord.xy));
-}
-
-fn uv_to_ndc(uv: vec2<f32>) -> vec2<f32> {
-    return uv * vec2(2.0, -2.0) + vec2(-1.0, 1.0);
-}
-
-fn ndc_to_world(ndc_position: vec2<f32>) -> vec2<f32> {
-    return (view.world_from_clip * vec4(ndc_position, 0.0, 1.0)).xy;
-}
+#import bevy_light_2d::view_transformations::{frag_coord_to_ndc, ndc_to_world};
 
 // We're currently only using a single uniform binding for occluders in
 // WebGL2, which is limited to 4kb in BatchedUniformBuffer, so we need to
