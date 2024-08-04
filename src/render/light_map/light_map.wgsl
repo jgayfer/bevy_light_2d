@@ -86,7 +86,7 @@ fn attenuation(light: PointLight2d, dist: f32) -> f32 {
 
 fn get_distance(pos: vec2<f32>) -> f32 {
     let uv = ndc_to_uv(world_to_ndc(pos));
-    let dist = textureSample(sdf, sdf_sampler, uv).r;
+    let dist = textureSampleLevel(sdf, sdf_sampler, uv, 0.0).r;
     return dist;
 }
 
