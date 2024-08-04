@@ -40,10 +40,10 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
     let pos = ndc_to_world(frag_coord_to_ndc(in.position.xy));
 
     if get_distance(pos) <= 0.0 {
-        return ambient_light.color;
+        return vec4(ambient_light.color.rgb, 1.0);
     }
 
-    var lighting_color = vec4(1.0);
+    var lighting_color = vec3(1.0);
 
     // WebGL2 does not support storage buffers (or runtime sized arrays), so we
     // need to use a fixed number of point lights.
@@ -61,12 +61,12 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
             let raymarch = raymarch(pos, light.center);
 
             if raymarch > 0.0 {
-                lighting_color += light.color * attenuation(light, dist);
+                lighting_color += light.color.rgb * attenuation(light, dist);
             }
         }
     }
 
-    return ambient_light.color * lighting_color;
+    return vec4(ambient_light.color.rgb, 1.0) * vec4(lighting_color, 1.0);
 }
 
 fn square(x: f32) -> f32 {
