@@ -73,11 +73,6 @@ of drop in options available.
 My goal with this crate is to fill that void, prioritizing ease of use and
 general application over depth of features.
 
-## Future goals
-
-- Light occluders + shadows
-- Sprite lights
-
 ## Bevy compatibility
 
 | bevy | bevy_light_2d |
