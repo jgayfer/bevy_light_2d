@@ -16,6 +16,8 @@ Designed to be simple to use, yet expressive enough to fit a variety of needs.
 
 - Component driven design
 - Configurable [point lights](https://docs.rs/bevy_light_2d/0.2.2/bevy_light_2d/light/struct.PointLight2d.html)
+- Light occlusion
+- Dynamic shadows
 - Camera specific [ambient light](https://docs.rs/bevy_light_2d/0.2.2/bevy_light_2d/light/struct.AmbientLight2d.html)
 - Single camera rendering
 
