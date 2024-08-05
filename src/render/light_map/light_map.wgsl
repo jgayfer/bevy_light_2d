@@ -60,7 +60,7 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
         if dist < light.radius {
             let raymarch = raymarch(pos, light.center);
 
-            if raymarch > 0.0 {
+            if raymarch > 0.0 || light.cast_shadows == 0 {
                 lighting_color += light.color.rgb * attenuation(light, dist);
             }
         }

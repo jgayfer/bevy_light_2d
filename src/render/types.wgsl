@@ -14,5 +14,6 @@ struct PointLight2d {
     radius: f32,
     color: vec4<f32>,
     intensity: f32,
-    falloff: f32
+    falloff: f32,
+    cast_shadows: u32
 }

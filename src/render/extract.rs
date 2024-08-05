@@ -15,6 +15,7 @@ pub struct ExtractedPointLight2d {
     pub color: LinearRgba,
     pub intensity: f32,
     pub falloff: f32,
+    pub cast_shadows: u32,
 }
 
 #[derive(Component, Default, Clone, ShaderType)]
@@ -42,6 +43,7 @@ pub fn extract_point_lights(
             radius: point_light.radius,
             intensity: point_light.intensity,
             falloff: point_light.falloff,
+            cast_shadows: if point_light.cast_shadows { 1 } else { 0 },
         });
     }
 
@@ -53,6 +55,7 @@ pub fn extract_point_lights(
         radius: 0.0,
         falloff: 0.0,
         color: LinearRgba::BLACK,
+        cast_shadows: 0,
     });
 }
 

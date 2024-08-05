@@ -43,6 +43,7 @@ fn setup(mut commands: Commands) {
             radius: 50.,
             intensity: 5.0,
             falloff: 5.0,
+            ..default()
         },
         transform: Transform::from_xyz(25., 50., 0.),
         ..default()

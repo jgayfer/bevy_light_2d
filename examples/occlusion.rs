@@ -17,6 +17,7 @@ fn setup(mut commands: Commands) {
             intensity: 20.0,
             radius: 1000.0,
             falloff: 10.0,
+            cast_shadows: true,
             ..default()
         },
         transform: Transform {
