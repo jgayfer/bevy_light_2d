@@ -10,8 +10,14 @@ use bevy::{
 /// A light occluder that prevents light passing through it, casting shadows.
 ///
 /// This is commonly used as a component within [`LightOcluder2dBundle`].
-#[derive(Component)]
-pub enum LightOccluder2d {
+#[derive(Default, Component)]
+pub struct LightOccluder2d {
+    /// The shape of the light occluder.
+    pub shape: LightOccluder2dShape,
+}
+
+/// Shape data for a light occluder.
+pub enum LightOccluder2dShape {
     /// A rectangular light occluder.
     Rectangle {
         /// Half of the width and height of the rectangle.
@@ -19,7 +25,7 @@ pub enum LightOccluder2d {
     },
 }
 
-impl Default for LightOccluder2d {
+impl Default for LightOccluder2dShape {
     fn default() -> Self {
         Self::Rectangle {
             half_size: Vec2::splat(0.0),

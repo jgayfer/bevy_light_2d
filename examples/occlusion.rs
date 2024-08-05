@@ -27,40 +27,50 @@ fn setup(mut commands: Commands) {
     });
 
     commands.spawn(LightOccluder2dBundle {
-        light_occluder: LightOccluder2d::Rectangle {
-            half_size: Vec2::splat(25.0),
+        light_occluder: LightOccluder2d {
+            shape: LightOccluder2dShape::Rectangle {
+                half_size: Vec2::splat(25.0),
+            },
         },
         transform: Transform::from_xyz(-400.0, -50.0, 0.0),
         ..default()
     });
 
     commands.spawn(LightOccluder2dBundle {
-        light_occluder: LightOccluder2d::Rectangle {
-            half_size: Vec2::splat(25.0),
+        light_occluder: LightOccluder2d {
+            shape: LightOccluder2dShape::Rectangle {
+                half_size: Vec2::splat(25.0),
+            },
         },
         transform: Transform::from_xyz(-200.0, -50.0, 0.0),
         ..default()
     });
 
     commands.spawn(LightOccluder2dBundle {
-        light_occluder: LightOccluder2d::Rectangle {
-            half_size: Vec2::splat(25.0),
+        light_occluder: LightOccluder2d {
+            shape: LightOccluder2dShape::Rectangle {
+                half_size: Vec2::splat(25.0),
+            },
         },
         transform: Transform::from_xyz(0.0, -50.0, 0.0),
         ..default()
     });
 
     commands.spawn(LightOccluder2dBundle {
-        light_occluder: LightOccluder2d::Rectangle {
-            half_size: Vec2::splat(25.0),
+        light_occluder: LightOccluder2d {
+            shape: LightOccluder2dShape::Rectangle {
+                half_size: Vec2::splat(25.0),
+            },
         },
         transform: Transform::from_xyz(200.0, -50.0, 0.0),
         ..default()
     });
 
     commands.spawn(LightOccluder2dBundle {
-        light_occluder: LightOccluder2d::Rectangle {
-            half_size: Vec2::splat(25.0),
+        light_occluder: LightOccluder2d {
+            shape: LightOccluder2dShape::Rectangle {
+                half_size: Vec2::splat(25.0),
+            },
         },
         transform: Transform::from_xyz(400.0, -50.0, 0.0),
         ..default()

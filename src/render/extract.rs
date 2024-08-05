@@ -5,7 +5,7 @@ use bevy::{
 
 use crate::{
     light::{AmbientLight2d, PointLight2d},
-    occluder::LightOccluder2d,
+    occluder::{LightOccluder2d, LightOccluder2dShape},
 };
 
 #[derive(Component, Default, Clone, ShaderType)]
@@ -67,9 +67,9 @@ pub fn extract_light_occluders(
             continue;
         }
 
-        let extracted_occluder = match light_occluder {
-            LightOccluder2d::Rectangle { half_size } => ExtractedLightOccluder2d {
-                half_size: *half_size,
+        let extracted_occluder = match light_occluder.shape {
+            LightOccluder2dShape::Rectangle { half_size } => ExtractedLightOccluder2d {
+                half_size,
                 center: global_transform.translation().xy(),
             },
         };
