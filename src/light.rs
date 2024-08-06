@@ -32,6 +32,8 @@ pub struct PointLight2d {
     /// How quickly illumination from the light should deteriorate over distance.
     /// A higher falloff value will result in less illumination at the light's maximum radius.
     pub falloff: f32,
+    /// Whether the light should cast shadows.
+    pub cast_shadows: bool,
 }
 
 impl Default for PointLight2d {
@@ -42,6 +44,7 @@ impl Default for PointLight2d {
             intensity: 1.0,
             radius: 0.5,
             falloff: 0.0,
+            cast_shadows: false,
         }
     }
 }

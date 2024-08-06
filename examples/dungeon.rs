@@ -74,6 +74,7 @@ fn spawn_candles(mut commands: Commands, spritesheet: Res<CandleSpritesheet>) {
                 color: Color::Srgba(YELLOW),
                 intensity: 25.0,
                 falloff: 4.0,
+                ..default()
             },
             ..default()
         },))

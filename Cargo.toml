@@ -15,7 +15,7 @@ bevy = { version = "0.14", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline",
     "bevy_winit",
-    "x11"
+    "x11",
 ] }
 smallvec = "1.13"
 
@@ -49,3 +49,7 @@ path = "examples/multiple.rs"
 [[example]]
 name = "dungeon"
 path = "examples/dungeon.rs"
+
+[[example]]
+name = "occlusion"
+path = "examples/occlusion.rs"

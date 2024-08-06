@@ -1,16 +1,13 @@
+use bevy::ecs::system::lifetimeless::Read;
 use bevy::prelude::*;
-use bevy::render::extract_component::{ComponentUniforms, DynamicUniformIndex};
 use bevy::render::render_graph::ViewNode;
 
 use bevy::render::render_resource::{
-    BindGroupEntries, GpuArrayBuffer, Operations, PipelineCache, RenderPassColorAttachment,
-    RenderPassDescriptor,
+    BindGroupEntries, Operations, PipelineCache, RenderPassColorAttachment, RenderPassDescriptor,
 };
-use bevy::render::renderer::RenderDevice;
-use bevy::render::view::{ViewTarget, ViewUniformOffset, ViewUniforms};
-use smallvec::{smallvec, SmallVec};
+use bevy::render::view::ViewTarget;
 
-use crate::render::extract::{ExtractedAmbientLight2d, ExtractedPointLight2d};
+use crate::render::light_map::LightMapTexture;
 
 use super::{LightingPipeline, LightingPipelineId};
 
@@ -22,46 +19,25 @@ pub struct LightingNode;
 
 impl ViewNode for LightingNode {
     type ViewQuery = (
-        &'static ViewTarget,
-        &'static DynamicUniformIndex<ExtractedAmbientLight2d>,
-        &'static ViewUniformOffset,
-        &'static LightingPipelineId,
+        Read<ViewTarget>,
+        Read<LightingPipelineId>,
+        Read<LightMapTexture>,
     );
 
     fn run<'w>(
         &self,
         _graph: &mut bevy::render::render_graph::RenderGraphContext,
         render_context: &mut bevy::render::renderer::RenderContext<'w>,
-        (view_target, ambient_index, view_offset, pipeline_id): bevy::ecs::query::QueryItem<
+        (view_target, pipeline_id, light_map_texture): bevy::ecs::query::QueryItem<
             'w,
             Self::ViewQuery,
         >,
         world: &'w World,
     ) -> Result<(), bevy::render::render_graph::NodeRunError> {
-        let lighting_pipeline = world.resource::<LightingPipeline>();
-
+        let pipeline = world.resource::<LightingPipeline>();
         let pipeline_cache = world.resource::<PipelineCache>();
 
-        let Some(pipeline) = pipeline_cache.get_render_pipeline(pipeline_id.0) else {
-            return Ok(());
-        };
-
-        let Some(view_uniform_binding) = world.resource::<ViewUniforms>().uniforms.binding() else {
-            return Ok(());
-        };
-
-        let Some(ambient_light_uniform) = world
-            .resource::<ComponentUniforms<ExtractedAmbientLight2d>>()
-            .uniforms()
-            .binding()
-        else {
-            return Ok(());
-        };
-
-        let Some(point_light_binding) = world
-            .resource::<GpuArrayBuffer<ExtractedPointLight2d>>()
-            .binding()
-        else {
+        let Some(lighting_pipeline) = pipeline_cache.get_render_pipeline(pipeline_id.0) else {
             return Ok(());
         };
 
@@ -69,13 +45,11 @@ impl ViewNode for LightingNode {
 
         let bind_group = render_context.render_device().create_bind_group(
             LIGHTING_BIND_GROUP,
-            &lighting_pipeline.layout,
+            &pipeline.layout,
             &BindGroupEntries::sequential((
                 post_process.source,
-                &lighting_pipeline.sampler,
-                view_uniform_binding,
-                ambient_light_uniform,
-                point_light_binding,
+                &light_map_texture.light_map.default_view,
+                &pipeline.sampler,
             )),
         );
 
@@ -91,24 +65,8 @@ impl ViewNode for LightingNode {
             occlusion_query_set: None,
         });
 
-        let mut dynamic_offsets: SmallVec<[u32; 3]> =
-            smallvec![view_offset.offset, ambient_index.index()];
-
-        // Storage buffers aren't available in WebGL2. We fall back to a
-        // dynamic uniform buffer, and therefore need to provide the offset.
-        // We're providing a value of 0 here as we're limiting the number of
-        // point lights to only those that can reasonably fit in a single binding.
-        if world
-            .resource::<RenderDevice>()
-            .limits()
-            .max_storage_buffers_per_shader_stage
-            == 0
-        {
-            dynamic_offsets.push(0);
-        }
-
-        render_pass.set_render_pipeline(pipeline);
-        render_pass.set_bind_group(0, &bind_group, &dynamic_offsets);
+        render_pass.set_render_pipeline(lighting_pipeline);
+        render_pass.set_bind_group(0, &bind_group, &[]);
         render_pass.draw(0..3, 0..1);
 
         Ok(())

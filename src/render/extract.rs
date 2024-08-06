@@ -3,7 +3,10 @@ use bevy::{
     render::{render_resource::ShaderType, Extract},
 };
 
-use crate::light::{AmbientLight2d, PointLight2d};
+use crate::{
+    light::{AmbientLight2d, PointLight2d},
+    occluder::{LightOccluder2d, LightOccluder2dShape},
+};
 
 #[derive(Component, Default, Clone, ShaderType)]
 pub struct ExtractedPointLight2d {
@@ -12,6 +15,13 @@ pub struct ExtractedPointLight2d {
     pub color: LinearRgba,
     pub intensity: f32,
     pub falloff: f32,
+    pub cast_shadows: u32,
+}
+
+#[derive(Component, Default, Clone, ShaderType)]
+pub struct ExtractedLightOccluder2d {
+    pub half_size: Vec2,
+    pub center: Vec2,
 }
 
 #[derive(Component, Default, Clone, ShaderType)]
@@ -33,6 +43,7 @@ pub fn extract_point_lights(
             radius: point_light.radius,
             intensity: point_light.intensity,
             falloff: point_light.falloff,
+            cast_shadows: if point_light.cast_shadows { 1 } else { 0 },
         });
     }
 
@@ -44,7 +55,34 @@ pub fn extract_point_lights(
         radius: 0.0,
         falloff: 0.0,
         color: LinearRgba::BLACK,
+        cast_shadows: 0,
     });
+}
+
+pub fn extract_light_occluders(
+    mut commands: Commands,
+    light_occluders_query: Extract<
+        Query<(Entity, &LightOccluder2d, &GlobalTransform, &ViewVisibility)>,
+    >,
+) {
+    for (entity, light_occluder, global_transform, view_visibility) in &light_occluders_query {
+        if !view_visibility.get() {
+            continue;
+        }
+
+        let extracted_occluder = match light_occluder.shape {
+            LightOccluder2dShape::Rectangle { half_size } => ExtractedLightOccluder2d {
+                half_size,
+                center: global_transform.translation().xy(),
+            },
+        };
+
+        commands.get_or_spawn(entity).insert(extracted_occluder);
+    }
+
+    // BufferVec won't write to the GPU if there aren't any point lights.
+    // For now we can spawn an empty occluder to get around this.
+    commands.spawn(ExtractedLightOccluder2d::default());
 }
 
 pub fn extract_ambient_lights(

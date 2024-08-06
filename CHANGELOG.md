@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Light occlusion with hard shadows (#20).
+  - Added `LightOccluder2d` component and `LightOccluder2dBundle`.
+  - Added `cast_shadows` field to `PointLight2d` (defaults to false).
+
 ## [0.2.2] - 2024-07-18
 
 ### Fixed

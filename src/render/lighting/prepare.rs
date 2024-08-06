@@ -1,9 +1,5 @@
 use bevy::{
-    ecs::{
-        entity::Entity,
-        query::With,
-        system::{Commands, Query, Res, ResMut},
-    },
+    prelude::*,
     render::{
         render_resource::{PipelineCache, SpecializedRenderPipelines},
         view::ExtractedView,
