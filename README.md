@@ -15,11 +15,12 @@ Designed to be simple to use, yet expressive enough to fit a variety of needs.
 ## Features
 
 - Component driven design
-- Configurable [point lights](https://docs.rs/bevy_light_2d/0.2.2/bevy_light_2d/light/struct.PointLight2d.html)
+- Configurable point lights
 - Light occlusion
 - Dynamic shadows
-- Camera specific [ambient light](https://docs.rs/bevy_light_2d/0.2.2/bevy_light_2d/light/struct.AmbientLight2d.html)
+- Camera specific ambient light
 - Single camera rendering
+- Web support for WebGL2 and WebGPU
 
 ## Usage
 
@@ -58,10 +59,6 @@ fn setup(mut commands: Commands) {
 ```
 
 To see an in depth example, use `cargo run --example dungeon`.
-
-## Web support
-
-WebGL2 and WebGPU are both supported.
 
 ## Motiviation
 
