@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Modified `PointLight2d` to include a `cast_shadows` attribute (defaults to false).
+- Modified `PointLight2d` to include a `cast_shadows` attribute (defaults to false) (#20).
 
 ## [0.2.2] - 2024-07-18
 
