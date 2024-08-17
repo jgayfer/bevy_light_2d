@@ -8,7 +8,7 @@
     world_to_ndc
 };
 
-// We're currently only using a single uniform binding for point lights in 
+// We're currently only using a single uniform binding for point lights in
 // WebGL2, which is limited to 4kb in BatchedUniformBuffer, so we need to
 // ensure our point lights can fit in 4kb.
 const MAX_POINT_LIGHTS: u32 = 82u;
@@ -66,7 +66,7 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
         }
     }
 
-    return vec4(ambient_light.color.rgb, 1.0) * vec4(lighting_color, 1.0);
+    return vec4(ambient_light.color.rgb, 1.0) + vec4(lighting_color, 1.0);
 }
 
 fn square(x: f32) -> f32 {
@@ -122,4 +122,3 @@ fn raymarch(ray_origin: vec2<f32>, ray_target: vec2<f32>) -> f32 {
     // ray found occluder
     return 0.0;
 }
-
