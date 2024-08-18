@@ -13,7 +13,7 @@ use bevy::render::view::ViewUniform;
 
 use crate::render::extract::{ExtractedAmbientLight2d, ExtractedPointLight2d};
 
-use super::LIGHT_MAP_SHADER;
+use super::{PointLightMeta, LIGHT_MAP_SHADER};
 
 const LIGHT_MAP_BIND_GROUP_LAYOUT: &str = "light_map_group_layout";
 const LIGHT_MAP_PIPELINE: &str = "light_map_pipeline";
@@ -37,6 +37,7 @@ impl FromWorld for LightMapPipeline {
                     uniform_buffer::<ViewUniform>(true),
                     uniform_buffer::<ExtractedAmbientLight2d>(true),
                     GpuArrayBuffer::<ExtractedPointLight2d>::binding_layout(render_device),
+                    uniform_buffer::<PointLightMeta>(false),
                     texture_2d(TextureSampleType::Float { filterable: true }),
                     sampler(SamplerBindingType::Filtering),
                 ),

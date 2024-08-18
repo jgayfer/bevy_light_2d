@@ -1,6 +1,6 @@
 #import bevy_core_pipeline::fullscreen_vertex_shader::FullscreenVertexOutput
 #import bevy_render::view::View
-#import bevy_light_2d::types::{AmbientLight2d, PointLight2d};
+#import bevy_light_2d::types::{AmbientLight2d, PointLight2d, PointLightMeta};
 #import bevy_light_2d::view_transformations::{
     frag_coord_to_ndc,
     ndc_to_world,
@@ -30,9 +30,12 @@ var<uniform> ambient_light: AmbientLight2d;
 #endif
 
 @group(0) @binding(3)
-var sdf: texture_2d<f32>;
+var<uniform> point_light_meta: PointLightMeta;
 
 @group(0) @binding(4)
+var sdf: texture_2d<f32>;
+
+@group(0) @binding(5)
 var sdf_sampler: sampler;
 
 @fragment
@@ -45,15 +48,7 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
 
     var lighting_color = ambient_light.color.rgb;
 
-    // WebGL2 does not support storage buffers (or runtime sized arrays), so we
-    // need to use a fixed number of point lights.
-#if AVAILABLE_STORAGE_BUFFER_BINDINGS >= 6
-    let point_light_count = arrayLength(&point_lights);
-#else
-    let point_light_count = MAX_POINT_LIGHTS;
-#endif
-
-    for (var i = 0u; i < point_light_count; i++) {
+    for (var i = 0u; i < point_light_meta.count; i++) {
         let light = point_lights[i];
         let dist = distance(light.center, pos);
 

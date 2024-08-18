@@ -17,3 +17,9 @@ struct PointLight2d {
     falloff: f32,
     cast_shadows: u32
 }
+
+struct PointLightMeta {
+    count: u32,
+    // WebGL2 structs must be 16 byte aligned.
+    _padding: vec3<u32>
+}

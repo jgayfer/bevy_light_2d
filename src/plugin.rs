@@ -23,8 +23,8 @@ use crate::{
             ExtractedAmbientLight2d, ExtractedLightOccluder2d, ExtractedPointLight2d,
         },
         light_map::{
-            prepare_light_map_texture, LightMapNode, LightMapPass, LightMapPipeline,
-            LIGHT_MAP_SHADER,
+            prepare_light_map_texture, prepare_point_light_count, LightMapNode, LightMapPass,
+            LightMapPipeline, PointLightMetaBuffer, LIGHT_MAP_SHADER,
         },
         lighting::{
             prepare_lighting_pipelines, LightingNode, LightingPass, LightingPipeline,
@@ -83,6 +83,7 @@ impl Plugin for Light2dPlugin {
 
         render_app
             .init_resource::<SpecializedRenderPipelines<LightingPipeline>>()
+            .init_resource::<PointLightMetaBuffer>()
             .add_systems(
                 ExtractSchedule,
                 (
@@ -95,6 +96,7 @@ impl Plugin for Light2dPlugin {
                 Render,
                 (
                     prepare_lighting_pipelines.in_set(RenderSet::Prepare),
+                    prepare_point_light_count.in_set(RenderSet::Prepare),
                     prepare_sdf_texture
                         .after(prepare_view_targets)
                         .in_set(RenderSet::ManageViews),

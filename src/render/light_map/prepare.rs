@@ -5,13 +5,15 @@ use bevy::{
     },
     render::{
         render_resource::{TextureDescriptor, TextureDimension, TextureFormat, TextureUsages},
-        renderer::RenderDevice,
+        renderer::{RenderDevice, RenderQueue},
         texture::TextureCache,
         view::ViewTarget,
     },
 };
 
-use super::LightMapTexture;
+use crate::render::extract::ExtractedPointLight2d;
+
+use super::{LightMapTexture, PointLightMeta, PointLightMetaBuffer};
 
 const LIGHT_MAP_TEXTURE: &str = "light_map_texture";
 
@@ -40,4 +42,17 @@ pub fn prepare_light_map_texture(
             light_map: light_map_texture,
         });
     }
+}
+
+pub fn prepare_point_light_count(
+    render_device: Res<RenderDevice>,
+    render_queue: Res<RenderQueue>,
+    point_lights: Query<&ExtractedPointLight2d>,
+    mut point_light_count: ResMut<PointLightMetaBuffer>,
+) {
+    let meta = PointLightMeta::new(point_lights.iter().count() as u32);
+    point_light_count.buffer.set(meta);
+    point_light_count
+        .buffer
+        .write_buffer(&render_device, &render_queue);
 }
