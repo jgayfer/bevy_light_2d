@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed point lights not rendering on a dark ambient color (#24).
+
 ## [0.3.0] - 2024-08-05
 
 ### Added
