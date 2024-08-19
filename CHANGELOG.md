@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Changed
+
+- Point lights colours are now added to ambient light, instead of multiplied by it (#24).
+
+## Migration guide
+
+- Point light intensity needs to be adjusted to account for changes to ambient light. Generally this means point light intensity values need to be lowered. See the relevant changes to the `dungeon` example.
+
 ## [0.3.0] - 2024-08-05
 
 ### Added

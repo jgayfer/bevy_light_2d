@@ -72,7 +72,7 @@ fn spawn_candles(mut commands: Commands, spritesheet: Res<CandleSpritesheet>) {
             point_light: PointLight2d {
                 radius: 48.0,
                 color: Color::Srgba(YELLOW),
-                intensity: 25.0,
+                intensity: 2.0,
                 falloff: 4.0,
                 ..default()
             },

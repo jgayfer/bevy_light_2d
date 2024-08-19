@@ -30,7 +30,7 @@ fn setup(mut commands: Commands) {
         point_light: PointLight2d {
             color: Color::Srgba(Srgba::RED),
             radius: 50.,
-            intensity: 5.0,
+            intensity: 1.0,
             ..default()
         },
         transform: Transform::from_xyz(-50., 25., 0.),
@@ -41,7 +41,7 @@ fn setup(mut commands: Commands) {
         point_light: PointLight2d {
             color: Color::WHITE,
             radius: 50.,
-            intensity: 5.0,
+            intensity: 1.0,
             falloff: 5.0,
             ..default()
         },
@@ -53,7 +53,7 @@ fn setup(mut commands: Commands) {
         point_light: PointLight2d {
             color: Color::Srgba(Srgba::GREEN),
             radius: 75.,
-            intensity: 5.0,
+            intensity: 1.0,
             ..default()
         },
         transform: Transform::from_xyz(-10., -25., 0.),
