@@ -14,7 +14,7 @@ use smallvec::{smallvec, SmallVec};
 use crate::render::extract::{ExtractedAmbientLight2d, ExtractedPointLight2d};
 use crate::render::sdf::SdfTexture;
 
-use super::{LightMapPipeline, LightMapTexture};
+use super::{LightMapPipeline, LightMapTexture, PointLightMetaBuffer};
 
 const LIGHT_MAP_PASS: &str = "light_map_pass";
 const LIGHT_MAP_BIND_GROUP: &str = "light_map_bind_group";
@@ -48,6 +48,7 @@ impl ViewNode for LightMapNode {
             Some(view_uniform_binding),
             Some(ambient_light_uniform),
             Some(point_light_binding),
+            Some(point_light_count_binding),
         ) = (
             pipeline_cache.get_render_pipeline(light_map_pipeline.pipeline_id),
             world.resource::<ViewUniforms>().uniforms.binding(),
@@ -58,6 +59,7 @@ impl ViewNode for LightMapNode {
             world
                 .resource::<GpuArrayBuffer<ExtractedPointLight2d>>()
                 .binding(),
+            world.resource::<PointLightMetaBuffer>().buffer.binding(),
         )
         else {
             return Ok(());
@@ -70,6 +72,7 @@ impl ViewNode for LightMapNode {
                 view_uniform_binding.clone(),
                 ambient_light_uniform.clone(),
                 point_light_binding.clone(),
+                point_light_count_binding.clone(),
                 &sdf_texture.sdf.default_view,
                 &light_map_pipeline.sdf_sampler,
             )),
