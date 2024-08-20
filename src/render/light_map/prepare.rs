@@ -50,7 +50,7 @@ pub fn prepare_point_light_count(
     point_lights: Query<&ExtractedPointLight2d>,
     mut point_light_count: ResMut<PointLightMetaBuffer>,
 ) {
-    let meta = PointLightMeta::new(point_lights.iter().count() as u32);
+    let meta = PointLightMeta::new(point_lights.iter().len() as u32);
     point_light_count.buffer.set(meta);
     point_light_count
         .buffer
