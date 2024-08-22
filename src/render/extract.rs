@@ -46,17 +46,6 @@ pub fn extract_point_lights(
             cast_shadows: if point_light.cast_shadows { 1 } else { 0 },
         });
     }
-
-    // BufferVec won't write to the GPU if there aren't any point lights.
-    // For now we can spawn an empty point light to get around this.
-    commands.spawn(ExtractedPointLight2d {
-        transform: Vec2::ZERO,
-        intensity: 0.0,
-        radius: 0.0,
-        falloff: 0.0,
-        color: LinearRgba::BLACK,
-        cast_shadows: 0,
-    });
 }
 
 pub fn extract_light_occluders(
@@ -79,10 +68,6 @@ pub fn extract_light_occluders(
 
         commands.get_or_spawn(entity).insert(extracted_occluder);
     }
-
-    // BufferVec won't write to the GPU if there aren't any point lights.
-    // For now we can spawn an empty occluder to get around this.
-    commands.spawn(ExtractedLightOccluder2d::default());
 }
 
 pub fn extract_ambient_lights(
