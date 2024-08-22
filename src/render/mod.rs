@@ -1,5 +1,6 @@
 use bevy::{asset::Handle, render::render_resource::Shader};
 
+pub mod empty_buffer;
 pub mod extract;
 pub mod light_map;
 pub mod lighting;

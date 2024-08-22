@@ -18,6 +18,7 @@ use crate::{
     light::{AmbientLight2d, PointLight2d},
     occluder::LightOccluder2d,
     render::{
+        empty_buffer::{prepare_empty_buffer, EmptyBuffer},
         extract::{
             extract_ambient_lights, extract_light_occluders, extract_point_lights,
             ExtractedAmbientLight2d, ExtractedLightOccluder2d, ExtractedPointLight2d,
@@ -84,6 +85,7 @@ impl Plugin for Light2dPlugin {
         render_app
             .init_resource::<SpecializedRenderPipelines<LightingPipeline>>()
             .init_resource::<PointLightMetaBuffer>()
+            .init_resource::<EmptyBuffer>()
             .add_systems(
                 ExtractSchedule,
                 (
@@ -97,6 +99,7 @@ impl Plugin for Light2dPlugin {
                 (
                     prepare_lighting_pipelines.in_set(RenderSet::Prepare),
                     prepare_point_light_count.in_set(RenderSet::Prepare),
+                    prepare_empty_buffer.in_set(RenderSet::Prepare),
                     prepare_sdf_texture
                         .after(prepare_view_targets)
                         .in_set(RenderSet::ManageViews),
