@@ -10,6 +10,7 @@ use bevy::render::renderer::RenderDevice;
 use bevy::render::view::{ViewUniformOffset, ViewUniforms};
 use smallvec::{smallvec, SmallVec};
 
+use crate::render::empty_buffer::EmptyBuffer;
 use crate::render::extract::ExtractedLightOccluder2d;
 
 use super::pipeline::SdfPipeline;
@@ -39,7 +40,8 @@ impl ViewNode for SdfNode {
             world.resource::<ViewUniforms>().uniforms.binding(),
             world
                 .resource::<GpuArrayBuffer<ExtractedLightOccluder2d>>()
-                .binding(),
+                .binding()
+                .or(world.resource::<EmptyBuffer>().binding()),
         ) else {
             return Ok(());
         };
