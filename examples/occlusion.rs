@@ -1,5 +1,7 @@
 use bevy::{
-    color::palettes::css::{BLUE, YELLOW}, input::mouse::MouseWheel, prelude::*
+    color::palettes::css::{BLUE, YELLOW},
+    input::mouse::MouseWheel,
+    prelude::*,
 };
 use bevy_light_2d::prelude::*;
 
@@ -7,7 +9,10 @@ fn main() {
     App::new()
         .add_plugins((DefaultPlugins, Light2dPlugin))
         .add_systems(Startup, setup)
-        .add_systems(Update, (move_lights, control_camera_movement, control_camera_zoom))
+        .add_systems(
+            Update,
+            (move_lights, control_camera_movement, control_camera_zoom),
+        )
         .run();
 }
 
@@ -128,7 +133,6 @@ fn control_camera_movement(
     mut query_cameras: Query<&mut Transform, With<Camera>>,
     keyboard: Res<ButtonInput<KeyCode>>,
 ) {
-    
     if keyboard.pressed(KeyCode::KeyW) {
         camera_target.y += CAMERA_SPEED;
     }
