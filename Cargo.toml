@@ -1,6 +1,6 @@
 [package]
 name = "bevy_light_2d"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 categories = ["game-engines", "graphics", "rendering"]
 description = "General purpose 2d lighting for the Bevy game engine."

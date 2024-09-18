@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2024-09-17
+
 ### Changed
 
 - Point lights colours are now added to ambient light, instead of multiplied by it (#24).
