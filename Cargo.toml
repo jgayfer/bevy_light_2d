@@ -20,7 +20,7 @@ bevy = { version = "0.14", default-features = false, features = [
 smallvec = "1.13"
 
 [dev-dependencies]
-bevy = { version = "0.15.0-rc.1", default-features = false, features = [
+bevy = { version = "0.14", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline",
     "bevy_winit",
