@@ -21,12 +21,19 @@ impl EmptyBuffer {
     }
 
     pub fn fill_buffer(&mut self, render_device: &RenderDevice) {
+        // GpuArrayBuffer uniform buffers are 4096 bytes in size when using WebGl2.
+        //
+        // On platforms that support dynamic storage buffers, we just need something big
+        // enough to "hold" one item.
+        let size = if render_device.limits().max_storage_buffers_per_shader_stage == 0 {
+            4096
+        } else {
+            64
+        };
         if self.buffer.is_none() {
             self.buffer = Some(render_device.create_buffer(&BufferDescriptor {
                 label: "empty-buffer".into(),
-                // This needs to be at least as big as the items we're storing in our
-                // GPUArrayBuffer.
-                size: 64,
+                size,
                 usage: BufferUsages::COPY_DST | BufferUsages::STORAGE | BufferUsages::UNIFORM,
                 mapped_at_creation: false,
             }));
