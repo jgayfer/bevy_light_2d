@@ -113,7 +113,13 @@ impl Plugin for Light2dPlugin {
             .add_render_graph_node::<ViewNodeRunner<LightMapNode>>(Core2d, LightMapPass)
             .add_render_graph_edges(
                 Core2d,
-                (Node2d::EndMainPass, SdfPass, LightMapPass, LightingPass),
+                (
+                    Node2d::EndMainPass,
+                    SdfPass,
+                    LightMapPass,
+                    LightingPass,
+                    Node2d::Bloom,
+                ),
             );
     }
 
