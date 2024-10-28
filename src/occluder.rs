@@ -3,7 +3,10 @@
 use bevy::{
     ecs::{bundle::Bundle, component::Component},
     math::Vec2,
-    render::view::{InheritedVisibility, ViewVisibility, Visibility},
+    render::{
+        sync_world::SyncToRenderWorld,
+        view::{InheritedVisibility, ViewVisibility, Visibility},
+    },
     transform::components::{GlobalTransform, Transform},
 };
 
@@ -11,6 +14,7 @@ use bevy::{
 ///
 /// This is commonly used as a component within [`LightOcluder2dBundle`].
 #[derive(Default, Component)]
+#[require(SyncToRenderWorld)]
 pub struct LightOccluder2d {
     /// The shape of the light occluder.
     pub shape: LightOccluder2dShape,

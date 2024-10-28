@@ -10,19 +10,16 @@ fn main() {
 
 fn setup(mut commands: Commands) {
     commands.spawn((
-        Camera2dBundle::default(),
+        Camera2d,
         AmbientLight2d {
             brightness: 0.1,
             ..default()
         },
     ));
 
-    commands.spawn(SpriteBundle {
-        sprite: Sprite {
-            custom_size: Some(Vec2::splat(150.)),
-            color: Color::WHITE,
-            ..default()
-        },
+    commands.spawn(Sprite {
+        custom_size: Some(Vec2::splat(150.)),
+        color: Color::WHITE,
         ..default()
     });
 

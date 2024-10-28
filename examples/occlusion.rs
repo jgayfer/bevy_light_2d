@@ -23,7 +23,7 @@ struct YellowLight;
 struct BlueLight;
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d);
 
     commands.spawn((
         PointLight2dBundle {
@@ -118,10 +118,10 @@ fn move_lights(
     time: Res<Time>,
 ) {
     for mut light_transform in &mut yellow_query {
-        light_transform.translation.x = time.elapsed_seconds().sin() * 500.
+        light_transform.translation.x = time.elapsed_secs().sin() * 500.
     }
     for mut light_transform in &mut blue_query {
-        light_transform.translation.x = time.elapsed_seconds().cos() * 500.
+        light_transform.translation.x = time.elapsed_secs().cos() * 500.
     }
 }
 
@@ -177,7 +177,7 @@ fn control_camera_zoom(
     }
 
     for mut camera in cameras.iter_mut() {
-        camera.scale = (camera.scale - projection_delta * time.delta_seconds())
+        camera.scale = (camera.scale - projection_delta * time.delta_secs())
             .clamp(MIN_CAMERA_SCALE, MAX_CAMERA_SCALE);
     }
 }
