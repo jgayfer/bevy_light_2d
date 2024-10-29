@@ -14,7 +14,7 @@ use bevy::{
 ///
 /// This is commonly used as a component within [`LightOcluder2dBundle`].
 #[derive(Default, Component)]
-#[require(SyncToRenderWorld)]
+#[require(SyncToRenderWorld, Transform, Visibility)]
 pub struct LightOccluder2d {
     /// The shape of the light occluder.
     pub shape: LightOccluder2dShape,

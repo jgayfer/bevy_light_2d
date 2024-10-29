@@ -24,7 +24,7 @@ use bevy::{
 /// [A better point light attenutation function](https://lisyarus.github.io/blog/posts/point-light-attenuation.html#section-the-solution)
 /// by [lisyarus](https://lisyarus.github.io/blog/).
 #[derive(Component, Clone, Reflect)]
-#[require(SyncToRenderWorld)]
+#[require(SyncToRenderWorld, Transform, Visibility)]
 pub struct PointLight2d {
     /// The light's color tint.
     pub color: Color,

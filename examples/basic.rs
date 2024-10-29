@@ -11,12 +11,9 @@ fn main() {
 fn setup(mut commands: Commands) {
     commands.spawn(Camera2d);
 
-    commands.spawn(PointLight2dBundle {
-        point_light: PointLight2d {
-            intensity: 3.0,
-            radius: 100.0,
-            ..default()
-        },
+    commands.spawn(PointLight2d {
+        intensity: 3.0,
+        radius: 100.0,
         ..default()
     });
 }

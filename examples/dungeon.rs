@@ -70,17 +70,16 @@ fn animate_candles(
 
 fn spawn_candles(mut commands: Commands, spritesheet: Res<CandleSpritesheet>) {
     let light = commands
-        .spawn((PointLight2dBundle {
-            transform: Transform::from_xyz(0.0, 4.0, ENTITY_INDEX),
-            point_light: PointLight2d {
+        .spawn((
+            Transform::from_xyz(0.0, 4.0, ENTITY_INDEX),
+            PointLight2d {
                 radius: 48.0,
                 color: Color::Srgba(YELLOW),
                 intensity: 2.0,
                 falloff: 4.0,
                 ..default()
             },
-            ..default()
-        },))
+        ))
         .id();
 
     commands
