@@ -1,4 +1,5 @@
 //! A module which contains occluder components.
+#![expect(deprecated)]
 
 use bevy::{
     ecs::{bundle::Bundle, component::Component},
@@ -39,6 +40,10 @@ impl Default for LightOccluder2dShape {
 
 /// A bundle of components for rendering a [`LightOccluder2d`] entity.
 #[derive(Bundle, Default)]
+#[deprecated(
+    since = "0.5.0",
+    note = "Use the `LightOccluder2d` component instead. Inserting `LightOccluder2d` will also insert the other components required automatically."
+)]
 pub struct LightOccluder2dBundle {
     /// Specifies the rendering properties of the light occluder
     pub light_occluder: LightOccluder2d,
