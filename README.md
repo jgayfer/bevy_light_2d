@@ -60,7 +60,7 @@ fn setup(mut commands: Commands) {
 
 To see an in depth example, use `cargo run --example dungeon`.
 
-## Motiviation
+## Motivation
 
 When I first started experimenting with Bevy, the lack of a first party 2D
 lighting implementation left me wanting. While there were some rather impressive
