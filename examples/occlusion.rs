@@ -23,93 +23,76 @@ struct YellowLight;
 struct BlueLight;
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d);
 
     commands.spawn((
-        PointLight2dBundle {
-            point_light: PointLight2d {
-                intensity: 20.0,
-                radius: 1000.0,
-                falloff: 10.0,
-                cast_shadows: true,
-                color: Color::Srgba(YELLOW),
-            },
-            transform: Transform {
-                translation: Vec3::new(0.0, 200.0, 0.0),
-                ..default()
-            },
-            ..default()
+        PointLight2d {
+            intensity: 20.0,
+            radius: 1000.0,
+            falloff: 10.0,
+            cast_shadows: true,
+            color: Color::Srgba(YELLOW),
         },
+        Transform::from_translation(Vec3::new(0.0, 200.0, 0.0)),
         YellowLight,
     ));
 
     commands.spawn((
-        PointLight2dBundle {
-            point_light: PointLight2d {
-                intensity: 20.0,
-                radius: 1000.0,
-                falloff: 10.0,
-                cast_shadows: true,
-                color: Color::Srgba(BLUE),
-            },
-            transform: Transform {
-                translation: Vec3::new(0.0, -200.0, 0.0),
-                ..default()
-            },
-            ..default()
+        PointLight2d {
+            intensity: 20.0,
+            radius: 1000.0,
+            falloff: 10.0,
+            cast_shadows: true,
+            color: Color::Srgba(BLUE),
         },
+        Transform::from_translation(Vec3::new(0.0, -200.0, 0.0)),
         BlueLight,
     ));
 
-    commands.spawn(LightOccluder2dBundle {
-        light_occluder: LightOccluder2d {
+    commands.spawn((
+        LightOccluder2d {
             shape: LightOccluder2dShape::Rectangle {
                 half_size: Vec2::splat(25.0),
             },
         },
-        transform: Transform::from_xyz(-400.0, 0., 0.0),
-        ..default()
-    });
+        Transform::from_xyz(-400.0, 0., 0.0),
+    ));
 
-    commands.spawn(LightOccluder2dBundle {
-        light_occluder: LightOccluder2d {
+    commands.spawn((
+        LightOccluder2d {
             shape: LightOccluder2dShape::Rectangle {
                 half_size: Vec2::splat(25.0),
             },
         },
-        transform: Transform::from_xyz(-200.0, 0.0, 0.0),
-        ..default()
-    });
+        Transform::from_xyz(-200.0, 0.0, 0.0),
+    ));
 
-    commands.spawn(LightOccluder2dBundle {
-        light_occluder: LightOccluder2d {
+    commands.spawn((
+        LightOccluder2d {
             shape: LightOccluder2dShape::Rectangle {
                 half_size: Vec2::splat(25.0),
             },
         },
-        transform: Transform::from_xyz(0.0, 0.0, 0.0),
-        ..default()
-    });
+        Transform::from_xyz(0.0, 0.0, 0.0),
+    ));
 
-    commands.spawn(LightOccluder2dBundle {
-        light_occluder: LightOccluder2d {
+    commands.spawn((
+        LightOccluder2d {
             shape: LightOccluder2dShape::Rectangle {
                 half_size: Vec2::splat(25.0),
             },
         },
-        transform: Transform::from_xyz(200.0, 0.0, 0.0),
-        ..default()
-    });
+        Transform::from_xyz(200.0, 0.0, 0.0),
+    ));
 
-    commands.spawn(LightOccluder2dBundle {
-        light_occluder: LightOccluder2d {
+    commands.spawn((
+        LightOccluder2d {
             shape: LightOccluder2dShape::Rectangle {
                 half_size: Vec2::splat(25.0),
             },
         },
-        transform: Transform::from_xyz(400.0, 0.0, 0.0),
-        ..default()
-    });
+        Transform::from_xyz(400.0, 0.0, 0.0),
+    ));
 }
 
 fn move_lights(
@@ -118,10 +101,10 @@ fn move_lights(
     time: Res<Time>,
 ) {
     for mut light_transform in &mut yellow_query {
-        light_transform.translation.x = time.elapsed_seconds().sin() * 500.
+        light_transform.translation.x = time.elapsed_secs().sin() * 500.
     }
     for mut light_transform in &mut blue_query {
-        light_transform.translation.x = time.elapsed_seconds().cos() * 500.
+        light_transform.translation.x = time.elapsed_secs().cos() * 500.
     }
 }
 
@@ -177,7 +160,7 @@ fn control_camera_zoom(
     }
 
     for mut camera in cameras.iter_mut() {
-        camera.scale = (camera.scale - projection_delta * time.delta_seconds())
+        camera.scale = (camera.scale - projection_delta * time.delta_secs())
             .clamp(MIN_CAMERA_SCALE, MAX_CAMERA_SCALE);
     }
 }

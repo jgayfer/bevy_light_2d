@@ -1,10 +1,14 @@
 //! A module which contains lighting components.
+#![expect(deprecated)]
 
 use bevy::{
     color::Color,
     ecs::{bundle::Bundle, component::Component},
     reflect::Reflect,
-    render::view::{InheritedVisibility, ViewVisibility, Visibility},
+    render::{
+        sync_world::SyncToRenderWorld,
+        view::{InheritedVisibility, ViewVisibility, Visibility},
+    },
     transform::components::{GlobalTransform, Transform},
 };
 
@@ -21,6 +25,7 @@ use bevy::{
 /// [A better point light attenutation function](https://lisyarus.github.io/blog/posts/point-light-attenuation.html#section-the-solution)
 /// by [lisyarus](https://lisyarus.github.io/blog/).
 #[derive(Component, Clone, Reflect)]
+#[require(SyncToRenderWorld, Transform, Visibility)]
 pub struct PointLight2d {
     /// The light's color tint.
     pub color: Color,
@@ -51,6 +56,10 @@ impl Default for PointLight2d {
 
 /// A bundle of components for rendering a [`PointLight2d`] entity.
 #[derive(Bundle, Default)]
+#[deprecated(
+    since = "0.5.0",
+    note = "Use the `PointLight2d` component instead. Inserting `PointLight2d` will also insert the other components required automatically."
+)]
 pub struct PointLight2dBundle {
     /// Specifies the rendering properties of the point light, such as color and radius.
     pub point_light: PointLight2d,
