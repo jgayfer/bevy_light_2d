@@ -15,6 +15,7 @@ bevy = { version = "0.15.0", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline",
     "bevy_winit",
+    "bevy_window",
     "x11",
     "png"
 ] }
@@ -25,6 +26,7 @@ bevy = { version = "0.15.0", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline",
     "bevy_winit",
+    "bevy_window",
     "bevy_sprite",
     "png",
     "x11"
