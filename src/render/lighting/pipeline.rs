@@ -1,4 +1,5 @@
 use bevy::core_pipeline::fullscreen_vertex_shader::fullscreen_shader_vertex_state;
+use bevy::image::BevyDefault;
 use bevy::prelude::*;
 use bevy::render::render_resource::binding_types::{sampler, texture_2d};
 use bevy::render::render_resource::{
@@ -7,7 +8,6 @@ use bevy::render::render_resource::{
     SamplerDescriptor, ShaderStages, SpecializedRenderPipeline, TextureFormat, TextureSampleType,
 };
 use bevy::render::renderer::RenderDevice;
-use bevy::render::texture::BevyDefault;
 use bevy::render::view::ViewTarget;
 
 use super::{LightingPipelineKey, LIGHTING_SHADER};
@@ -69,6 +69,7 @@ impl SpecializedRenderPipeline for LightingPipeline {
             depth_stencil: None,
             multisample: MultisampleState::default(),
             push_constant_ranges: vec![],
+            zero_initialize_workgroup_memory: false,
         }
     }
 }
