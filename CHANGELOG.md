@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2024-12-04
+
+### Added
+
+- Added required component support for `PointLight2d` (#39).
+- Added required component support for `LightOccluder2d` (#39).
+
+### Changed
+
+- Updated Bevy version from `0.14` to `0.15` (#39).
+- Deprecated `PointLight2dBundle` in favour of `PointLight2d` (#39).
+- Deprecated `LightOccluder2dBundle` in favour of `LightOccluder2d` (#39).
+
+### Migration guide
+
+- Replace all uses of `PointLight2dBundle` with `PointLight2d`.
+- Replace all uses of `LightOccluder2dBundle` with `LightOccluder2d`.
+
 ## [0.4.2] - 2024-10-25
 
 ### Fixed

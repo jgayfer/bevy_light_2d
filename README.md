@@ -29,8 +29,8 @@ In the [`basic`](https://github.com/jgayfer/bevy_light_2d/blob/main/examples/bas
 ```toml
 # Cargo.toml
 [dependencies]
-bevy = "0.14"
-bevy_light_2d = "0.4"
+bevy = "0.15"
+bevy_light_2d = "0.5"
 ```
 
 ```rust
@@ -41,18 +41,15 @@ fn main() {
     App::new()
         .add_plugins((DefaultPlugins, Light2dPlugin))
         .add_systems(Startup, setup)
-        .run()
+        .run();
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
-    
-    commands.spawn(PointLight2dBundle {
-        point_light: PointLight2d {
-            radius: 100.0,
-            intensity: 3.0,
-            ..default()
-        },
+    commands.spawn(Camera2d);
+
+    commands.spawn(PointLight2d {
+        intensity: 3.0,
+        radius: 100.0,
         ..default()
     });
 }
@@ -74,6 +71,7 @@ general application over depth of features.
 
 | bevy | bevy_light_2d |
 |------|---------------|
+| 0.15 | 0.5           |
 | 0.14 | 0.2..0.4      |
 | 0.13 | 0.1           |
 

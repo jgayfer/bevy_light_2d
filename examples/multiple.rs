@@ -10,53 +10,47 @@ fn main() {
 
 fn setup(mut commands: Commands) {
     commands.spawn((
-        Camera2dBundle::default(),
+        Camera2d,
         AmbientLight2d {
             brightness: 0.1,
             ..default()
         },
     ));
 
-    commands.spawn(SpriteBundle {
-        sprite: Sprite {
-            custom_size: Some(Vec2::splat(150.)),
-            color: Color::WHITE,
-            ..default()
-        },
+    commands.spawn(Sprite {
+        custom_size: Some(Vec2::splat(150.)),
+        color: Color::WHITE,
         ..default()
     });
 
-    commands.spawn(PointLight2dBundle {
-        point_light: PointLight2d {
+    commands.spawn((
+        PointLight2d {
             color: Color::Srgba(Srgba::RED),
             radius: 50.,
             intensity: 1.0,
             ..default()
         },
-        transform: Transform::from_xyz(-50., 25., 0.),
-        ..default()
-    });
+        Transform::from_xyz(-50., 25., 0.),
+    ));
 
-    commands.spawn(PointLight2dBundle {
-        point_light: PointLight2d {
+    commands.spawn((
+        PointLight2d {
             color: Color::WHITE,
             radius: 50.,
             intensity: 1.0,
             falloff: 5.0,
             ..default()
         },
-        transform: Transform::from_xyz(25., 50., 0.),
-        ..default()
-    });
+        Transform::from_xyz(25., 50., 0.),
+    ));
 
-    commands.spawn(PointLight2dBundle {
-        point_light: PointLight2d {
+    commands.spawn((
+        PointLight2d {
             color: Color::Srgba(Srgba::GREEN),
             radius: 75.,
             intensity: 1.0,
             ..default()
         },
-        transform: Transform::from_xyz(-10., -25., 0.),
-        ..default()
-    });
+        Transform::from_xyz(-10., -25., 0.),
+    ));
 }

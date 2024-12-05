@@ -1,5 +1,6 @@
 #![deny(missing_docs)]
 #![doc = include_str!("../README.md")]
+#![expect(deprecated)]
 
 pub mod light;
 pub mod occluder;

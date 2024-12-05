@@ -38,10 +38,11 @@ struct Candle;
 struct AnimationTimer(Timer);
 
 fn setup_camera(mut commands: Commands) {
-    let mut camera = Camera2dBundle::default();
-    camera.projection.scale = 0.25;
+    let mut projection = OrthographicProjection::default_2d();
+    projection.scale = 0.25;
     commands.spawn((
-        camera,
+        Camera2d,
+        projection,
         AmbientLight2d {
             brightness: 0.1,
             ..default()
@@ -55,44 +56,44 @@ fn set_clear_color(mut clear_color: ResMut<ClearColor>) {
 
 fn animate_candles(
     time: Res<Time>,
-    mut query: Query<(&mut AnimationTimer, &mut TextureAtlas), With<Candle>>,
+    mut query: Query<(&mut AnimationTimer, &mut Sprite), With<Candle>>,
 ) {
-    for (mut timer, mut atlas) in &mut query {
+    for (mut timer, mut sprite) in &mut query {
         timer.tick(time.delta());
         if timer.just_finished() {
-            atlas.index = (atlas.index + 1) % 4;
+            if let Some(ref mut texture_atlas) = sprite.texture_atlas {
+                texture_atlas.index = (texture_atlas.index + 1) % 4;
+            }
         }
     }
 }
 
 fn spawn_candles(mut commands: Commands, spritesheet: Res<CandleSpritesheet>) {
     let light = commands
-        .spawn((PointLight2dBundle {
-            transform: Transform::from_xyz(0.0, 4.0, ENTITY_INDEX),
-            point_light: PointLight2d {
+        .spawn((
+            Transform::from_xyz(0.0, 4.0, ENTITY_INDEX),
+            PointLight2d {
                 radius: 48.0,
                 color: Color::Srgba(YELLOW),
                 intensity: 2.0,
                 falloff: 4.0,
                 ..default()
             },
-            ..default()
-        },))
+        ))
         .id();
 
     commands
         .spawn((
             Candle,
             AnimationTimer(Timer::from_seconds(0.2, TimerMode::Repeating)),
-            SpriteBundle {
-                transform: Transform::from_xyz(0., 2., ENTITY_INDEX),
-                texture: spritesheet.texture.clone(),
-                ..default()
-            },
-            TextureAtlas {
-                layout: spritesheet.layout.clone(),
-                ..default()
-            },
+            Sprite::from_atlas_image(
+                spritesheet.texture.clone(),
+                TextureAtlas {
+                    layout: spritesheet.layout.clone(),
+                    index: 0,
+                },
+            ),
+            Transform::from_xyz(0., 2., ENTITY_INDEX),
         ))
         .add_child(light);
 }
@@ -166,18 +167,14 @@ fn spawn_from_atlas(
     texture: Handle<Image>,
 ) {
     commands.spawn((
-        SpriteBundle {
-            transform: Transform {
-                translation,
-                ..default()
-            },
+        Sprite::from_atlas_image(
             texture,
-            ..default()
-        },
-        TextureAtlas {
-            index: sprite_index,
-            layout: atlas_handle,
-        },
+            TextureAtlas {
+                index: sprite_index,
+                layout: atlas_handle,
+            },
+        ),
+        Transform::from_translation(translation),
     ));
 }
 

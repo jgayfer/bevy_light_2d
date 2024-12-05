@@ -1,6 +1,6 @@
 [package]
 name = "bevy_light_2d"
-version = "0.4.2"
+version = "0.5.0"
 edition = "2021"
 categories = ["game-engines", "graphics", "rendering"]
 description = "General purpose 2d lighting for the Bevy game engine."
@@ -11,22 +11,28 @@ readme = "README.md"
 exclude = ["assets/*", "static/*"]
 
 [dependencies]
-bevy = { version = "0.14", default-features = false, features = [
+bevy = { version = "0.15", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline",
     "bevy_winit",
     "x11",
+    # TODO: Remove when https://github.com/bevyengine/bevy/issues/16568 is resolved.
+    "bevy_window",
+    # TODO: Remove when https://github.com/bevyengine/bevy/issues/16563 is resolved.
+    "png"
 ] }
 smallvec = "1.13"
 
 [dev-dependencies]
-bevy = { version = "0.14", default-features = false, features = [
+bevy = { version = "0.15", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline",
     "bevy_winit",
     "bevy_sprite",
     "png",
-    "x11"
+    "x11",
+    # TODO: Remove when https://github.com/bevyengine/bevy/issues/16568 is resolved.
+    "bevy_window"
 ] }
 
 [lints.clippy]
