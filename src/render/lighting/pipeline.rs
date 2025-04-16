@@ -10,7 +10,7 @@ use bevy::render::render_resource::{
 use bevy::render::renderer::RenderDevice;
 use bevy::render::view::ViewTarget;
 
-use super::{LightingPipelineKey, LIGHTING_SHADER};
+use super::{LIGHTING_SHADER, LightingPipelineKey};
 
 const LIGHTING_PIPELINE: &str = "lighting_pipeline";
 const LIGHTING_BIND_GROUP_LAYOUT: &str = "lighting_bind_group_layout";

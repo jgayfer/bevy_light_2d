@@ -42,7 +42,7 @@ fn setup_camera(mut commands: Commands) {
     projection.scale = 0.25;
     commands.spawn((
         Camera2d,
-        projection,
+        Projection::Orthographic(projection),
         AmbientLight2d {
             brightness: 0.1,
             ..default()

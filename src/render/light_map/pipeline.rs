@@ -1,5 +1,5 @@
 use bevy::core_pipeline::fullscreen_vertex_shader::fullscreen_shader_vertex_state;
-use bevy::ecs::system::Resource;
+use bevy::ecs::resource::Resource;
 use bevy::ecs::world::{FromWorld, World};
 use bevy::render::render_resource::binding_types::{sampler, texture_2d, uniform_buffer};
 use bevy::render::render_resource::{
@@ -13,7 +13,7 @@ use bevy::render::view::ViewUniform;
 
 use crate::render::extract::{ExtractedAmbientLight2d, ExtractedPointLight2d};
 
-use super::{PointLightMeta, LIGHT_MAP_SHADER};
+use super::{LIGHT_MAP_SHADER, PointLightMeta};
 
 const LIGHT_MAP_BIND_GROUP_LAYOUT: &str = "light_map_group_layout";
 const LIGHT_MAP_PIPELINE: &str = "light_map_pipeline";

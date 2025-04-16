@@ -1,5 +1,8 @@
 use bevy::{
-    ecs::system::{Res, ResMut, Resource},
+    ecs::{
+        resource::Resource,
+        system::{Res, ResMut},
+    },
     render::{
         render_resource::{BindingResource, Buffer, BufferDescriptor, BufferUsages},
         renderer::RenderDevice,

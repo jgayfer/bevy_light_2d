@@ -9,7 +9,7 @@ use bevy::render::render_resource::{
 };
 use bevy::render::renderer::RenderDevice;
 use bevy::render::view::{ViewUniformOffset, ViewUniforms};
-use smallvec::{smallvec, SmallVec};
+use smallvec::{SmallVec, smallvec};
 
 use crate::render::empty_buffer::EmptyBuffer;
 use crate::render::extract::{ExtractedAmbientLight2d, ExtractedPointLight2d};

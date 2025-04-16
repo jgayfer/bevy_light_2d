@@ -4,7 +4,8 @@ mod prepare;
 
 use bevy::{
     asset::Handle,
-    ecs::{component::Component, system::Resource},
+    ecs::component::Component,
+    ecs::resource::Resource,
     math::Vec3,
     render::{
         render_graph::RenderLabel,
