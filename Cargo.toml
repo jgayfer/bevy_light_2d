@@ -15,11 +15,7 @@ bevy = { version = "0.16.0-rc.5", default-features = false, features = [
     "bevy_render",
     "bevy_core_pipeline",
     "bevy_winit",
-    "x11",
-    # TODO: Remove when https://github.com/bevyengine/bevy/issues/16568 is resolved.
-    "bevy_window",
-    # TODO: Remove when https://github.com/bevyengine/bevy/issues/16563 is resolved.
-    "png"
+    "x11"
 ] }
 smallvec = "1.13"
 
@@ -30,9 +26,7 @@ bevy = { version = "0.16.0-rc.5", default-features = false, features = [
     "bevy_winit",
     "bevy_sprite",
     "png",
-    "x11",
-    # TODO: Remove when https://github.com/bevyengine/bevy/issues/16568 is resolved.
-    "bevy_window"
+    "x11"
 ] }
 
 [lints.clippy]
