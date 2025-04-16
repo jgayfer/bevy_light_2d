@@ -1,5 +1,4 @@
 //! A module which contains occluder components.
-#![expect(deprecated)]
 
 use bevy::{
     ecs::{bundle::Bundle, component::Component},

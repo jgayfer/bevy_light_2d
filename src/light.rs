@@ -1,5 +1,4 @@
 //! A module which contains lighting components.
-#![expect(deprecated)]
 
 use bevy::{
     color::Color,
