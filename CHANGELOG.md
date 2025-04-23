@@ -19,6 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Lighting is no longer processed by default; the `Light2d` marker component
   must be added to the `Camera2d` (#49).
 
+### Fixed
+
+- Fixed occluders not despawning correctly (#47).
+- Improved WebGL2 performance (#47).
+
 ### Migration guide
 
 - Add a `Light2d` marker component to cameras that should process lighting
