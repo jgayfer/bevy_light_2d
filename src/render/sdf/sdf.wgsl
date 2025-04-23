@@ -38,6 +38,11 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
     let occluder_count = min(MAX_OCCLUDERS, occluder_meta.count);
 #endif
 
+    // If there aren't any occluders, use the max value for the texture.
+    if (occluder_count == 0) {
+        return vec4(255.0, 0.0, 0.0, 1.0);
+    }
+
     var sdf = occluder_sd(pos, occluders[0]);
 
     for (var i = 1u; i < occluder_count; i++) {
