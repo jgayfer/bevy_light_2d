@@ -23,3 +23,9 @@ struct PointLightMeta {
     // WebGL2 structs must be 16 byte aligned.
     _padding: vec3<u32>
 }
+
+struct OccluderMeta {
+    count: u32,
+    // WebGL2 structs must be 16 byte aligned.
+    _padding: vec3<u32>
+}
