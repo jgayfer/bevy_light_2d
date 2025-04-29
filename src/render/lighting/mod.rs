@@ -3,7 +3,7 @@ mod pipeline;
 mod prepare;
 
 use bevy::{
-    asset::Handle,
+    asset::{Handle, weak_handle},
     ecs::component::Component,
     render::{
         render_graph::RenderLabel,
@@ -15,8 +15,7 @@ pub use node::LightingNode;
 pub use pipeline::*;
 pub use prepare::*;
 
-pub const LIGHTING_SHADER: Handle<Shader> =
-    Handle::weak_from_u128(111120241052143214281687226997564407636);
+pub const LIGHTING_SHADER: Handle<Shader> = weak_handle!("22ed6ffe-b47d-4b88-b986-5b0e87b3a240");
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, RenderLabel)]
 pub struct LightingPass;

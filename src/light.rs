@@ -1,5 +1,4 @@
 //! A module which contains lighting components.
-#![expect(deprecated)]
 
 use bevy::{
     color::Color,
@@ -7,7 +6,7 @@ use bevy::{
     reflect::Reflect,
     render::{
         sync_world::SyncToRenderWorld,
-        view::{InheritedVisibility, ViewVisibility, Visibility},
+        view::{self, InheritedVisibility, ViewVisibility, Visibility, VisibilityClass},
     },
     transform::components::{GlobalTransform, Transform},
 };
@@ -25,7 +24,8 @@ use bevy::{
 /// [A better point light attenutation function](https://lisyarus.github.io/blog/posts/point-light-attenuation.html#section-the-solution)
 /// by [lisyarus](https://lisyarus.github.io/blog/).
 #[derive(Component, Clone, Reflect)]
-#[require(SyncToRenderWorld, Transform, Visibility)]
+#[require(SyncToRenderWorld, Transform, Visibility, VisibilityClass)]
+#[component(on_add = view::add_visibility_class::<PointLight2d>)]
 pub struct PointLight2d {
     /// The light's color tint.
     pub color: Color,

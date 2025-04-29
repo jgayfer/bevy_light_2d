@@ -145,7 +145,7 @@ const MIN_CAMERA_SCALE: f32 = 1.;
 const MAX_CAMERA_SCALE: f32 = 20.;
 
 fn control_camera_zoom(
-    mut cameras: Query<&mut OrthographicProjection, With<Camera>>,
+    mut projections: Query<&mut Projection, With<Camera>>,
     time: Res<Time>,
     mut scroll_event_reader: EventReader<MouseWheel>,
 ) {
@@ -159,8 +159,10 @@ fn control_camera_zoom(
         return;
     }
 
-    for mut camera in cameras.iter_mut() {
-        camera.scale = (camera.scale - projection_delta * time.delta_secs())
-            .clamp(MIN_CAMERA_SCALE, MAX_CAMERA_SCALE);
+    for projection in projections.iter_mut() {
+        if let Projection::Orthographic(mut camera) = projection.clone() {
+            camera.scale = (camera.scale - projection_delta * time.delta_secs())
+                .clamp(MIN_CAMERA_SCALE, MAX_CAMERA_SCALE);
+        }
     }
 }

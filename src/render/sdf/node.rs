@@ -8,13 +8,13 @@ use bevy::render::render_resource::{
 };
 use bevy::render::renderer::RenderDevice;
 use bevy::render::view::{ViewUniformOffset, ViewUniforms};
-use smallvec::{smallvec, SmallVec};
+use smallvec::{SmallVec, smallvec};
 
 use crate::render::empty_buffer::EmptyBuffer;
 use crate::render::extract::ExtractedLightOccluder2d;
 
-use super::pipeline::SdfPipeline;
 use super::SdfTexture;
+use super::pipeline::SdfPipeline;
 
 const SDF_PASS: &str = "sdf_pass";
 const SDF_BIND_GROUP: &str = "sdf_bind_group";

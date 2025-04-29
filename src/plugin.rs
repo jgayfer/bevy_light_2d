@@ -5,34 +5,33 @@ use bevy::{
     core_pipeline::core_2d::graph::{Core2d, Node2d},
     prelude::*,
     render::{
+        Render, RenderApp, RenderSet,
         extract_component::UniformComponentPlugin,
         gpu_component_array_buffer::GpuComponentArrayBufferPlugin,
         render_graph::{RenderGraphApp, ViewNodeRunner},
         render_resource::SpecializedRenderPipelines,
-        view::{check_visibility, prepare_view_targets, VisibilitySystems},
-        Render, RenderApp, RenderSet,
+        view::prepare_view_targets,
     },
 };
 
 use crate::{
     light::{AmbientLight2d, PointLight2d},
-    occluder::LightOccluder2d,
     render::{
-        empty_buffer::{prepare_empty_buffer, EmptyBuffer},
+        TYPES_SHADER, VIEW_TRANSFORMATIONS_SHADER,
+        empty_buffer::{EmptyBuffer, prepare_empty_buffer},
         extract::{
-            extract_ambient_lights, extract_light_occluders, extract_point_lights,
             ExtractedAmbientLight2d, ExtractedLightOccluder2d, ExtractedPointLight2d,
+            extract_ambient_lights, extract_light_occluders, extract_point_lights,
         },
         light_map::{
-            prepare_light_map_texture, prepare_point_light_count, LightMapNode, LightMapPass,
-            LightMapPipeline, PointLightMetaBuffer, LIGHT_MAP_SHADER,
+            LIGHT_MAP_SHADER, LightMapNode, LightMapPass, LightMapPipeline, PointLightMetaBuffer,
+            prepare_light_map_texture, prepare_point_light_count,
         },
         lighting::{
-            prepare_lighting_pipelines, LightingNode, LightingPass, LightingPipeline,
-            LIGHTING_SHADER,
+            LIGHTING_SHADER, LightingNode, LightingPass, LightingPipeline,
+            prepare_lighting_pipelines,
         },
-        sdf::{prepare_sdf_texture, SdfNode, SdfPass, SdfPipeline, SDF_SHADER},
-        TYPES_SHADER, VIEW_TRANSFORMATIONS_SHADER,
+        sdf::{SDF_SHADER, SdfNode, SdfPass, SdfPipeline, prepare_sdf_texture},
     },
 };
 
@@ -68,15 +67,7 @@ impl Plugin for Light2dPlugin {
             GpuComponentArrayBufferPlugin::<ExtractedLightOccluder2d>::default(),
         ))
         .register_type::<AmbientLight2d>()
-        .register_type::<PointLight2d>()
-        .add_systems(
-            PostUpdate,
-            (
-                check_visibility::<With<PointLight2d>>,
-                check_visibility::<With<LightOccluder2d>>,
-            )
-                .in_set(VisibilitySystems::CheckVisibility),
-        );
+        .register_type::<PointLight2d>();
 
         let Some(render_app) = app.get_sub_app_mut(RenderApp) else {
             return;

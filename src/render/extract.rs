@@ -1,6 +1,6 @@
 use bevy::{
     prelude::*,
-    render::{render_resource::ShaderType, sync_world::RenderEntity, Extract},
+    render::{Extract, render_resource::ShaderType, sync_world::RenderEntity},
 };
 
 use crate::{

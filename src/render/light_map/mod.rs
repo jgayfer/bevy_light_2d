@@ -3,8 +3,8 @@ mod pipeline;
 mod prepare;
 
 use bevy::{
-    asset::Handle,
-    ecs::{component::Component, system::Resource},
+    asset::{Handle, weak_handle},
+    ecs::{component::Component, resource::Resource},
     math::Vec3,
     render::{
         render_graph::RenderLabel,
@@ -17,8 +17,7 @@ pub use node::LightMapNode;
 pub use pipeline::LightMapPipeline;
 pub use prepare::{prepare_light_map_texture, prepare_point_light_count};
 
-pub const LIGHT_MAP_SHADER: Handle<Shader> =
-    Handle::weak_from_u128(320609826414128764415270070474935914193);
+pub const LIGHT_MAP_SHADER: Handle<Shader> = weak_handle!("48777bb3-8a37-4b4d-a4f2-f10ff1ee4360");
 
 #[derive(Debug, Hash, PartialEq, Eq, Clone, RenderLabel)]
 pub struct LightMapPass;
