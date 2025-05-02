@@ -10,6 +10,7 @@ use bevy::render::renderer::RenderDevice;
 use bevy::render::view::ViewUniform;
 
 use crate::render::extract::ExtractedLightOccluder2d;
+use crate::render::light_map::PointLightMeta;
 
 use super::SDF_SHADER;
 
@@ -34,6 +35,7 @@ impl FromWorld for SdfPipeline {
                 (
                     uniform_buffer::<ViewUniform>(true),
                     GpuArrayBuffer::<ExtractedLightOccluder2d>::binding_layout(render_device),
+                    uniform_buffer::<PointLightMeta>(false),
                 ),
             ),
         );

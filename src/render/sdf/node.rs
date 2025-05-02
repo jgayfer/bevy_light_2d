@@ -13,8 +13,8 @@ use smallvec::{SmallVec, smallvec};
 use crate::render::empty_buffer::EmptyBuffer;
 use crate::render::extract::ExtractedLightOccluder2d;
 
-use super::SdfTexture;
 use super::pipeline::SdfPipeline;
+use super::{OccluderMetaBuffer, SdfTexture};
 
 const SDF_PASS: &str = "sdf_pass";
 const SDF_BIND_GROUP: &str = "sdf_bind_group";
@@ -35,21 +35,32 @@ impl ViewNode for SdfNode {
         let sdf_pipeline = world.resource::<SdfPipeline>();
         let pipeline_cache = world.resource::<PipelineCache>();
 
-        let (Some(pipeline), Some(view_uniform_binding), Some(light_occluders_binding)) = (
+        let (
+            Some(pipeline),
+            Some(view_uniform_binding),
+            Some(light_occluders_binding),
+            Some(occluder_meta_buffer),
+        ) = (
             pipeline_cache.get_render_pipeline(sdf_pipeline.pipeline_id),
             world.resource::<ViewUniforms>().uniforms.binding(),
             world
                 .resource::<GpuArrayBuffer<ExtractedLightOccluder2d>>()
                 .binding()
                 .or(world.resource::<EmptyBuffer>().binding()),
-        ) else {
+            world.resource::<OccluderMetaBuffer>().buffer.binding(),
+        )
+        else {
             return Ok(());
         };
 
         let bind_group = render_context.render_device().create_bind_group(
             SDF_BIND_GROUP,
             &sdf_pipeline.layout,
-            &BindGroupEntries::sequential((view_uniform_binding.clone(), light_occluders_binding)),
+            &BindGroupEntries::sequential((
+                view_uniform_binding.clone(),
+                light_occluders_binding,
+                occluder_meta_buffer,
+            )),
         );
 
         let mut sdf_pass = render_context.begin_tracked_render_pass(RenderPassDescriptor {

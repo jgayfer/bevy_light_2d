@@ -31,7 +31,10 @@ use crate::{
             LIGHTING_SHADER, LightingNode, LightingPass, LightingPipeline,
             prepare_lighting_pipelines,
         },
-        sdf::{SDF_SHADER, SdfNode, SdfPass, SdfPipeline, prepare_sdf_texture},
+        sdf::{
+            OccluderMetaBuffer, SDF_SHADER, SdfNode, SdfPass, SdfPipeline, prepare_occluder_meta,
+            prepare_sdf_texture,
+        },
     },
 };
 
@@ -76,6 +79,7 @@ impl Plugin for Light2dPlugin {
         render_app
             .init_resource::<SpecializedRenderPipelines<LightingPipeline>>()
             .init_resource::<PointLightMetaBuffer>()
+            .init_resource::<OccluderMetaBuffer>()
             .init_resource::<EmptyBuffer>()
             .add_systems(
                 ExtractSchedule,
@@ -90,6 +94,7 @@ impl Plugin for Light2dPlugin {
                 (
                     prepare_lighting_pipelines.in_set(RenderSet::Prepare),
                     prepare_point_light_count.in_set(RenderSet::Prepare),
+                    prepare_occluder_meta.in_set(RenderSet::Prepare),
                     prepare_empty_buffer.in_set(RenderSet::Prepare),
                     prepare_sdf_texture
                         .after(prepare_view_targets)
