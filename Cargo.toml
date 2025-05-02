@@ -26,7 +26,8 @@ bevy = { version = "0.16", default-features = false, features = [
     "bevy_winit",
     "bevy_sprite",
     "png",
-    "x11"
+    "x11",
+    "dynamic_linking"
 ] }
 
 [lints.clippy]
