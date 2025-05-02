@@ -23,7 +23,7 @@ struct YellowLight;
 struct BlueLight;
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Camera2d);
+    commands.spawn((Camera2d, Light2d::default()));
 
     commands.spawn((
         PointLight2d {
