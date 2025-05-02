@@ -9,7 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added `Light2d` "marker" component to indicate which cameras should process
+  lighting effects (#49).
 - Add reflection for Component and Default on `PointLight2D` and `AmbientLight` (#50).
+
+### Changed
+
+- Lighting is no longer processed by default; the `Light2d` marker component
+  must be added to the `Camera2d` (#49).
+
+### Migration guide
+
+- Add a `Light2d` marker component to cameras that should process lighting
+  effects.
+- Remove `AmbientLight2d` components from cameras. Instead, include them as a
+  field on the camera's `Light2d` marker component.
 
 ## [0.6.0] - 2025-04-29
 
