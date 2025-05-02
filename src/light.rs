@@ -12,6 +12,15 @@ use bevy::{
     transform::components::{GlobalTransform, Transform},
 };
 
+/// A "marker" component to be used with a `Camera2d`.
+///
+/// 2D lighting effects will only run for cameras that have this component.
+#[derive(Component, Default)]
+pub struct Light2d {
+    /// The ambight light to apply to the scene.
+    pub ambient_light: AmbientLight2d,
+}
+
 /// A light that provides illumination in all directions.
 ///
 /// This is commonly used as a component within [`PointLight2dBundle`].

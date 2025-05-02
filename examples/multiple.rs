@@ -11,9 +11,11 @@ fn main() {
 fn setup(mut commands: Commands) {
     commands.spawn((
         Camera2d,
-        AmbientLight2d {
-            brightness: 0.1,
-            ..default()
+        Light2d {
+            ambient_light: AmbientLight2d {
+                brightness: 0.1,
+                ..default()
+            },
         },
     ));
 

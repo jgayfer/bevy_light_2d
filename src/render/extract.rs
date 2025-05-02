@@ -4,7 +4,7 @@ use bevy::{
 };
 
 use crate::{
-    light::{AmbientLight2d, PointLight2d},
+    light::{Light2d, PointLight2d},
     occluder::{LightOccluder2d, LightOccluder2dShape},
 };
 
@@ -89,24 +89,13 @@ pub fn extract_light_occluders(
 
 pub fn extract_ambient_lights(
     mut commands: Commands,
-    ambient_light_query: Extract<Query<(&RenderEntity, &AmbientLight2d)>>,
-    camera_query: Extract<Query<&RenderEntity, (With<Camera2d>, Without<AmbientLight2d>)>>,
+    light_2d_query: Extract<Query<(&RenderEntity, &Light2d)>>,
 ) {
-    for (render_entity, ambient_light) in &ambient_light_query {
+    for (render_entity, light_2d) in &light_2d_query {
         commands
             .entity(render_entity.id())
             .insert(ExtractedAmbientLight2d {
-                color: ambient_light.color.to_linear() * ambient_light.brightness,
-            });
-    }
-
-    // Our lighting pass only runs on views with an ambient light component,
-    // so let's add a no-op ambient light to any 2d cameras don't have one.
-    for render_entity in &camera_query {
-        commands
-            .entity(render_entity.id())
-            .insert(ExtractedAmbientLight2d {
-                color: Color::WHITE.into(),
+                color: light_2d.ambient_light.color.to_linear() * light_2d.ambient_light.brightness,
             });
     }
 }

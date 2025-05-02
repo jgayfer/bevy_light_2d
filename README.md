@@ -45,7 +45,7 @@ fn main() {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Camera2d);
+    commands.spawn((Camera2d, Light2d::default()));
 
     commands.spawn(PointLight2d {
         intensity: 3.0,
