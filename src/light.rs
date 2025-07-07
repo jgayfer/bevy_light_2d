@@ -3,16 +3,13 @@
 use bevy::{
     color::Color,
     ecs::{bundle::Bundle, component::Component},
+    prelude::{ReflectComponent, ReflectDefault},
     reflect::Reflect,
     render::{
         sync_world::SyncToRenderWorld,
         view::{self, InheritedVisibility, ViewVisibility, Visibility, VisibilityClass},
     },
     transform::components::{GlobalTransform, Transform},
-    prelude::{
-        ReflectComponent,
-        ReflectDefault
-    }
 };
 
 /// A light that provides illumination in all directions.
