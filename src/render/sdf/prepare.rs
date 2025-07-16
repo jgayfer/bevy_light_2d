@@ -5,13 +5,15 @@ use bevy::{
     },
     render::{
         render_resource::{TextureDescriptor, TextureDimension, TextureFormat, TextureUsages},
-        renderer::RenderDevice,
+        renderer::{RenderDevice, RenderQueue},
         texture::TextureCache,
         view::ViewTarget,
     },
 };
 
-use super::SdfTexture;
+use crate::render::extract::ExtractedLightOccluder2d;
+
+use super::{OccluderMeta, OccluderMetaBuffer, SdfTexture};
 
 const SDF_TEXTURE: &str = "sdf_texture";
 
@@ -40,4 +42,17 @@ pub fn prepare_sdf_texture(
             .entity(entity)
             .insert(SdfTexture { sdf: sdf_texture });
     }
+}
+
+pub fn prepare_occluder_meta(
+    render_device: Res<RenderDevice>,
+    render_queue: Res<RenderQueue>,
+    occluders: Query<&ExtractedLightOccluder2d>,
+    mut occluder_meta_buffer: ResMut<OccluderMetaBuffer>,
+) {
+    let meta = OccluderMeta::new(occluders.iter().len() as u32);
+    occluder_meta_buffer.buffer.set(meta);
+    occluder_meta_buffer
+        .buffer
+        .write_buffer(&render_device, &render_queue);
 }
