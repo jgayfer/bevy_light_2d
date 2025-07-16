@@ -54,3 +54,7 @@ path = "examples/dungeon.rs"
 [[example]]
 name = "occlusion"
 path = "examples/occlusion.rs"
+
+[[example]]
+name = "minimap"
+path = "examples/minimap.rs"
