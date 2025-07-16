@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `Light2d` "marker" component to indicate which cameras should process
   lighting effects (#49).
 - Added "minimap" example to showcase camera with lighting disabled (#49).
-- Add reflection for Component and Default on `PointLight2D` and `AmbientLight` (#50).
+- Added reflection for Component and Default on `PointLight2D` and
+  `AmbientLight` (#50).
 
 ### Changed
 
