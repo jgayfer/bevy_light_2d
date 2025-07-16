@@ -3,6 +3,7 @@
 use bevy::{
     color::Color,
     ecs::{bundle::Bundle, component::Component},
+    prelude::{ReflectComponent, ReflectDefault},
     reflect::Reflect,
     render::{
         sync_world::SyncToRenderWorld,
@@ -24,6 +25,7 @@ use bevy::{
 /// [A better point light attenutation function](https://lisyarus.github.io/blog/posts/point-light-attenuation.html#section-the-solution)
 /// by [lisyarus](https://lisyarus.github.io/blog/).
 #[derive(Component, Clone, Reflect)]
+#[reflect(Component, Default)]
 #[require(SyncToRenderWorld, Transform, Visibility, VisibilityClass)]
 #[component(on_add = view::add_visibility_class::<PointLight2d>)]
 pub struct PointLight2d {
@@ -81,6 +83,7 @@ pub struct PointLight2dBundle {
 /// - For a brighter scene, use a brightness greater than `1.0`.
 /// - A brightness value of `0.0` will result in a completely black scene.
 #[derive(Component, Clone, Reflect)]
+#[reflect(Component, Default)]
 pub struct AmbientLight2d {
     /// The ambient light's color tint.
     pub color: Color,
