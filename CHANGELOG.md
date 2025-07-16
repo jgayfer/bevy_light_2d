@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Add reflection for Component and Default on PointLight2D and AmbientLight (#50).
+### Added
+
+- Add reflection for Component and Default on `PointLight2D` and `AmbientLight` (#50).
 
 ## [0.6.0] - 2025-04-29
 
