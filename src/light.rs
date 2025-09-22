@@ -11,6 +11,7 @@ use bevy::{
     },
     transform::components::{GlobalTransform, Transform},
 };
+use bevy::prelude::{Handle, Image};
 
 /// A "marker" component to be used with a `Camera2d`.
 ///
@@ -64,6 +65,16 @@ impl Default for PointLight2d {
         }
     }
 }
+
+
+/// An optional component to override the lights' texture
+#[derive(Component, Clone, Default, Reflect)]
+#[reflect(Component, Default)]
+pub struct PointLight2dImageTexture {
+    /// Image handle to the light's texture
+    pub texture: Handle<Image>
+}
+
 
 /// A bundle of components for rendering a [`PointLight2d`] entity.
 #[derive(Bundle, Default)]

@@ -6,10 +6,9 @@ use bevy::render::render_resource::{
     BindGroupEntries, Operations, PipelineCache, RenderPassColorAttachment, RenderPassDescriptor,
 };
 use bevy::render::view::ViewTarget;
-
 use crate::render::light_map::LightMapTexture;
 
-use super::{LightingPipeline, LightingPipelineId};
+use super::{LightingPipeline, LightingPipelineId, LightImageTexture};
 
 const LIGHTING_PASS: &str = "lighting_pass";
 const LIGHTING_BIND_GROUP: &str = "lighting_bind_group";
@@ -22,13 +21,14 @@ impl ViewNode for LightingNode {
         Read<ViewTarget>,
         Read<LightingPipelineId>,
         Read<LightMapTexture>,
+        Read<LightImageTexture>
     );
 
     fn run<'w>(
         &self,
         _graph: &mut bevy::render::render_graph::RenderGraphContext,
         render_context: &mut bevy::render::renderer::RenderContext<'w>,
-        (view_target, pipeline_id, light_map_texture): bevy::ecs::query::QueryItem<
+        (view_target, pipeline_id, light_map_texture, image_texture): bevy::ecs::query::QueryItem<
             'w,
             Self::ViewQuery,
         >,
@@ -49,6 +49,7 @@ impl ViewNode for LightingNode {
             &BindGroupEntries::sequential((
                 post_process.source,
                 &light_map_texture.light_map.default_view,
+                &image_texture.texture.default_view,
                 &pipeline.sampler,
             )),
         );

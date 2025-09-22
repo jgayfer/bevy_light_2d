@@ -29,7 +29,7 @@ use crate::{
         },
         lighting::{
             LIGHTING_SHADER, LightingNode, LightingPass, LightingPipeline,
-            prepare_lighting_pipelines,
+            prepare_lighting_pipelines, prepare_light_image_textures
         },
         sdf::{
             OccluderMetaBuffer, SDF_SHADER, SdfNode, SdfPass, SdfPipeline, prepare_occluder_meta,
@@ -100,6 +100,9 @@ impl Plugin for Light2dPlugin {
                         .after(prepare_view_targets)
                         .in_set(RenderSet::ManageViews),
                     prepare_light_map_texture
+                        .after(prepare_view_targets)
+                        .in_set(RenderSet::ManageViews),
+                    prepare_light_image_textures
                         .after(prepare_view_targets)
                         .in_set(RenderSet::ManageViews),
                 ),

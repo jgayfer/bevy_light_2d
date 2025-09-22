@@ -10,7 +10,7 @@ use bevy::{
         render_resource::{CachedRenderPipelineId, Shader},
     },
 };
-
+use bevy::render::texture::CachedTexture;
 pub use node::LightingNode;
 pub use pipeline::*;
 pub use prepare::*;
@@ -27,3 +27,8 @@ pub struct LightingPipelineKey {
 
 #[derive(Component)]
 pub struct LightingPipelineId(pub CachedRenderPipelineId);
+
+#[derive(Component)]
+pub struct LightImageTexture{
+    pub texture: CachedTexture
+}
