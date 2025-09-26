@@ -33,7 +33,7 @@ pub struct Light2d {
 /// For more information on the formula used, see the blog post
 /// [A better point light attenutation function](https://lisyarus.github.io/blog/posts/point-light-attenuation.html#section-the-solution)
 /// by [lisyarus](https://lisyarus.github.io/blog/).
-#[derive(Component, Clone, Reflect)]
+#[derive(Component, Clone, Reflect, Debug)]
 #[reflect(Component, Default)]
 #[require(SyncToRenderWorld, Transform, Visibility, VisibilityClass)]
 #[component(on_add = view::add_visibility_class::<PointLight2d>)]
