@@ -29,7 +29,7 @@ impl ViewNode for SdfNode {
         &self,
         _graph: &mut bevy::render::render_graph::RenderGraphContext,
         render_context: &mut bevy::render::renderer::RenderContext<'w>,
-        (view_offset, sdf_texture): bevy::ecs::query::QueryItem<'w, Self::ViewQuery>,
+        (view_offset, sdf_texture): bevy::ecs::query::QueryItem<'w, 'w, Self::ViewQuery>,
         world: &'w World,
     ) -> Result<(), bevy::render::render_graph::NodeRunError> {
         let sdf_pipeline = world.resource::<SdfPipeline>();
@@ -69,6 +69,7 @@ impl ViewNode for SdfNode {
                 view: &sdf_texture.sdf.default_view,
                 resolve_target: None,
                 ops: Operations::default(),
+                depth_slice: None,
             })],
             ..default()
         });

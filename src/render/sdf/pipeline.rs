@@ -1,4 +1,4 @@
-use bevy::core_pipeline::fullscreen_vertex_shader::fullscreen_shader_vertex_state;
+use bevy::core_pipeline::FullscreenShader;
 use bevy::prelude::*;
 use bevy::render::render_resource::binding_types::uniform_buffer;
 use bevy::render::render_resource::{
@@ -27,6 +27,7 @@ impl FromWorld for SdfPipeline {
     fn from_world(world: &mut World) -> Self {
         let render_device = world.resource::<RenderDevice>();
         let pipeline_cache = world.resource::<PipelineCache>();
+        let fullscreen_shader = world.resource::<FullscreenShader>();
 
         let layout = render_device.create_bind_group_layout(
             SDF_BIND_GROUP_LAYOUT,
@@ -43,11 +44,11 @@ impl FromWorld for SdfPipeline {
         let pipeline_id = pipeline_cache.queue_render_pipeline(RenderPipelineDescriptor {
             label: Some(SDF_PIPELINE.into()),
             layout: vec![layout.clone()],
-            vertex: fullscreen_shader_vertex_state(),
+            vertex: fullscreen_shader.to_vertex_state(),
             fragment: Some(FragmentState {
                 shader: SDF_SHADER,
                 shader_defs: vec![],
-                entry_point: "fragment".into(),
+                entry_point: Some("fragment".into()),
                 targets: vec![Some(ColorTargetState {
                     format: TextureFormat::Rgba16Float,
                     blend: None,

@@ -1,6 +1,6 @@
 use bevy::{
     asset::{Handle, weak_handle},
-    render::render_resource::Shader,
+    prelude::Shader,
 };
 
 pub mod empty_buffer;

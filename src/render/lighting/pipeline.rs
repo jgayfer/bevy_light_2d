@@ -1,4 +1,4 @@
-use bevy::core_pipeline::fullscreen_vertex_shader::fullscreen_shader_vertex_state;
+use bevy::core_pipeline::FullscreenShader;
 use bevy::image::BevyDefault;
 use bevy::prelude::*;
 use bevy::render::render_resource::binding_types::{sampler, texture_2d};
@@ -19,6 +19,7 @@ const LIGHTING_BIND_GROUP_LAYOUT: &str = "lighting_bind_group_layout";
 pub struct LightingPipeline {
     pub layout: BindGroupLayout,
     pub sampler: Sampler,
+    pub fullscreen_shader: FullscreenShader,
 }
 
 impl FromWorld for LightingPipeline {
@@ -39,7 +40,12 @@ impl FromWorld for LightingPipeline {
 
         let sampler = render_device.create_sampler(&SamplerDescriptor::default());
 
-        Self { layout, sampler }
+        let fullscreen_shader = world.resource::<FullscreenShader>().clone();
+        Self {
+            layout,
+            sampler,
+            fullscreen_shader,
+        }
     }
 }
 
@@ -50,11 +56,11 @@ impl SpecializedRenderPipeline for LightingPipeline {
         RenderPipelineDescriptor {
             label: Some(LIGHTING_PIPELINE.into()),
             layout: vec![self.layout.clone()],
-            vertex: fullscreen_shader_vertex_state(),
+            vertex: self.fullscreen_shader.to_vertex_state(),
             fragment: Some(FragmentState {
                 shader: LIGHTING_SHADER,
                 shader_defs: vec![],
-                entry_point: "fragment".into(),
+                entry_point: Some("fragment".into()),
                 targets: vec![Some(ColorTargetState {
                     format: if key.hdr {
                         ViewTarget::TEXTURE_FORMAT_HDR

@@ -1,12 +1,10 @@
 //! A module which contains occluder components.
 
 use bevy::{
+    camera::visibility::{self, InheritedVisibility, ViewVisibility, Visibility, VisibilityClass},
     ecs::{bundle::Bundle, component::Component},
     math::Vec2,
-    render::{
-        sync_world::SyncToRenderWorld,
-        view::{self, InheritedVisibility, ViewVisibility, Visibility, VisibilityClass},
-    },
+    render::sync_world::SyncToRenderWorld,
     transform::components::{GlobalTransform, Transform},
 };
 
@@ -15,7 +13,7 @@ use bevy::{
 /// This is commonly used as a component within [`LightOcluder2dBundle`].
 #[derive(Default, Component)]
 #[require(SyncToRenderWorld, Transform, Visibility, VisibilityClass)]
-#[component(on_add = view::add_visibility_class::<LightOccluder2d>)]
+#[component(on_add = visibility::add_visibility_class::<LightOccluder2d>)]
 pub struct LightOccluder2d {
     /// The shape of the light occluder.
     pub shape: LightOccluder2dShape,
