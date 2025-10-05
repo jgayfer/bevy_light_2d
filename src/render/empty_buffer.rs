@@ -17,7 +17,7 @@ pub struct EmptyBuffer {
 }
 
 impl EmptyBuffer {
-    pub fn binding(&self) -> Option<BindingResource> {
+    pub fn binding(&self) -> Option<BindingResource<'_>> {
         self.buffer
             .as_ref()
             .map(|buffer| BindingResource::Buffer(buffer.as_entire_buffer_binding()))

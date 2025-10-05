@@ -147,7 +147,7 @@ const MAX_CAMERA_SCALE: f32 = 20.;
 fn control_camera_zoom(
     mut projections: Query<&mut Projection, With<Camera>>,
     time: Res<Time>,
-    mut scroll_event_reader: EventReader<MouseWheel>,
+    mut scroll_event_reader: MessageReader<MouseWheel>,
 ) {
     let mut projection_delta = 0.;
 

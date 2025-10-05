@@ -37,6 +37,7 @@ impl ViewNode for LightMapNode {
         render_context: &mut bevy::render::renderer::RenderContext<'w>,
         (ambient_index, view_offset, light_map_texture, sdf_texture): bevy::ecs::query::QueryItem<
             'w,
+            'w,
             Self::ViewQuery,
         >,
         world: &'w World,
@@ -86,6 +87,7 @@ impl ViewNode for LightMapNode {
                 view: &light_map_texture.light_map.default_view,
                 resolve_target: None,
                 ops: Operations::default(),
+                depth_slice: None,
             })],
             ..default()
         });

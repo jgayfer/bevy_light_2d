@@ -30,6 +30,7 @@ impl ViewNode for LightingNode {
         render_context: &mut bevy::render::renderer::RenderContext<'w>,
         (view_target, pipeline_id, light_map_texture): bevy::ecs::query::QueryItem<
             'w,
+            'w,
             Self::ViewQuery,
         >,
         world: &'w World,
@@ -59,6 +60,7 @@ impl ViewNode for LightingNode {
                 view: post_process.destination,
                 resolve_target: None,
                 ops: Operations::default(),
+                depth_slice: None,
             })],
             depth_stencil_attachment: None,
             timestamp_writes: None,

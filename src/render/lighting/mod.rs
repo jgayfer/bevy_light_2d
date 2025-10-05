@@ -5,10 +5,8 @@ mod prepare;
 use bevy::{
     asset::{Handle, weak_handle},
     ecs::component::Component,
-    render::{
-        render_graph::RenderLabel,
-        render_resource::{CachedRenderPipelineId, Shader},
-    },
+    prelude::Shader,
+    render::{render_graph::RenderLabel, render_resource::CachedRenderPipelineId},
 };
 
 pub use node::LightingNode;

@@ -8,9 +8,10 @@ use bevy::{
     math::Vec3,
     render::{
         render_graph::RenderLabel,
-        render_resource::{Shader, ShaderType, UniformBuffer},
+        render_resource::{ShaderType, UniformBuffer},
         texture::CachedTexture,
     },
+    shader::Shader,
 };
 
 pub use node::SdfNode;

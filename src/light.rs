@@ -1,14 +1,13 @@
 //! A module which contains lighting components.
 
 use bevy::{
+    camera::visibility,
+    camera::visibility::{InheritedVisibility, ViewVisibility, Visibility, VisibilityClass},
     color::Color,
     ecs::{bundle::Bundle, component::Component},
     prelude::{ReflectComponent, ReflectDefault},
     reflect::Reflect,
-    render::{
-        sync_world::SyncToRenderWorld,
-        view::{self, InheritedVisibility, ViewVisibility, Visibility, VisibilityClass},
-    },
+    render::sync_world::SyncToRenderWorld,
     transform::components::{GlobalTransform, Transform},
 };
 
@@ -36,7 +35,7 @@ pub struct Light2d {
 #[derive(Component, Clone, Reflect)]
 #[reflect(Component, Default)]
 #[require(SyncToRenderWorld, Transform, Visibility, VisibilityClass)]
-#[component(on_add = view::add_visibility_class::<PointLight2d>)]
+#[component(on_add = visibility::add_visibility_class::<PointLight2d>)]
 pub struct PointLight2d {
     /// The light's color tint.
     pub color: Color,

@@ -5,11 +5,9 @@ use bevy::{
     core_pipeline::core_2d::graph::{Core2d, Node2d},
     prelude::*,
     render::{
-        Render, RenderApp, RenderSet,
-        extract_component::UniformComponentPlugin,
-        gpu_component_array_buffer::GpuComponentArrayBufferPlugin,
-        render_graph::{RenderGraphApp, ViewNodeRunner},
-        render_resource::SpecializedRenderPipelines,
+        Render, RenderApp, RenderSet, extract_component::UniformComponentPlugin,
+        gpu_component_array_buffer::GpuComponentArrayBufferPlugin, render_graph::RenderGraphExt,
+        render_graph::ViewNodeRunner, render_resource::SpecializedRenderPipelines,
         view::prepare_view_targets,
     },
 };
@@ -114,7 +112,7 @@ impl Plugin for Light2dPlugin {
                     SdfPass,
                     LightMapPass,
                     LightingPass,
-                    Node2d::Bloom,
+                    Node2d::StartMainPassPostProcessing,
                 ),
             );
     }

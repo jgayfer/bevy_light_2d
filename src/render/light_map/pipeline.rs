@@ -1,4 +1,4 @@
-use bevy::core_pipeline::fullscreen_vertex_shader::fullscreen_shader_vertex_state;
+use bevy::core_pipeline::FullscreenShader;
 use bevy::ecs::resource::Resource;
 use bevy::ecs::world::{FromWorld, World};
 use bevy::render::render_resource::binding_types::{sampler, texture_2d, uniform_buffer};
@@ -28,6 +28,7 @@ pub struct LightMapPipeline {
 impl FromWorld for LightMapPipeline {
     fn from_world(world: &mut World) -> Self {
         let render_device = world.resource::<RenderDevice>();
+        let fullscreen_shader = world.resource::<FullscreenShader>().clone();
 
         let layout = render_device.create_bind_group_layout(
             LIGHT_MAP_BIND_GROUP_LAYOUT,
@@ -52,11 +53,11 @@ impl FromWorld for LightMapPipeline {
                 .queue_render_pipeline(RenderPipelineDescriptor {
                     label: Some(LIGHT_MAP_PIPELINE.into()),
                     layout: vec![layout.clone()],
-                    vertex: fullscreen_shader_vertex_state(),
+                    vertex: fullscreen_shader.to_vertex_state(),
                     fragment: Some(FragmentState {
                         shader: LIGHT_MAP_SHADER,
                         shader_defs: vec![],
-                        entry_point: "fragment".into(),
+                        entry_point: Some("fragment".into()),
                         targets: vec![Some(ColorTargetState {
                             format: TextureFormat::Rgba16Float,
                             blend: None,

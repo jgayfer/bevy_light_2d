@@ -62,10 +62,10 @@ fn animate_candles(
 ) {
     for (mut timer, mut sprite) in &mut query {
         timer.tick(time.delta());
-        if timer.just_finished() {
-            if let Some(ref mut texture_atlas) = sprite.texture_atlas {
-                texture_atlas.index = (texture_atlas.index + 1) % 4;
-            }
+        if timer.just_finished()
+            && let Some(ref mut texture_atlas) = sprite.texture_atlas
+        {
+            texture_atlas.index = (texture_atlas.index + 1) % 4;
         }
     }
 }
