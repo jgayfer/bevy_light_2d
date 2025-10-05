@@ -1,4 +1,4 @@
-use bevy::{prelude::*, render::camera::Viewport};
+use bevy::{camera::Viewport, prelude::*};
 use bevy_light_2d::prelude::*;
 
 fn main() {
