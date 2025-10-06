@@ -112,7 +112,7 @@ impl Plugin for Light2dPlugin {
                     SdfPass,
                     LightMapPass,
                     LightingPass,
-                    Node2d::Bloom,
+                    Node2d::StartMainPassPostProcessing,
                 ),
             );
     }
