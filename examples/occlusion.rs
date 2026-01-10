@@ -11,7 +11,12 @@ fn main() {
         .add_systems(Startup, setup)
         .add_systems(
             Update,
-            (move_lights, control_camera_movement, control_camera_zoom),
+            (
+                move_lights,
+                rotate_occluder,
+                control_camera_movement,
+                control_camera_zoom,
+            ),
         )
         .run();
 }
@@ -27,6 +32,9 @@ struct RedLight;
 
 #[derive(Component)]
 struct GreenLight;
+
+#[derive(Component)]
+struct RotatingOccluder;
 
 fn setup(mut commands: Commands) {
     commands.spawn((Camera2d, Light2d::default()));
@@ -112,6 +120,7 @@ fn setup(mut commands: Commands) {
             },
         },
         Transform::from_xyz(0.0, 0.0, 0.0),
+        RotatingOccluder,
     ));
 
     commands.spawn((
@@ -183,6 +192,12 @@ fn move_lights(
     }
     for mut light_transform in &mut green_query {
         light_transform.translation.x = time.elapsed_secs().cos() * 750.
+    }
+}
+
+fn rotate_occluder(mut query: Query<&mut Transform, With<RotatingOccluder>>, time: Res<Time>) {
+    for mut transform in &mut query {
+        transform.rotate_z(time.delta_secs());
     }
 }
 
