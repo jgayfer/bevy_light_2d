@@ -3,12 +3,13 @@ use bevy::ecs::resource::Resource;
 use bevy::ecs::world::{FromWorld, World};
 use bevy::render::render_resource::binding_types::{sampler, texture_2d, uniform_buffer};
 use bevy::render::render_resource::{
-    BindGroupLayout, BindGroupLayoutEntries, CachedRenderPipelineId, ColorTargetState, ColorWrites,
-    FragmentState, GpuArrayBuffer, MultisampleState, PipelineCache, PrimitiveState,
+    BindGroupLayoutDescriptor, BindGroupLayoutEntries, CachedRenderPipelineId, ColorTargetState,
+    ColorWrites, FragmentState, GpuArrayBuffer, MultisampleState, PipelineCache, PrimitiveState,
     RenderPipelineDescriptor, Sampler, SamplerBindingType, SamplerDescriptor, ShaderStages,
     TextureFormat, TextureSampleType,
 };
 use bevy::render::renderer::RenderDevice;
+use bevy::render::settings::WgpuLimits;
 use bevy::render::view::ViewUniform;
 
 use crate::render::extract::{
@@ -22,7 +23,7 @@ const LIGHT_MAP_PIPELINE: &str = "light_map_pipeline";
 
 #[derive(Resource)]
 pub struct LightMapPipeline {
-    pub layout: BindGroupLayout,
+    pub layout_descriptor: BindGroupLayoutDescriptor,
     pub sdf_sampler: Sampler,
     pub pipeline_id: CachedRenderPipelineId,
 }
@@ -32,18 +33,18 @@ impl FromWorld for LightMapPipeline {
         let render_device = world.resource::<RenderDevice>();
         let fullscreen_shader = world.resource::<FullscreenShader>().clone();
 
-        let layout = render_device.create_bind_group_layout(
+        let layout_descriptor = BindGroupLayoutDescriptor::new(
             LIGHT_MAP_BIND_GROUP_LAYOUT,
             &BindGroupLayoutEntries::sequential(
                 ShaderStages::FRAGMENT,
                 (
                     uniform_buffer::<ViewUniform>(true),
                     uniform_buffer::<ExtractedAmbientLight2d>(true),
-                    GpuArrayBuffer::<ExtractedPointLight2d>::binding_layout(render_device),
+                    GpuArrayBuffer::<ExtractedPointLight2d>::binding_layout(&WgpuLimits::defaults()),
                     uniform_buffer::<PointLightMeta>(false),
                     texture_2d(TextureSampleType::Float { filterable: true }),
                     sampler(SamplerBindingType::Filtering),
-                    GpuArrayBuffer::<ExtractedSpotLight2d>::binding_layout(render_device),
+                    GpuArrayBuffer::<ExtractedSpotLight2d>::binding_layout(&WgpuLimits::defaults()),
                     uniform_buffer::<SpotLightMeta>(false),
                 ),
             ),
@@ -56,7 +57,7 @@ impl FromWorld for LightMapPipeline {
                 .resource_mut::<PipelineCache>()
                 .queue_render_pipeline(RenderPipelineDescriptor {
                     label: Some(LIGHT_MAP_PIPELINE.into()),
-                    layout: vec![layout.clone()],
+                    layout: vec![layout_descriptor.clone()],
                     vertex: fullscreen_shader.to_vertex_state(),
                     fragment: Some(FragmentState {
                         shader: LIGHT_MAP_SHADER,
@@ -76,7 +77,7 @@ impl FromWorld for LightMapPipeline {
                 });
 
         Self {
-            layout,
+            layout_descriptor,
             sdf_sampler,
             pipeline_id,
         }

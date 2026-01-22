@@ -3,9 +3,10 @@ use bevy::image::BevyDefault;
 use bevy::prelude::*;
 use bevy::render::render_resource::binding_types::{sampler, texture_2d};
 use bevy::render::render_resource::{
-    BindGroupLayout, BindGroupLayoutEntries, ColorTargetState, ColorWrites, FragmentState,
-    MultisampleState, PrimitiveState, RenderPipelineDescriptor, Sampler, SamplerBindingType,
-    SamplerDescriptor, ShaderStages, SpecializedRenderPipeline, TextureFormat, TextureSampleType,
+    BindGroupLayoutDescriptor, BindGroupLayoutEntries, ColorTargetState, ColorWrites,
+    FragmentState, MultisampleState, PrimitiveState, RenderPipelineDescriptor, Sampler,
+    SamplerBindingType, SamplerDescriptor, ShaderStages, SpecializedRenderPipeline, TextureFormat,
+    TextureSampleType,
 };
 use bevy::render::renderer::RenderDevice;
 use bevy::render::view::ViewTarget;
@@ -17,7 +18,7 @@ const LIGHTING_BIND_GROUP_LAYOUT: &str = "lighting_bind_group_layout";
 
 #[derive(Resource)]
 pub struct LightingPipeline {
-    pub layout: BindGroupLayout,
+    pub layout_descriptor: BindGroupLayoutDescriptor,
     pub sampler: Sampler,
     pub fullscreen_shader: FullscreenShader,
 }
@@ -26,7 +27,7 @@ impl FromWorld for LightingPipeline {
     fn from_world(world: &mut World) -> Self {
         let render_device = world.resource::<RenderDevice>();
 
-        let layout = render_device.create_bind_group_layout(
+        let layout_descriptor = BindGroupLayoutDescriptor::new(
             LIGHTING_BIND_GROUP_LAYOUT,
             &BindGroupLayoutEntries::sequential(
                 ShaderStages::FRAGMENT,
@@ -42,7 +43,7 @@ impl FromWorld for LightingPipeline {
 
         let fullscreen_shader = world.resource::<FullscreenShader>().clone();
         Self {
-            layout,
+            layout_descriptor,
             sampler,
             fullscreen_shader,
         }
@@ -55,7 +56,7 @@ impl SpecializedRenderPipeline for LightingPipeline {
     fn specialize(&self, key: Self::Key) -> RenderPipelineDescriptor {
         RenderPipelineDescriptor {
             label: Some(LIGHTING_PIPELINE.into()),
-            layout: vec![self.layout.clone()],
+            layout: vec![self.layout_descriptor.clone()],
             vertex: self.fullscreen_shader.to_vertex_state(),
             fragment: Some(FragmentState {
                 shader: LIGHTING_SHADER,

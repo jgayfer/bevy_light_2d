@@ -55,7 +55,7 @@ impl ViewNode for SdfNode {
 
         let bind_group = render_context.render_device().create_bind_group(
             SDF_BIND_GROUP,
-            &sdf_pipeline.layout,
+            &pipeline_cache.get_bind_group_layout(&sdf_pipeline.layout_descriptor),
             &BindGroupEntries::sequential((
                 view_uniform_binding.clone(),
                 light_occluders_binding,
