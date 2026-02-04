@@ -6,7 +6,7 @@ use bevy::render::render_resource::{
     ColorWrites, FragmentState, GpuArrayBuffer, MultisampleState, PipelineCache, PrimitiveState,
     RenderPipelineDescriptor, ShaderStages, TextureFormat,
 };
-use bevy::render::settings::WgpuLimits;
+use bevy::render::renderer::RenderDevice;
 use bevy::render::view::ViewUniform;
 
 use crate::render::extract::ExtractedLightOccluder2d;
@@ -25,23 +25,22 @@ pub struct SdfPipeline {
 
 impl FromWorld for SdfPipeline {
     fn from_world(world: &mut World) -> Self {
-        let pipeline_cache = world.resource::<PipelineCache>();
-        let fullscreen_shader = world.resource::<FullscreenShader>();
-
+        let render_device = world.resource::<RenderDevice>();
+        let limits = &render_device.limits();
         let layout_descriptor = BindGroupLayoutDescriptor::new(
             SDF_BIND_GROUP_LAYOUT,
             &BindGroupLayoutEntries::sequential(
                 ShaderStages::FRAGMENT,
                 (
                     uniform_buffer::<ViewUniform>(true),
-                    GpuArrayBuffer::<ExtractedLightOccluder2d>::binding_layout(
-                        &WgpuLimits::defaults(),
-                    ),
+                    GpuArrayBuffer::<ExtractedLightOccluder2d>::binding_layout(limits),
                     uniform_buffer::<PointLightMeta>(false),
                 ),
             ),
         );
 
+        let pipeline_cache = world.resource::<PipelineCache>();
+        let fullscreen_shader = world.resource::<FullscreenShader>();
         let pipeline_id = pipeline_cache.queue_render_pipeline(RenderPipelineDescriptor {
             label: Some(SDF_PIPELINE.into()),
             layout: vec![layout_descriptor.clone()],

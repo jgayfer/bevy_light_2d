@@ -9,7 +9,6 @@ use bevy::render::render_resource::{
     TextureFormat, TextureSampleType,
 };
 use bevy::render::renderer::RenderDevice;
-use bevy::render::settings::WgpuLimits;
 use bevy::render::view::ViewUniform;
 
 use crate::render::extract::{
@@ -31,8 +30,7 @@ pub struct LightMapPipeline {
 impl FromWorld for LightMapPipeline {
     fn from_world(world: &mut World) -> Self {
         let render_device = world.resource::<RenderDevice>();
-        let fullscreen_shader = world.resource::<FullscreenShader>().clone();
-
+        let limits = &render_device.limits();
         let layout_descriptor = BindGroupLayoutDescriptor::new(
             LIGHT_MAP_BIND_GROUP_LAYOUT,
             &BindGroupLayoutEntries::sequential(
@@ -40,18 +38,18 @@ impl FromWorld for LightMapPipeline {
                 (
                     uniform_buffer::<ViewUniform>(true),
                     uniform_buffer::<ExtractedAmbientLight2d>(true),
-                    GpuArrayBuffer::<ExtractedPointLight2d>::binding_layout(&WgpuLimits::defaults()),
+                    GpuArrayBuffer::<ExtractedPointLight2d>::binding_layout(limits),
                     uniform_buffer::<PointLightMeta>(false),
                     texture_2d(TextureSampleType::Float { filterable: true }),
                     sampler(SamplerBindingType::Filtering),
-                    GpuArrayBuffer::<ExtractedSpotLight2d>::binding_layout(&WgpuLimits::defaults()),
+                    GpuArrayBuffer::<ExtractedSpotLight2d>::binding_layout(limits),
                     uniform_buffer::<SpotLightMeta>(false),
                 ),
             ),
         );
 
         let sdf_sampler = render_device.create_sampler(&SamplerDescriptor::default());
-
+        let fullscreen_shader = world.resource::<FullscreenShader>().clone();
         let pipeline_id =
             world
                 .resource_mut::<PipelineCache>()
