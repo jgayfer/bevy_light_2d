@@ -66,13 +66,18 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
         let light = point_lights[i];
         let dist_sq = distance_squared(light.center, pos);
         let radius_sq = square(light.radius);
+        if dist_sq >= radius_sq {
+            continue;
+        }
 
-        if dist_sq < radius_sq {
-            let raymarch = raymarch(pos, light.center);
-            if raymarch > 0.0 || light.cast_shadows == 0 {
-                let dist = sqrt(dist_sq);
-                lighting_color += light.color.rgb * attenuation(dist, light.radius, light.intensity, light.falloff);
-            }
+        let dist = sqrt(dist_sq);
+        let atten = attenuation(dist, light.radius, light.intensity, light.falloff);
+        if atten <= 0.001 {
+            continue;
+        }
+
+        if light.cast_shadows == 0 || raymarch(pos, light.center) > 0.0 {
+            lighting_color += light.color.rgb * atten;
         }
     }
 
@@ -82,15 +87,22 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
         let effective_center = get_effective_spot_light_center(light, pos);
         let dist_sq = distance_squared(effective_center, pos);
         let radius_sq = square(light.radius);
-        if dist_sq < radius_sq {
+        if dist_sq >= radius_sq {
+            continue;
+        }
+
+        let dist = sqrt(dist_sq);
+        let atten = attenuation(dist, light.radius, light.intensity, light.falloff);
+        if atten <= 0.001 {
+            continue;
+        }
+
+        if light.cast_shadows == 0 || raymarch(pos, effective_center) > 0.0 {
             let mask = spot_mask(light, pos, effective_center);
-            if mask > 0.0 {
-                let vis = raymarch(pos, effective_center);
-                if vis > 0.0 || light.cast_shadows == 0u {
-                    let dist = sqrt(dist_sq);
-                    lighting_color += light.color.rgb * attenuation(dist, light.radius, light.intensity, light.falloff) * mask;
-                }
+            if mask <= 0.0 {
+                continue;
             }
+            lighting_color += light.color.rgb * atten * mask;
         }
     }
 
