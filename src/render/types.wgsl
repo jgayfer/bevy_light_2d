@@ -25,8 +25,8 @@ struct SpotLight2d {
     intensity: f32,
     falloff: f32,
     direction: vec2f,
-    inner_angle: f32,
-    outer_angle: f32,
+    cos_inner_angle: f32,
+    cos_outer_angle: f32,
     source_width: f32,
     cast_shadows: u32,
 }

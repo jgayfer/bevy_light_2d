@@ -26,8 +26,8 @@ pub struct ExtractedSpotLight2d {
     pub intensity: f32,
     pub falloff: f32,
     pub direction: Vec2,
-    pub inner_angle: f32,
-    pub outer_angle: f32,
+    pub cos_inner_angle: f32,
+    pub cos_outer_angle: f32,
     pub source_width: f32,
     pub cast_shadows: u32,
 }
@@ -47,10 +47,6 @@ pub fn extract_spot_lights(
         if !view_visibility.get() {
             continue;
         }
-        let direction_radians = spot_light.direction.to_radians();
-        let inner_radians = spot_light.inner_angle.to_radians();
-        let outer_radians = spot_light.outer_angle.to_radians();
-        let spotlight_direction = Vec2::from_angle(direction_radians);
         commands
             .entity(render_entity.id())
             .insert(ExtractedSpotLight2d {
@@ -59,9 +55,9 @@ pub fn extract_spot_lights(
                 color: spot_light.color.to_linear(),
                 intensity: spot_light.intensity,
                 falloff: spot_light.falloff,
-                direction: spotlight_direction,
-                inner_angle: inner_radians,
-                outer_angle: outer_radians,
+                direction: Vec2::from_angle(spot_light.direction).normalize_or_zero(),
+                cos_inner_angle: spot_light.cos_inner_angle,
+                cos_outer_angle: spot_light.cos_outer_angle,
                 source_width: spot_light.source_width,
                 cast_shadows: if spot_light.cast_shadows { 1 } else { 0 },
             });

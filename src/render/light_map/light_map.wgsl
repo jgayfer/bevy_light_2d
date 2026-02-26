@@ -60,7 +60,7 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
     }
 
     var lighting_color = ambient_light.color.rgb;
-    
+
     // Point lights
     for (var i = 0u; i < point_light_meta.count; i++) {
         let light = point_lights[i];
@@ -148,15 +148,13 @@ fn raymarch(ray_origin: vec2<f32>, ray_target: vec2<f32>) -> f32 {
     return 0.0;
 }
 
-// Calculates the mask for a given spotlight. 
+// Calculates the mask for a given spotlight.
 // The direction, inner_angle, and outer_angle can be modulated to control the lit area of the spotlight.
 // Returns: a 0..1 value representing the intensity of a spotlight at a given position
 fn spot_mask(light: SpotLight2d, pos: vec2<f32>, effective_center: vec2<f32>) -> f32 {
     let to_frag = normalize(pos - effective_center);
-    let cos_theta = dot(-to_frag, normalize(light.direction));
-    let cos_inner = cos(light.inner_angle);
-    let cos_outer = cos(light.outer_angle);
-    return clamp(smoothstep(cos_outer, cos_inner, cos_theta), 0.0, 1.0);
+    let cos_theta = dot(-to_frag, light.direction);
+    return clamp(smoothstep(light.cos_outer_angle, light.cos_inner_angle, cos_theta), 0.0, 1.0);
 }
 
 // Calculates the effective center for a light from a given source_width.
@@ -166,19 +164,19 @@ fn get_effective_spot_light_center(light: SpotLight2d, frag_pos: vec2<f32>) -> v
     if (light.source_width <= 0.0) {
         return light.center;
     }
-    
+
     // Compute the direction of the light bar, which is perpendicular to the direction of the light
-    let bar_direction = normalize(vec2<f32>(-light.direction.y, light.direction.x));
-    
+    let bar_direction = vec2<f32>(-light.direction.y, light.direction.x);
+
     // Compute the vector from the effective center of the light to the fragment position
     let to_frag = frag_pos - light.center;
-    
+
     // Compute the projection of the fragment position onto the line defined by the light bar
     let projection = dot(to_frag, bar_direction);
-    
+
     // Clamp the projection within the bounds of the actual width of the light bar
     let half_width = light.source_width * 0.5;
     let clamped_projection = clamp(projection, -half_width, half_width);
-    
+
     return light.center + bar_direction * clamped_projection;
 }

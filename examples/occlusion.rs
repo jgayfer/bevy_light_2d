@@ -1,6 +1,7 @@
 use bevy::{
     color::palettes::css::{BLUE, GREEN, RED, YELLOW},
     input::mouse::MouseWheel,
+    math::ops::cos,
     prelude::*,
 };
 use bevy_light_2d::prelude::*;
@@ -55,14 +56,20 @@ fn setup(mut commands: Commands) {
         BlueLight,
     ));
 
+    let direction: f32 = 90.;
+    let direction = direction.to_radians();
+    let inner_angle: f32 = 180.;
+    let inner_angle = inner_angle.to_radians();
+    let outer_angle: f32 = 120.;
+    let outer_angle = outer_angle.to_radians();
     commands.spawn((
         SpotLight2d {
             intensity: 20.0,
             radius: 500.0,
             falloff: 10.0,
-            direction: 90.0,
-            inner_angle: 180.0,
-            outer_angle: 120.0,
+            direction,
+            cos_inner_angle: cos(inner_angle),
+            cos_outer_angle: cos(outer_angle),
             source_width: 10.0,
             cast_shadows: true,
             color: Color::Srgba(RED),
@@ -76,9 +83,9 @@ fn setup(mut commands: Commands) {
             intensity: 20.0,
             radius: 500.0,
             falloff: 10.0,
-            direction: 90.0,
-            inner_angle: 180.0,
-            outer_angle: 120.0,
+            direction,
+            cos_inner_angle: cos(inner_angle),
+            cos_outer_angle: cos(outer_angle),
             source_width: 10.0,
             cast_shadows: true,
             color: Color::Srgba(GREEN),

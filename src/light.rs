@@ -1,10 +1,10 @@
 //! A module which contains lighting components.
 
 use bevy::{
-    camera::visibility,
-    camera::visibility::{InheritedVisibility, ViewVisibility, Visibility, VisibilityClass},
+    camera::visibility::{self, InheritedVisibility, ViewVisibility, Visibility, VisibilityClass},
     color::Color,
     ecs::{bundle::Bundle, component::Component},
+    math::ops::cos,
     prelude::{ReflectComponent, ReflectDefault},
     reflect::Reflect,
     render::sync_world::SyncToRenderWorld,
@@ -86,12 +86,12 @@ pub struct SpotLight2d {
     /// How quickly illumination from the light should deteriorate over distance.
     /// A higher falloff value will result in less illumination at the light's maximum radius.
     pub falloff: f32,
-    /// The given angle direction (in degrees) of the light.
+    /// The normalized given angle direction (in radians) of the light.
     pub direction: f32,
-    /// The inner angle of the light.
-    pub inner_angle: f32,
-    /// The outer angle of the light.
-    pub outer_angle: f32,
+    /// The cosine of the inner angle (in radians) of the light.
+    pub cos_inner_angle: f32,
+    /// The cosine of the outer angle (in radians) of the light.
+    pub cos_outer_angle: f32,
     /// The width of the segment from where the light begins to emit.
     pub source_width: f32,
     /// Whether the light should cast shadows.
@@ -100,14 +100,17 @@ pub struct SpotLight2d {
 
 impl Default for SpotLight2d {
     fn default() -> Self {
+        let direction: f32 = -90.;
+        let inner_angle: f32 = -180.;
+        let outer_angle: f32 = -90.;
         Self {
             color: Color::WHITE,
             intensity: 1.0,
             radius: 0.5,
             falloff: 0.0,
-            direction: -90.,
-            inner_angle: -180.,
-            outer_angle: -90.,
+            direction: direction.to_radians(),
+            cos_inner_angle: cos(inner_angle.to_radians()),
+            cos_outer_angle: cos(outer_angle.to_radians()),
             source_width: 1.,
             cast_shadows: false,
         }
