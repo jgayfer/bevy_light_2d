@@ -64,12 +64,13 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
     // Point lights
     for (var i = 0u; i < point_light_meta.count; i++) {
         let light = point_lights[i];
-        let dist = distance(light.center, pos);
+        let dist_sq = distance_squared(light.center, pos);
+        let radius_sq = square(light.radius);
 
-        if dist < light.radius {
+        if dist_sq < radius_sq {
             let raymarch = raymarch(pos, light.center);
-
             if raymarch > 0.0 || light.cast_shadows == 0 {
+                let dist = sqrt(dist_sq);
                 lighting_color += light.color.rgb * attenuation(dist, light.radius, light.intensity, light.falloff);
             }
         }
@@ -79,12 +80,14 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
     for (var i = 0u; i < spot_light_meta.count; i++) {
         let light = spot_lights[i];
         let effective_center = get_effective_spot_light_center(light, pos);
-        let dist = distance(effective_center, pos);
-        if dist < light.radius {
+        let dist_sq = distance_squared(effective_center, pos);
+        let radius_sq = square(light.radius);
+        if dist_sq < radius_sq {
             let mask = spot_mask(light, pos, effective_center);
             if mask > 0.0 {
                 let vis = raymarch(pos, effective_center);
                 if vis > 0.0 || light.cast_shadows == 0u {
+                    let dist = sqrt(dist_sq);
                     lighting_color += light.color.rgb * attenuation(dist, light.radius, light.intensity, light.falloff) * mask;
                 }
             }
