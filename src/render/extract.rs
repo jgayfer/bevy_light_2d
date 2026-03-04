@@ -72,6 +72,7 @@ pub fn extract_spot_lights(
 pub struct ExtractedLightOccluder2d {
     pub half_size: Vec2,
     pub center: Vec2,
+    pub rotation: f32,
 }
 
 #[derive(Component, Default, Clone, ShaderType)]
@@ -124,10 +125,14 @@ pub fn extract_light_occluders(
             continue;
         }
 
+        let (_, rotation_quat, translation) = global_transform.to_scale_rotation_translation();
+        let rotation = rotation_quat.to_euler(EulerRot::ZYX).0;
+
         let extracted_occluder = match light_occluder.shape {
             LightOccluder2dShape::Rectangle { half_size } => ExtractedLightOccluder2d {
                 half_size,
-                center: global_transform.translation().xy(),
+                center: translation.xy(),
+                rotation,
             },
         };
 
