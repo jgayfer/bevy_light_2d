@@ -29,8 +29,8 @@ In the [`basic`](https://github.com/jgayfer/bevy_light_2d/blob/main/examples/bas
 ```toml
 # Cargo.toml
 [dependencies]
-bevy = "0.17"
-bevy_light_2d = "0.8"
+bevy = "0.18"
+bevy_light_2d = "0.9"
 ```
 
 ```rust
@@ -71,6 +71,7 @@ general application over depth of features.
 
 | bevy | bevy_light_2d |
 |------|---------------|
+| 0.18 | 0.9           |
 | 0.17 | 0.8           |
 | 0.16 | 0.6..0.7      |
 | 0.15 | 0.5           |

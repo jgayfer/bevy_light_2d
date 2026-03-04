@@ -7,13 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-03-04
+
 ### Added
 
 - Added a `SpotLight2D` component which can be used to create spotlights (#52).
 
 ### Changed
 
-- Adjusted the occlusion example to include spotlights.
+- Adjusted the occlusion example to include spotlights (#52).
+- Updated Bevy version from `0.17` to `0.18` (#60).
 
 ## [0.8.0] - 2025-10-14
 
