@@ -5,7 +5,7 @@ use bevy::{
     core_pipeline::core_2d::graph::{Core2d, Node2d},
     prelude::*,
     render::{
-        Render, RenderApp, RenderSet, extract_component::UniformComponentPlugin,
+        Render, RenderApp, RenderSystems, extract_component::UniformComponentPlugin,
         gpu_component_array_buffer::GpuComponentArrayBufferPlugin, render_graph::RenderGraphExt,
         render_graph::ViewNodeRunner, render_resource::SpecializedRenderPipelines,
         view::prepare_view_targets,
@@ -96,17 +96,17 @@ impl Plugin for Light2dPlugin {
             .add_systems(
                 Render,
                 (
-                    prepare_lighting_pipelines.in_set(RenderSet::Prepare),
-                    prepare_point_light_count.in_set(RenderSet::Prepare),
-                    prepare_spot_light_count.in_set(RenderSet::Prepare),
-                    prepare_occluder_meta.in_set(RenderSet::Prepare),
-                    prepare_empty_buffer.in_set(RenderSet::Prepare),
+                    prepare_lighting_pipelines.in_set(RenderSystems::Prepare),
+                    prepare_point_light_count.in_set(RenderSystems::Prepare),
+                    prepare_spot_light_count.in_set(RenderSystems::Prepare),
+                    prepare_occluder_meta.in_set(RenderSystems::Prepare),
+                    prepare_empty_buffer.in_set(RenderSystems::Prepare),
                     prepare_sdf_texture
                         .after(prepare_view_targets)
-                        .in_set(RenderSet::ManageViews),
+                        .in_set(RenderSystems::ManageViews),
                     prepare_light_map_texture
                         .after(prepare_view_targets)
-                        .in_set(RenderSet::ManageViews),
+                        .in_set(RenderSystems::ManageViews),
                 ),
             )
             .add_render_graph_node::<ViewNodeRunner<LightingNode>>(Core2d, LightingPass)

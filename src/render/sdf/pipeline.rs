@@ -2,8 +2,8 @@ use bevy::core_pipeline::FullscreenShader;
 use bevy::prelude::*;
 use bevy::render::render_resource::binding_types::uniform_buffer;
 use bevy::render::render_resource::{
-    BindGroupLayout, BindGroupLayoutEntries, CachedRenderPipelineId, ColorTargetState, ColorWrites,
-    FragmentState, GpuArrayBuffer, MultisampleState, PipelineCache, PrimitiveState,
+    BindGroupLayoutDescriptor, BindGroupLayoutEntries, CachedRenderPipelineId, ColorTargetState,
+    ColorWrites, FragmentState, GpuArrayBuffer, MultisampleState, PipelineCache, PrimitiveState,
     RenderPipelineDescriptor, ShaderStages, TextureFormat,
 };
 use bevy::render::renderer::RenderDevice;
@@ -19,31 +19,31 @@ const SDF_BIND_GROUP_LAYOUT: &str = "sdf_bind_group_layout";
 
 #[derive(Resource)]
 pub struct SdfPipeline {
-    pub layout: BindGroupLayout,
+    pub layout_descriptor: BindGroupLayoutDescriptor,
     pub pipeline_id: CachedRenderPipelineId,
 }
 
 impl FromWorld for SdfPipeline {
     fn from_world(world: &mut World) -> Self {
         let render_device = world.resource::<RenderDevice>();
-        let pipeline_cache = world.resource::<PipelineCache>();
-        let fullscreen_shader = world.resource::<FullscreenShader>();
-
-        let layout = render_device.create_bind_group_layout(
+        let limits = &render_device.limits();
+        let layout_descriptor = BindGroupLayoutDescriptor::new(
             SDF_BIND_GROUP_LAYOUT,
             &BindGroupLayoutEntries::sequential(
                 ShaderStages::FRAGMENT,
                 (
                     uniform_buffer::<ViewUniform>(true),
-                    GpuArrayBuffer::<ExtractedLightOccluder2d>::binding_layout(render_device),
+                    GpuArrayBuffer::<ExtractedLightOccluder2d>::binding_layout(limits),
                     uniform_buffer::<PointLightMeta>(false),
                 ),
             ),
         );
 
+        let pipeline_cache = world.resource::<PipelineCache>();
+        let fullscreen_shader = world.resource::<FullscreenShader>();
         let pipeline_id = pipeline_cache.queue_render_pipeline(RenderPipelineDescriptor {
             label: Some(SDF_PIPELINE.into()),
-            layout: vec![layout.clone()],
+            layout: vec![layout_descriptor.clone()],
             vertex: fullscreen_shader.to_vertex_state(),
             fragment: Some(FragmentState {
                 shader: SDF_SHADER,
@@ -63,7 +63,7 @@ impl FromWorld for SdfPipeline {
         });
 
         Self {
-            layout,
+            layout_descriptor,
             pipeline_id,
         }
     }

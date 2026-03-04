@@ -79,7 +79,7 @@ impl ViewNode for LightMapNode {
 
         let light_map_bind_group = render_context.render_device().create_bind_group(
             LIGHT_MAP_BIND_GROUP,
-            &light_map_pipeline.layout,
+            &pipeline_cache.get_bind_group_layout(&light_map_pipeline.layout_descriptor),
             &BindGroupEntries::sequential((
                 view_uniform_binding.clone(),
                 ambient_light_uniform.clone(),
