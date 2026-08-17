@@ -70,7 +70,7 @@ impl FromWorld for LightMapPipeline {
                     primitive: PrimitiveState::default(),
                     depth_stencil: None,
                     multisample: MultisampleState::default(),
-                    push_constant_ranges: vec![],
+                    immediate_size: 0,
                     zero_initialize_workgroup_memory: false,
                 });
 

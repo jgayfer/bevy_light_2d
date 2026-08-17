@@ -1,15 +1,13 @@
 use bevy::core_pipeline::FullscreenShader;
-use bevy::image::BevyDefault;
 use bevy::prelude::*;
 use bevy::render::render_resource::binding_types::{sampler, texture_2d};
 use bevy::render::render_resource::{
     BindGroupLayoutDescriptor, BindGroupLayoutEntries, ColorTargetState, ColorWrites,
     FragmentState, MultisampleState, PrimitiveState, RenderPipelineDescriptor, Sampler,
-    SamplerBindingType, SamplerDescriptor, ShaderStages, SpecializedRenderPipeline, TextureFormat,
+    SamplerBindingType, SamplerDescriptor, ShaderStages, SpecializedRenderPipeline,
     TextureSampleType,
 };
 use bevy::render::renderer::RenderDevice;
-use bevy::render::view::ViewTarget;
 
 use super::{LIGHTING_SHADER, LightingPipelineKey};
 
@@ -63,11 +61,7 @@ impl SpecializedRenderPipeline for LightingPipeline {
                 shader_defs: vec![],
                 entry_point: Some("fragment".into()),
                 targets: vec![Some(ColorTargetState {
-                    format: if key.hdr {
-                        ViewTarget::TEXTURE_FORMAT_HDR
-                    } else {
-                        TextureFormat::bevy_default()
-                    },
+                    format: key.target_format,
                     blend: None,
                     write_mask: ColorWrites::ALL,
                 })],
@@ -75,7 +69,7 @@ impl SpecializedRenderPipeline for LightingPipeline {
             primitive: PrimitiveState::default(),
             depth_stencil: None,
             multisample: MultisampleState::default(),
-            push_constant_ranges: vec![],
+            immediate_size: 0,
             zero_initialize_workgroup_memory: false,
         }
     }
