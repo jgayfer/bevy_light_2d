@@ -45,6 +45,9 @@ pub fn extract_spot_lights(
 ) {
     for (render_entity, spot_light, global_transform, view_visibility) in &q {
         if !view_visibility.get() {
+            commands
+                .entity(render_entity.id())
+                .remove::<ExtractedSpotLight2d>();
             continue;
         }
         let direction_radians = spot_light.direction.to_radians();
@@ -92,6 +95,9 @@ pub fn extract_point_lights(
 ) {
     for (render_entity, point_light, global_transform, view_visibility) in &point_light_query {
         if !view_visibility.get() {
+            commands
+                .entity(render_entity.id())
+                .remove::<ExtractedPointLight2d>();
             continue;
         }
         commands
@@ -121,6 +127,9 @@ pub fn extract_light_occluders(
     for (render_entity, light_occluder, global_transform, view_visibility) in &light_occluders_query
     {
         if !view_visibility.get() {
+            commands
+                .entity(render_entity.id())
+                .remove::<ExtractedLightOccluder2d>();
             continue;
         }
 
