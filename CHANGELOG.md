@@ -13,7 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fixed lights and occluders not being removed when `ViewVisibility` is false (#63).
+- Fixed lights and occluders not being removed when hidden (#63).
+- Fixed lights and occluders not rendering when attached to an entity with a
+  `Sprite`, once that sprite left the camera frustum. Visibility is now based on
+  `InheritedVisibility` (whether the entity is hidden) rather than
+  `ViewVisibility` (whether it survived frustum culling), so a sprite's bounds no
+  longer determine whether its light is rendered (#26).
 
 ## [0.9.0] - 2026-03-04
 
