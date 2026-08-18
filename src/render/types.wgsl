@@ -7,6 +7,7 @@ struct AmbientLight2d {
 struct LightOccluder2d {
     half_size: vec2<f32>,
     center: vec2<f32>,
+    rotation: f32,
 }
 
 struct PointLight2d {
