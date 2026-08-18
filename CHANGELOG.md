@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Updated Bevy version from `0.18` to `0.19` (#64).
+
 ### Fixed
 
 - Fixed lights and occluders not being removed when `ViewVisibility` is false (#63).

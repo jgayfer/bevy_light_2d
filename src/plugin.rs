@@ -2,13 +2,12 @@
 
 use bevy::{
     asset::load_internal_asset,
-    core_pipeline::core_2d::graph::{Core2d, Node2d},
+    core_pipeline::{Core2d, Core2dSystems},
     prelude::*,
     render::{
         Render, RenderApp, RenderSystems, extract_component::UniformComponentPlugin,
-        gpu_component_array_buffer::GpuComponentArrayBufferPlugin, render_graph::RenderGraphExt,
-        render_graph::ViewNodeRunner, render_resource::SpecializedRenderPipelines,
-        view::prepare_view_targets,
+        gpu_component_array_buffer::GpuComponentArrayBufferPlugin,
+        render_resource::SpecializedRenderPipelines, view::prepare_view_targets,
     },
 };
 
@@ -23,17 +22,14 @@ use crate::{
             extract_point_lights, extract_spot_lights,
         },
         light_map::{
-            LIGHT_MAP_SHADER, LightMapNode, LightMapPass, LightMapPipeline, PointLightMetaBuffer,
-            SpotLightMetaBuffer, prepare_light_map_texture, prepare_point_light_count,
+            LIGHT_MAP_SHADER, LightMapPipeline, PointLightMetaBuffer, SpotLightMetaBuffer,
+            light_map_pass, prepare_light_map_texture, prepare_point_light_count,
             prepare_spot_light_count,
         },
-        lighting::{
-            LIGHTING_SHADER, LightingNode, LightingPass, LightingPipeline,
-            prepare_lighting_pipelines,
-        },
+        lighting::{LIGHTING_SHADER, LightingPipeline, lighting_pass, prepare_lighting_pipelines},
         sdf::{
-            OccluderMetaBuffer, SDF_SHADER, SdfNode, SdfPass, SdfPipeline, prepare_occluder_meta,
-            prepare_sdf_texture,
+            OccluderMetaBuffer, SDF_SHADER, SdfPipeline, prepare_occluder_meta,
+            prepare_sdf_texture, sdf_pass,
         },
     },
 };
@@ -103,24 +99,18 @@ impl Plugin for Light2dPlugin {
                     prepare_empty_buffer.in_set(RenderSystems::Prepare),
                     prepare_sdf_texture
                         .after(prepare_view_targets)
-                        .in_set(RenderSystems::ManageViews),
+                        .in_set(RenderSystems::PrepareViews),
                     prepare_light_map_texture
                         .after(prepare_view_targets)
-                        .in_set(RenderSystems::ManageViews),
+                        .in_set(RenderSystems::PrepareViews),
                 ),
             )
-            .add_render_graph_node::<ViewNodeRunner<LightingNode>>(Core2d, LightingPass)
-            .add_render_graph_node::<ViewNodeRunner<SdfNode>>(Core2d, SdfPass)
-            .add_render_graph_node::<ViewNodeRunner<LightMapNode>>(Core2d, LightMapPass)
-            .add_render_graph_edges(
+            .add_systems(
                 Core2d,
-                (
-                    Node2d::EndMainPass,
-                    SdfPass,
-                    LightMapPass,
-                    LightingPass,
-                    Node2d::StartMainPassPostProcessing,
-                ),
+                (sdf_pass, light_map_pass, lighting_pass)
+                    .chain()
+                    .after(Core2dSystems::MainPass)
+                    .before(Core2dSystems::EarlyPostProcess),
             );
     }
 

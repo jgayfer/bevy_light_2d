@@ -21,7 +21,9 @@ pub fn prepare_lighting_pipelines(
         let pipeline_id = pipelines.specialize(
             &pipeline_cache,
             &lighting_pipeline,
-            LightingPipelineKey { hdr: view.hdr },
+            LightingPipelineKey {
+                target_format: view.target_format,
+            },
         );
 
         commands

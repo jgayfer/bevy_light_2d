@@ -1,12 +1,10 @@
-use bevy::ecs::system::lifetimeless::Read;
 use bevy::prelude::*;
-use bevy::render::render_graph::ViewNode;
 
 use bevy::render::render_resource::{
     BindGroupEntries, GpuArrayBuffer, Operations, PipelineCache, RenderPassColorAttachment,
     RenderPassDescriptor,
 };
-use bevy::render::renderer::RenderDevice;
+use bevy::render::renderer::{RenderContext, RenderDevice, ViewQuery};
 use bevy::render::view::{ViewUniformOffset, ViewUniforms};
 use smallvec::{SmallVec, smallvec};
 
@@ -19,80 +17,71 @@ use super::{OccluderMetaBuffer, SdfTexture};
 const SDF_PASS: &str = "sdf_pass";
 const SDF_BIND_GROUP: &str = "sdf_bind_group";
 
-#[derive(Default)]
-pub struct SdfNode;
+pub fn sdf_pass(
+    world: &World,
+    view: ViewQuery<(&ViewUniformOffset, &SdfTexture)>,
+    mut ctx: RenderContext,
+) {
+    let (view_offset, sdf_texture) = view.into_inner();
 
-impl ViewNode for SdfNode {
-    type ViewQuery = (Read<ViewUniformOffset>, Read<SdfTexture>);
+    let sdf_pipeline = world.resource::<SdfPipeline>();
+    let pipeline_cache = world.resource::<PipelineCache>();
 
-    fn run<'w>(
-        &self,
-        _graph: &mut bevy::render::render_graph::RenderGraphContext,
-        render_context: &mut bevy::render::renderer::RenderContext<'w>,
-        (view_offset, sdf_texture): bevy::ecs::query::QueryItem<'w, 'w, Self::ViewQuery>,
-        world: &'w World,
-    ) -> Result<(), bevy::render::render_graph::NodeRunError> {
-        let sdf_pipeline = world.resource::<SdfPipeline>();
-        let pipeline_cache = world.resource::<PipelineCache>();
+    let (
+        Some(pipeline),
+        Some(view_uniform_binding),
+        Some(light_occluders_binding),
+        Some(occluder_meta_buffer),
+    ) = (
+        pipeline_cache.get_render_pipeline(sdf_pipeline.pipeline_id),
+        world.resource::<ViewUniforms>().uniforms.binding(),
+        world
+            .resource::<GpuArrayBuffer<ExtractedLightOccluder2d>>()
+            .binding()
+            .or(world.resource::<EmptyBuffer>().binding()),
+        world.resource::<OccluderMetaBuffer>().buffer.binding(),
+    )
+    else {
+        return;
+    };
 
-        let (
-            Some(pipeline),
-            Some(view_uniform_binding),
-            Some(light_occluders_binding),
-            Some(occluder_meta_buffer),
-        ) = (
-            pipeline_cache.get_render_pipeline(sdf_pipeline.pipeline_id),
-            world.resource::<ViewUniforms>().uniforms.binding(),
-            world
-                .resource::<GpuArrayBuffer<ExtractedLightOccluder2d>>()
-                .binding()
-                .or(world.resource::<EmptyBuffer>().binding()),
-            world.resource::<OccluderMetaBuffer>().buffer.binding(),
-        )
-        else {
-            return Ok(());
-        };
+    let bind_group = ctx.render_device().create_bind_group(
+        SDF_BIND_GROUP,
+        &pipeline_cache.get_bind_group_layout(&sdf_pipeline.layout_descriptor),
+        &BindGroupEntries::sequential((
+            view_uniform_binding.clone(),
+            light_occluders_binding,
+            occluder_meta_buffer,
+        )),
+    );
 
-        let bind_group = render_context.render_device().create_bind_group(
-            SDF_BIND_GROUP,
-            &pipeline_cache.get_bind_group_layout(&sdf_pipeline.layout_descriptor),
-            &BindGroupEntries::sequential((
-                view_uniform_binding.clone(),
-                light_occluders_binding,
-                occluder_meta_buffer,
-            )),
-        );
+    let mut sdf_pass = ctx.begin_tracked_render_pass(RenderPassDescriptor {
+        label: Some(SDF_PASS),
+        color_attachments: &[Some(RenderPassColorAttachment {
+            view: &sdf_texture.sdf.default_view,
+            resolve_target: None,
+            ops: Operations::default(),
+            depth_slice: None,
+        })],
+        ..default()
+    });
 
-        let mut sdf_pass = render_context.begin_tracked_render_pass(RenderPassDescriptor {
-            label: Some(SDF_PASS),
-            color_attachments: &[Some(RenderPassColorAttachment {
-                view: &sdf_texture.sdf.default_view,
-                resolve_target: None,
-                ops: Operations::default(),
-                depth_slice: None,
-            })],
-            ..default()
-        });
+    let mut dynamic_offsets: SmallVec<[u32; 3]> = smallvec![view_offset.offset];
 
-        let mut dynamic_offsets: SmallVec<[u32; 3]> = smallvec![view_offset.offset];
-
-        // Storage buffers aren't available in WebGL2. We fall back to a
-        // dynamic uniform buffer, and therefore need to provide the offset.
-        // We're providing a value of 0 here as we're limiting the number of
-        // point lights to only those that can reasonably fit in a single binding.
-        if world
-            .resource::<RenderDevice>()
-            .limits()
-            .max_storage_buffers_per_shader_stage
-            == 0
-        {
-            dynamic_offsets.push(0);
-        }
-
-        sdf_pass.set_render_pipeline(pipeline);
-        sdf_pass.set_bind_group(0, &bind_group, &dynamic_offsets);
-        sdf_pass.draw(0..3, 0..1);
-
-        Ok(())
+    // Storage buffers aren't available in WebGL2. We fall back to a
+    // dynamic uniform buffer, and therefore need to provide the offset.
+    // We're providing a value of 0 here as we're limiting the number of
+    // point lights to only those that can reasonably fit in a single binding.
+    if world
+        .resource::<RenderDevice>()
+        .limits()
+        .max_storage_buffers_per_shader_stage
+        == 0
+    {
+        dynamic_offsets.push(0);
     }
+
+    sdf_pass.set_render_pipeline(pipeline);
+    sdf_pass.set_bind_group(0, &bind_group, &dynamic_offsets);
+    sdf_pass.draw(0..3, 0..1);
 }
