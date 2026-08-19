@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Updated Bevy version from `0.18` to `0.19` (#64).
+- Cull point and spot lights not visible by any camera (#67).
 
 ### Fixed
 
