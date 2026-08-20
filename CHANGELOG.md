@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added `benchmark` example to test performance with many (off screen) lights (#65).
+
 ### Changed
 
 - Updated Bevy version from `0.18` to `0.19` (#64).

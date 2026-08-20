@@ -26,6 +26,9 @@ bevy = { version = "0.19", default-features = false, features = [
     "bevy_winit",
     "bevy_sprite",
     "bevy_sprite_render",
+    "bevy_ui",
+    "bevy_ui_render",
+    "default_font",
     "png",
     "x11",
     "dynamic_linking",
@@ -59,3 +62,7 @@ path = "examples/occlusion.rs"
 [[example]]
 name = "minimap"
 path = "examples/minimap.rs"
+
+[[example]]
+name = "benchmark"
+path = "examples/benchmark.rs"
