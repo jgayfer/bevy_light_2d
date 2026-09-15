@@ -32,6 +32,7 @@ bevy = { version = "0.19", default-features = false, features = [
     "png",
     "x11",
     "dynamic_linking",
+    "bevy_scene",
 ] }
 
 [lints.clippy]
@@ -53,7 +54,7 @@ path = "examples/multiple.rs"
 
 [[example]]
 name = "dungeon"
-path = "examples/dungeon.rs"
+path = "examples/dungeon/main.rs"
 
 [[example]]
 name = "occlusion"

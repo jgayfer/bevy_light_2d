@@ -1,5 +1,8 @@
-use bevy::{color::palettes::css::YELLOW, prelude::*};
+use bevy::prelude::*;
 use bevy_light_2d::prelude::*;
+
+mod candle;
+use candle::{Candle, CandlePlugin};
 
 const TILE_INDEX: f32 = 0.0;
 const ENTITY_INDEX: f32 = 1.0;
@@ -9,13 +12,12 @@ fn main() {
         .add_plugins((
             DefaultPlugins.set(ImagePlugin::default_nearest()),
             Light2dPlugin,
+            CandlePlugin,
         ))
         .init_resource::<DungeonTileset>()
-        .init_resource::<CandleSpritesheet>()
         .add_systems(Startup, (setup_camera, set_clear_color))
         .add_systems(Startup, (setup_dungeon_tileset, spawn_tiles).chain())
-        .add_systems(Startup, (setup_candle_spritesheet, spawn_candles).chain())
-        .add_systems(Update, animate_candles)
+        .add_systems(Startup, candles.spawn())
         .run();
 }
 
@@ -24,18 +26,6 @@ struct DungeonTileset {
     layout: Handle<TextureAtlasLayout>,
     texture: Handle<Image>,
 }
-
-#[derive(Resource, Default)]
-struct CandleSpritesheet {
-    layout: Handle<TextureAtlasLayout>,
-    texture: Handle<Image>,
-}
-
-#[derive(Component)]
-struct Candle;
-
-#[derive(Component, Deref, DerefMut)]
-struct AnimationTimer(Timer);
 
 fn setup_camera(mut commands: Commands) {
     let mut projection = OrthographicProjection::default_2d();
@@ -56,48 +46,10 @@ fn set_clear_color(mut clear_color: ResMut<ClearColor>) {
     clear_color.0 = Color::srgb_u8(37, 19, 26);
 }
 
-fn animate_candles(
-    time: Res<Time>,
-    mut query: Query<(&mut AnimationTimer, &mut Sprite), With<Candle>>,
-) {
-    for (mut timer, mut sprite) in &mut query {
-        timer.tick(time.delta());
-        if timer.just_finished()
-            && let Some(ref mut texture_atlas) = sprite.texture_atlas
-        {
-            texture_atlas.index = (texture_atlas.index + 1) % 4;
-        }
-    }
-}
-
-fn spawn_candles(mut commands: Commands, spritesheet: Res<CandleSpritesheet>) {
-    let light = commands
-        .spawn((
-            Transform::from_xyz(0.0, 4.0, ENTITY_INDEX),
-            PointLight2d {
-                radius: 48.0,
-                color: Color::Srgba(YELLOW),
-                intensity: 2.0,
-                falloff: 4.0,
-                ..default()
-            },
-        ))
-        .id();
-
-    commands
-        .spawn((
-            Candle,
-            AnimationTimer(Timer::from_seconds(0.2, TimerMode::Repeating)),
-            Sprite::from_atlas_image(
-                spritesheet.texture.clone(),
-                TextureAtlas {
-                    layout: spritesheet.layout.clone(),
-                    index: 0,
-                },
-            ),
-            Transform::from_xyz(0., 2., ENTITY_INDEX),
-        ))
-        .add_child(light);
+fn candles() -> impl SceneList {
+    bsn_list! [
+        (@Candle Transform::from_xyz(0., 2., ENTITY_INDEX))
+    ]
 }
 
 fn spawn_tiles(mut commands: Commands, tileset: Res<DungeonTileset>) {
@@ -190,21 +142,6 @@ fn setup_dungeon_tileset(
         UVec2::new(16, 16),
         10,
         10,
-        None,
-        None,
-    ));
-}
-
-fn setup_candle_spritesheet(
-    asset_server: Res<AssetServer>,
-    mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
-    mut candle_spritesheet: ResMut<CandleSpritesheet>,
-) {
-    candle_spritesheet.texture = asset_server.load("candle.png");
-    candle_spritesheet.layout = texture_atlas_layouts.add(TextureAtlasLayout::from_grid(
-        UVec2::new(16, 16),
-        4,
-        1,
         None,
         None,
     ));
