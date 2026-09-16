@@ -9,6 +9,10 @@ use bevy_light_2d::prelude::*;
 const GRID: usize = 100;
 const SPACING: f32 = 100.0;
 const RADIUS: f32 = 80.0;
+// A quarter as many occluders as lights, sitting between the lights.
+const OCCLUDER_GRID: usize = GRID / 2;
+const OCCLUDER_SPACING: f32 = SPACING * 2.0;
+const OCCLUDER_HALF_SIZE: f32 = 10.0;
 
 fn main() {
     App::new()
@@ -41,7 +45,23 @@ fn setup(mut commands: Commands) {
             PointLight2d {
                 radius: RADIUS,
                 intensity: 2.0,
+                cast_shadows: true,
                 ..default()
+            },
+            Transform::from_xyz(x, y, 0.0),
+        ));
+    }
+
+    // Offset by half a light cell so occluders fall between lights rather than on top of them.
+    let occluder_offset = offset - SPACING / 2.0;
+    for i in 0..OCCLUDER_GRID * OCCLUDER_GRID {
+        let x = (i % OCCLUDER_GRID) as f32 * OCCLUDER_SPACING - occluder_offset;
+        let y = (i / OCCLUDER_GRID) as f32 * OCCLUDER_SPACING - occluder_offset;
+        commands.spawn((
+            LightOccluder2d {
+                shape: LightOccluder2dShape::Rectangle {
+                    half_size: Vec2::splat(OCCLUDER_HALF_SIZE),
+                },
             },
             Transform::from_xyz(x, y, 0.0),
         ));
@@ -75,6 +95,7 @@ fn update_readout(
     diagnostics: Res<DiagnosticsStore>,
     frustum: Single<&Frustum, With<Camera2d>>,
     lights: Query<(&GlobalTransform, &PointLight2d)>,
+    occluders: Query<(&GlobalTransform, &LightOccluder2d)>,
     mut text: Single<&mut Text>,
 ) {
     let fps = diagnostics
@@ -95,8 +116,24 @@ fn update_readout(
         })
         .count();
 
+    let occluders_in_view = occluders
+        .iter()
+        .filter(|(transform, occluder)| {
+            let LightOccluder2dShape::Rectangle { half_size } = occluder.shape;
+            // A bounding sphere around the rectangle is a cheap conservative test.
+            frustum.intersects_sphere(
+                &Sphere {
+                    center: transform.translation().into(),
+                    radius: half_size.length(),
+                },
+                false,
+            )
+        })
+        .count();
+
     text.0 = format!(
-        "{fps:.0} fps\n{in_view} of {} lights in view\nscroll to zoom",
-        GRID * GRID
+        "{fps:.0} fps\n{in_view} of {} lights in view\n{occluders_in_view} of {} occluders in view\nscroll to zoom",
+        GRID * GRID,
+        OCCLUDER_GRID * OCCLUDER_GRID
     );
 }
