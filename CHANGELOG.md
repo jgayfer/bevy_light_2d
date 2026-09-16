@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed lights and occluders not being removed when hidden (#63).
-- Fix lights and occluders being culled by their entity's AABB (#26).
+- Fix lights and occluders being culled by their entity's AABB (#65).
 
 ## [0.9.0] - 2026-03-04
 
