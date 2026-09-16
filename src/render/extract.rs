@@ -1,5 +1,6 @@
 use bevy::{
     camera::primitives::Frustum,
+    math::bounding::{BoundingCircle, IntersectsVolume},
     prelude::*,
     render::{Extract, render_resource::ShaderType, sync_world::RenderEntity},
 };
@@ -153,11 +154,34 @@ pub fn extract_light_occluders(
             &InheritedVisibility,
         )>,
     >,
+    extracted_point_lights: Query<&ExtractedPointLight2d>,
+    extracted_spot_lights: Query<&ExtractedSpotLight2d>,
 ) {
     for (render_entity, light_occluder, global_transform, inherited_visibility) in
         &light_occluders_query
     {
         if !inherited_visibility.get() {
+            commands
+                .entity(render_entity.id())
+                .remove::<ExtractedLightOccluder2d>();
+            continue;
+        }
+
+        let occluder_aabb = light_occluder
+            .shape
+            .aabb(global_transform.translation().xy());
+
+        let reached_by_point_light = extracted_point_lights.iter().any(|light| {
+            light.cast_shadows == 1
+                && occluder_aabb.intersects(&BoundingCircle::new(light.transform, light.radius))
+        });
+
+        let reached_by_spot_light = extracted_spot_lights.iter().any(|light| {
+            light.cast_shadows == 1
+                && occluder_aabb.intersects(&BoundingCircle::new(light.center, light.radius))
+        });
+
+        if !reached_by_spot_light && !reached_by_point_light {
             commands
                 .entity(render_entity.id())
                 .remove::<ExtractedLightOccluder2d>();

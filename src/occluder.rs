@@ -3,7 +3,7 @@
 use bevy::{
     camera::visibility::{self, InheritedVisibility, ViewVisibility, Visibility, VisibilityClass},
     ecs::{bundle::Bundle, component::Component},
-    math::Vec2,
+    math::{Vec2, bounding::Aabb2d},
     render::sync_world::SyncToRenderWorld,
     transform::components::{GlobalTransform, Transform},
 };
@@ -32,6 +32,14 @@ impl Default for LightOccluder2dShape {
     fn default() -> Self {
         Self::Rectangle {
             half_size: Vec2::splat(0.0),
+        }
+    }
+}
+
+impl LightOccluder2dShape {
+    pub(crate) fn aabb(&self, center: Vec2) -> Aabb2d {
+        match self {
+            Self::Rectangle { half_size } => Aabb2d::new(center, *half_size),
         }
     }
 }
