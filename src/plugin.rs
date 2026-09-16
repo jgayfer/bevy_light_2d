@@ -83,10 +83,12 @@ impl Plugin for Light2dPlugin {
             .add_systems(
                 ExtractSchedule,
                 (
-                    extract_point_lights,
-                    extract_light_occluders,
+                    (
+                        (extract_point_lights, extract_spot_lights),
+                        extract_light_occluders,
+                    )
+                        .chain(),
                     extract_ambient_lights,
-                    extract_spot_lights,
                 ),
             )
             .add_systems(
