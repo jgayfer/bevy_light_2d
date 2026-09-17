@@ -7,8 +7,8 @@
 // WebGL2, which is limited to 4kb in BatchedUniformBuffer, so we need to
 // ensure our occluders can fit in 4kb.
 //
-// As each occluder is 16 bytes, we can fit 4096 / 16 = 256 occluders.
-const MAX_OCCLUDERS: u32 = 256u;
+// As each occluder is 24 bytes (with padding), we can fit 4096 / 24 = 170 occluders.
+const MAX_OCCLUDERS: u32 = 170u;
 
 @group(0) @binding(0)
 var<uniform> view: View;
@@ -54,7 +54,15 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
 
 fn occluder_sd(p: vec2f, occluder: LightOccluder2d) -> f32 {
   let local_pos = occluder.center - p;
-  let d = abs(local_pos) - occluder.half_size;
 
+  // Rotate into occluder's local space (negate rotation to go world→local)
+  let cos_r = cos(-occluder.rotation);
+  let sin_r = sin(-occluder.rotation);
+  let rotated_pos = vec2f(
+    local_pos.x * cos_r - local_pos.y * sin_r,
+    local_pos.x * sin_r + local_pos.y * cos_r
+  );
+
+  let d = abs(rotated_pos) - occluder.half_size;
   return length(max(d, vec2f(0.))) + min(max(d.x, d.y), 0.);
 }
