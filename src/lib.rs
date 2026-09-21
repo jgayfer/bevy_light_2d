@@ -6,6 +6,7 @@ pub mod light;
 pub mod occluder;
 pub mod plugin;
 mod render;
+mod visibility;
 
 /// A module which exports commonly used dependencies.
 pub mod prelude {
