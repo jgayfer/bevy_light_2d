@@ -1,5 +1,4 @@
 use bevy::{
-    camera::primitives::Frustum,
     math::bounding::{BoundingCircle, IntersectsVolume},
     prelude::*,
     render::{Extract, render_resource::ShaderType, sync_world::RenderEntity},
@@ -41,20 +40,12 @@ pub fn extract_spot_lights(
             &RenderEntity,
             &SpotLight2d,
             &GlobalTransform,
-            &InheritedVisibility,
+            &ViewVisibility,
         )>,
     >,
-    frustum_query: Extract<Query<&Frustum, (With<Camera2d>, With<Light2d>)>>,
 ) {
-    for (render_entity, spot_light, global_transform, inherited_visibility) in &q {
-        let center = global_transform.translation().xy();
-
-        let visible = inherited_visibility.get()
-            && frustum_query
-                .iter()
-                .any(|frustum| circle_intersects_frustum(frustum, center, spot_light.radius));
-
-        if !visible {
+    for (render_entity, spot_light, global_transform, view_visibility) in &q {
+        if !view_visibility.get() {
             commands
                 .entity(render_entity.id())
                 .remove::<ExtractedSpotLight2d>();
@@ -99,19 +90,14 @@ pub fn extract_point_lights(
             &RenderEntity,
             &PointLight2d,
             &GlobalTransform,
-            &InheritedVisibility,
+            &ViewVisibility,
         )>,
     >,
-    frustum_query: Extract<Query<&Frustum, (With<Camera2d>, With<Light2d>)>>,
 ) {
-    for (render_entity, point_light, global_transform, inherited_visibility) in &point_light_query {
+    for (render_entity, point_light, global_transform, view_visibility) in &point_light_query {
         let center = global_transform.translation().xy();
-        let visible = inherited_visibility.get()
-            && frustum_query
-                .iter()
-                .any(|frustum| circle_intersects_frustum(frustum, center, point_light.radius));
 
-        if !visible {
+        if !view_visibility.get() {
             commands
                 .entity(render_entity.id())
                 .remove::<ExtractedPointLight2d>();
@@ -128,20 +114,6 @@ pub fn extract_point_lights(
                 cast_shadows: if point_light.cast_shadows { 1 } else { 0 },
             });
     }
-}
-
-fn circle_intersects_frustum(frustum: &Frustum, center: Vec2, radius: f32) -> bool {
-    // Lights reach the GPU as 2d positions and the light map isn't depth tested, so z is dropped
-    // here too, along with the near and far half-spaces that bound the camera in depth. Culling on
-    // depth would hide lights that still light the scene.
-    let center = center.extend(0.0).extend(1.0);
-    let [left, right, top, bottom, ..] = frustum.half_spaces;
-
-    [left, right, top, bottom].iter().all(|edge| {
-        // Distance from the light's centre to this edge of the screen, positive towards the
-        // inside. Adding the radius asks whether any part of the light reaches in.
-        edge.normal_d().dot(center) + radius > 0.0
-    })
 }
 
 pub fn extract_light_occluders(

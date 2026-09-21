@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Use Bevy's VisibilityPlugin for light source culling (#70).
+
 ## [0.10.0] - 2026-09-15
 
 ### Added

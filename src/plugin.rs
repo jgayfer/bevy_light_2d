@@ -2,6 +2,7 @@
 
 use bevy::{
     asset::load_internal_asset,
+    camera::visibility::VisibilitySystems,
     core_pipeline::{Core2d, Core2dSystems},
     prelude::*,
     render::{
@@ -32,6 +33,7 @@ use crate::{
             prepare_sdf_texture, sdf_pass,
         },
     },
+    visibility::calculate_light_bounds,
 };
 
 /// A plugin that provides 2d lighting for an app.
@@ -69,6 +71,11 @@ impl Plugin for Light2dPlugin {
         .register_type::<AmbientLight2d>()
         .register_type::<PointLight2d>()
         .register_type::<SpotLight2d>();
+
+        app.add_systems(
+            PostUpdate,
+            calculate_light_bounds.in_set(VisibilitySystems::CalculateBounds),
+        );
 
         let Some(render_app) = app.get_sub_app_mut(RenderApp) else {
             return;
