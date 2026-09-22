@@ -3,10 +3,11 @@
 use bevy::{
     camera::visibility::{self, InheritedVisibility, ViewVisibility, Visibility, VisibilityClass},
     ecs::{bundle::Bundle, component::Component},
-    math::{Vec2, bounding::Aabb2d},
+    math::Vec2,
     prelude::{Deref, ReflectComponent, ReflectDefault},
     reflect::Reflect,
     render::sync_world::SyncToRenderWorld,
+    shape::Aabb2d,
     transform::components::{GlobalTransform, Transform},
 };
 
