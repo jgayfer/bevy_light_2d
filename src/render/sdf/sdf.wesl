@@ -1,7 +1,6 @@
-#import bevy_core_pipeline::fullscreen_vertex_shader::FullscreenVertexOutput
-#import bevy_render::view::View
-#import bevy_light_2d::types::{LightOccluder2d, OccluderMeta};
-#import bevy_light_2d::view_transformations::{frag_coord_to_ndc, ndc_to_world};
+import bevy_core_pipeline::fullscreen_vertex_shader::FullscreenVertexOutput;
+import bevy_light_2d::render::types::{LightOccluder2d, OccluderMeta};
+import bevy_light_2d::render::view_transformations::{frag_coord_to_ndc, ndc_to_world};
 
 // We're currently only using a single uniform binding for occluders in
 // WebGL2, which is limited to 4kb in BatchedUniformBuffer, so we need to
@@ -10,18 +9,14 @@
 // As each occluder is 16 bytes, we can fit 4096 / 16 = 256 occluders.
 const MAX_OCCLUDERS: u32 = 256u;
 
-@group(0) @binding(0)
-var<uniform> view: View;
-
 // WebGL2 does not support storage buffers, so we fall back to a fixed length
 // array in a uniform buffer.
-#if AVAILABLE_STORAGE_BUFFER_BINDINGS >= 6
+@if(AVAILABLE_STORAGE_BUFFER_BINDINGS__GE_6)
     @group(0) @binding(1)
     var<storage> occluders: array<LightOccluder2d>;
-#else
+@else
     @group(0) @binding(1)
     var<uniform> occluders: array<LightOccluder2d, MAX_OCCLUDERS>;
-#endif
 
 @group(0) @binding(2)
 var<uniform> occluder_meta: OccluderMeta;
@@ -32,11 +27,10 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
 
     // WebGL2 does not support storage buffers (or runtime sized arrays), so we
     // need to use a fixed number of occluders.
-#if AVAILABLE_STORAGE_BUFFER_BINDINGS >= 6
-    let occluder_count = occluder_meta.count;
-#else
-    let occluder_count = min(MAX_OCCLUDERS, occluder_meta.count);
-#endif
+    @if(AVAILABLE_STORAGE_BUFFER_BINDINGS__GE_6)
+        let occluder_count = occluder_meta.count;
+    @else
+        let occluder_count = min(MAX_OCCLUDERS, occluder_meta.count);
 
     // If there aren't any occluders, use the max value for the texture.
     if (occluder_count == 0) {

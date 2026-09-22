@@ -42,7 +42,7 @@ impl Candle {
                     }
                 },
             }
-            Children [(
+            Children [
                 PointLight2d {
                     radius: 48.0,
                     color: Color::Srgba(YELLOW),
@@ -50,7 +50,7 @@ impl Candle {
                     falloff: 4.0,
                 }
                 Transform::from_xyz(0.0, 4.0, 0.0)
-            )]
+            ]
         }
     }
 }

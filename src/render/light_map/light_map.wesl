@@ -1,11 +1,10 @@
-#import bevy_core_pipeline::fullscreen_vertex_shader::FullscreenVertexOutput
-#import bevy_render::view::View
-#import bevy_light_2d::types::{AmbientLight2d, PointLight2d, PointLightMeta, SpotLight2d, SpotLightMeta}
-#import bevy_light_2d::view_transformations::{
+import bevy_core_pipeline::fullscreen_vertex_shader::FullscreenVertexOutput;
+import bevy_light_2d::render::types::{AmbientLight2d, PointLight2d, PointLightMeta, SpotLight2d, SpotLightMeta};
+import bevy_light_2d::render::view_transformations::{
     frag_coord_to_ndc,
     ndc_to_world,
     ndc_to_uv,
-    world_to_ndc
+    world_to_ndc,
 };
 
 // We're currently only using a single uniform binding for point lights in
@@ -14,21 +13,17 @@
 const MAX_POINT_LIGHTS: u32 = 82u;
 const MAX_SPOT_LIGHTS:  u32 = 64u;
 
-@group(0) @binding(0)
-var<uniform> view: View;
-
 @group(0) @binding(1)
 var<uniform> ambient_light: AmbientLight2d;
 
 // WebGL2 does not support storage buffers, so we fall back to a fixed length
 // array in a uniform buffer.
-#if AVAILABLE_STORAGE_BUFFER_BINDINGS >= 6
+@if(AVAILABLE_STORAGE_BUFFER_BINDINGS__GE_6)
     @group(0) @binding(2)
     var<storage> point_lights: array<PointLight2d>;
-#else
+@else
     @group(0) @binding(2)
     var<uniform> point_lights: array<PointLight2d, MAX_POINT_LIGHTS>;
-#endif
 
 @group(0) @binding(3)
 var<uniform> point_light_meta: PointLightMeta;
@@ -40,13 +35,12 @@ var sdf: texture_2d<f32>;
 var sdf_sampler: sampler;
 
 // Spot lights: SSBO on modern backends, UBO array on WebGL2
-#if AVAILABLE_STORAGE_BUFFER_BINDINGS >= 6
+@if(AVAILABLE_STORAGE_BUFFER_BINDINGS__GE_6)
     @group(0) @binding(6)
     var<storage> spot_lights: array<SpotLight2d>;
-#else
+@else
     @group(0) @binding(6)
     var<uniform> spot_lights: array<SpotLight2d, MAX_SPOT_LIGHTS>;
-#endif
 
 @group(0) @binding(7)
 var<uniform> spot_light_meta: SpotLightMeta;

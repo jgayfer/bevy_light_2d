@@ -1,3 +1,4 @@
+use bevy::asset::load_embedded_asset;
 use bevy::core_pipeline::FullscreenShader;
 use bevy::prelude::*;
 use bevy::render::render_resource::binding_types::uniform_buffer;
@@ -11,8 +12,6 @@ use bevy::render::view::ViewUniform;
 
 use crate::render::extract::ExtractedLightOccluder2d;
 use crate::render::light_map::PointLightMeta;
-
-use super::SDF_SHADER;
 
 const SDF_PIPELINE: &str = "sdf_pipeline";
 const SDF_BIND_GROUP_LAYOUT: &str = "sdf_bind_group_layout";
@@ -39,6 +38,7 @@ impl FromWorld for SdfPipeline {
             ),
         );
 
+        let shader = load_embedded_asset!(world, "sdf.wesl");
         let pipeline_cache = world.resource::<PipelineCache>();
         let fullscreen_shader = world.resource::<FullscreenShader>();
         let pipeline_id = pipeline_cache.queue_render_pipeline(RenderPipelineDescriptor {
@@ -46,7 +46,7 @@ impl FromWorld for SdfPipeline {
             layout: vec![layout_descriptor.clone()],
             vertex: fullscreen_shader.to_vertex_state(),
             fragment: Some(FragmentState {
-                shader: SDF_SHADER,
+                shader,
                 shader_defs: vec![],
                 entry_point: Some("fragment".into()),
                 targets: vec![Some(ColorTargetState {
@@ -54,6 +54,7 @@ impl FromWorld for SdfPipeline {
                     blend: None,
                     write_mask: ColorWrites::ALL,
                 })],
+                constants: Vec::new(),
             }),
             primitive: PrimitiveState::default(),
             depth_stencil: None,

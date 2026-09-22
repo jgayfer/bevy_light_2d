@@ -1,3 +1,4 @@
+use bevy::asset::load_embedded_asset;
 use bevy::core_pipeline::FullscreenShader;
 use bevy::prelude::*;
 use bevy::render::render_resource::binding_types::{sampler, texture_2d};
@@ -9,7 +10,7 @@ use bevy::render::render_resource::{
 };
 use bevy::render::renderer::RenderDevice;
 
-use super::{LIGHTING_SHADER, LightingPipelineKey};
+use super::LightingPipelineKey;
 
 const LIGHTING_PIPELINE: &str = "lighting_pipeline";
 const LIGHTING_BIND_GROUP_LAYOUT: &str = "lighting_bind_group_layout";
@@ -19,6 +20,7 @@ pub struct LightingPipeline {
     pub layout_descriptor: BindGroupLayoutDescriptor,
     pub sampler: Sampler,
     pub fullscreen_shader: FullscreenShader,
+    pub shader: Handle<Shader>,
 }
 
 impl FromWorld for LightingPipeline {
@@ -40,10 +42,12 @@ impl FromWorld for LightingPipeline {
         let sampler = render_device.create_sampler(&SamplerDescriptor::default());
 
         let fullscreen_shader = world.resource::<FullscreenShader>().clone();
+        let shader = load_embedded_asset!(world, "lighting.wesl");
         Self {
             layout_descriptor,
             sampler,
             fullscreen_shader,
+            shader,
         }
     }
 }
@@ -57,7 +61,7 @@ impl SpecializedRenderPipeline for LightingPipeline {
             layout: vec![self.layout_descriptor.clone()],
             vertex: self.fullscreen_shader.to_vertex_state(),
             fragment: Some(FragmentState {
-                shader: LIGHTING_SHADER,
+                shader: self.shader.clone(),
                 shader_defs: vec![],
                 entry_point: Some("fragment".into()),
                 targets: vec![Some(ColorTargetState {
@@ -65,6 +69,7 @@ impl SpecializedRenderPipeline for LightingPipeline {
                     blend: None,
                     write_mask: ColorWrites::ALL,
                 })],
+                constants: Vec::new(),
             }),
             primitive: PrimitiveState::default(),
             depth_stencil: None,
