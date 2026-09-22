@@ -4,6 +4,8 @@ use bevy::{
     camera::visibility::{self, InheritedVisibility, ViewVisibility, Visibility, VisibilityClass},
     ecs::{bundle::Bundle, component::Component},
     math::{Vec2, bounding::Aabb2d},
+    prelude::{Deref, ReflectComponent, ReflectDefault},
+    reflect::Reflect,
     render::sync_world::SyncToRenderWorld,
     transform::components::{GlobalTransform, Transform},
 };
@@ -12,7 +14,13 @@ use bevy::{
 ///
 /// This is commonly used as a component within [`LightOcluder2dBundle`].
 #[derive(Default, Component)]
-#[require(SyncToRenderWorld, Transform, Visibility, VisibilityClass)]
+#[require(
+    SyncToRenderWorld,
+    Transform,
+    Visibility,
+    VisibilityClass,
+    LightOccluder2dVisibility
+)]
 #[component(on_add = visibility::add_visibility_class::<LightOccluder2d>)]
 pub struct LightOccluder2d {
     /// The shape of the light occluder.
@@ -41,6 +49,35 @@ impl LightOccluder2dShape {
         match self {
             Self::Rectangle { half_size } => Aabb2d::new(center, *half_size),
         }
+    }
+}
+
+/// Whether an occluder is "visible". That is, whether an occluder is in range of
+/// any visible light sources.
+///
+/// Unlike light sources, occluders can't be culled by checking if they intersect
+/// the view, as off screen occluders can still occlude visible light sources that
+/// originate outside the view.
+///
+/// This computed component keeps track of which occluders should be considered
+/// for rendering. It should not be set manually.
+///
+/// To change the "visibility" of an occluder, use [`Visibility`] instead.
+#[derive(Component, Deref, Debug, Default, Clone, Copy, Reflect, PartialEq, Eq)]
+#[reflect(Component, Default, Debug, PartialEq, Clone)]
+pub struct LightOccluder2dVisibility(pub(crate) bool);
+
+impl LightOccluder2dVisibility {
+    /// An occluder that does not intersect any visible light sources.
+    pub const HIDDEN: Self = Self(false);
+    /// An occluder that intersects with at least one visible light source.
+    pub const VISIBLE: Self = Self(true);
+
+    /// Returns `true` if the occluder intersects with at least one visible light
+    /// source. Otherwise, returns `false`.
+    #[inline]
+    pub fn get(self) -> bool {
+        self.0
     }
 }
 

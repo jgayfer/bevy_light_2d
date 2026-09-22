@@ -2,6 +2,7 @@
 
 use bevy::{
     asset::load_internal_asset,
+    camera::visibility::VisibilitySystems,
     core_pipeline::{Core2d, Core2dSystems},
     prelude::*,
     render::{
@@ -13,6 +14,7 @@ use bevy::{
 
 use crate::{
     light::{AmbientLight2d, PointLight2d, SpotLight2d},
+    occluder::LightOccluder2dVisibility,
     render::{
         TYPES_SHADER, VIEW_TRANSFORMATIONS_SHADER,
         empty_buffer::{EmptyBuffer, prepare_empty_buffer},
@@ -32,6 +34,7 @@ use crate::{
             prepare_sdf_texture, sdf_pass,
         },
     },
+    visibility::{calculate_light_bounds, check_occluder_visibility},
 };
 
 /// A plugin that provides 2d lighting for an app.
@@ -68,7 +71,18 @@ impl Plugin for Light2dPlugin {
         ))
         .register_type::<AmbientLight2d>()
         .register_type::<PointLight2d>()
-        .register_type::<SpotLight2d>();
+        .register_type::<SpotLight2d>()
+        .register_type::<LightOccluder2dVisibility>();
+
+        app.add_systems(
+            PostUpdate,
+            calculate_light_bounds.in_set(VisibilitySystems::CalculateBounds),
+        );
+
+        app.add_systems(
+            PostUpdate,
+            check_occluder_visibility.after(VisibilitySystems::CheckVisibility),
+        );
 
         let Some(render_app) = app.get_sub_app_mut(RenderApp) else {
             return;
@@ -83,11 +97,9 @@ impl Plugin for Light2dPlugin {
             .add_systems(
                 ExtractSchedule,
                 (
-                    (
-                        (extract_point_lights, extract_spot_lights),
-                        extract_light_occluders,
-                    )
-                        .chain(),
+                    extract_point_lights,
+                    extract_spot_lights,
+                    extract_light_occluders,
                     extract_ambient_lights,
                 ),
             )
