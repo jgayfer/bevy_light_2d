@@ -47,9 +47,9 @@ fn set_clear_color(mut clear_color: ResMut<ClearColor>) {
 }
 
 fn candles() -> impl SceneList {
-    bsn_list! [
-        (@Candle Transform::from_xyz(0., 2., ENTITY_INDEX))
-    ]
+    bsn_list! {
+        @Candle Transform::from_xyz(0., 2., ENTITY_INDEX)
+    }
 }
 
 fn spawn_tiles(mut commands: Commands, tileset: Res<DungeonTileset>) {

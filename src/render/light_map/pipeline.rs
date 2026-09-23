@@ -1,3 +1,4 @@
+use bevy::asset::load_embedded_asset;
 use bevy::core_pipeline::FullscreenShader;
 use bevy::ecs::resource::Resource;
 use bevy::ecs::world::{FromWorld, World};
@@ -15,7 +16,7 @@ use crate::render::extract::{
     ExtractedAmbientLight2d, ExtractedPointLight2d, ExtractedSpotLight2d,
 };
 
-use super::{LIGHT_MAP_SHADER, PointLightMeta, SpotLightMeta};
+use super::{PointLightMeta, SpotLightMeta};
 
 const LIGHT_MAP_BIND_GROUP_LAYOUT: &str = "light_map_group_layout";
 const LIGHT_MAP_PIPELINE: &str = "light_map_pipeline";
@@ -50,6 +51,7 @@ impl FromWorld for LightMapPipeline {
 
         let sdf_sampler = render_device.create_sampler(&SamplerDescriptor::default());
         let fullscreen_shader = world.resource::<FullscreenShader>().clone();
+        let shader = load_embedded_asset!(world, "light_map.wesl");
         let pipeline_id =
             world
                 .resource_mut::<PipelineCache>()
@@ -58,7 +60,7 @@ impl FromWorld for LightMapPipeline {
                     layout: vec![layout_descriptor.clone()],
                     vertex: fullscreen_shader.to_vertex_state(),
                     fragment: Some(FragmentState {
-                        shader: LIGHT_MAP_SHADER,
+                        shader,
                         shader_defs: vec![],
                         entry_point: Some("fragment".into()),
                         targets: vec![Some(ColorTargetState {
@@ -66,6 +68,7 @@ impl FromWorld for LightMapPipeline {
                             blend: None,
                             write_mask: ColorWrites::ALL,
                         })],
+                        constants: Vec::new(),
                     }),
                     primitive: PrimitiveState::default(),
                     depth_stencil: None,

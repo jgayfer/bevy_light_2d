@@ -1,6 +1,4 @@
-#define_import_path bevy_light_2d::view_transformations
-
-#import bevy_render::view::View
+import bevy_render::view::View;
 
 @group(0) @binding(0) var<uniform> view: View;
 
