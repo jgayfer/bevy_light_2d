@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added `Clone` and `Default` to all components to ensure bsn! support (#74).
+- Added occluder z-sorting (#75).
 
 ### Changed
 
