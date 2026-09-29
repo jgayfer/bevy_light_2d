@@ -9,8 +9,9 @@ fn main() {
 }
 
 fn scene() -> impl SceneList {
-    bsn_list![
-        Camera2d Light2d,
+    bsn_list! {
+        Camera2d Light2d
+        --
         PointLight2d { intensity: 3.0, radius: 100.0 }
-    ]
+    }
 }
