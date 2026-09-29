@@ -83,6 +83,11 @@ pub struct ExtractedAmbientLight2d {
     pub color: LinearRgba,
 }
 
+#[derive(Component, Default, Clone, Copy)]
+pub struct ExtractedLight2d {
+    pub z_sorting: bool,
+}
+
 pub fn extract_point_lights(
     mut commands: Commands,
     point_light_query: Extract<
@@ -156,10 +161,13 @@ pub fn extract_ambient_lights(
     light_2d_query: Extract<Query<(&RenderEntity, &Light2d)>>,
 ) {
     for (render_entity, light_2d) in &light_2d_query {
-        commands
-            .entity(render_entity.id())
-            .insert(ExtractedAmbientLight2d {
+        commands.entity(render_entity.id()).insert((
+            ExtractedAmbientLight2d {
                 color: light_2d.ambient_light.color.to_linear() * light_2d.ambient_light.brightness,
-            });
+            },
+            ExtractedLight2d {
+                z_sorting: light_2d.z_sorting,
+            },
+        ));
     }
 }
