@@ -2,11 +2,11 @@ use bevy::prelude::*;
 use bevy::render::extract_component::{ComponentUniforms, DynamicUniformIndex};
 
 use bevy::render::render_resource::{
-    BindGroupEntries, GpuArrayBuffer, Operations, PipelineCache, RenderPassColorAttachment,
-    RenderPassDescriptor,
+    BindGroupEntries, BindGroupEntry, BindingResource, GpuArrayBuffer, Operations, PipelineCache,
+    RenderPassColorAttachment, RenderPassDescriptor,
 };
 use bevy::render::renderer::{RenderContext, RenderDevice, ViewQuery};
-use bevy::render::view::{ViewUniformOffset, ViewUniforms};
+use bevy::render::view::{ViewDepthTexture, ViewUniformOffset, ViewUniforms};
 use smallvec::{SmallVec, smallvec};
 
 use crate::render::empty_buffer::EmptyBuffer;
@@ -15,7 +15,11 @@ use crate::render::extract::{
 };
 use crate::render::sdf::SdfTexture;
 
-use super::{LightMapPipeline, LightMapTexture, PointLightMetaBuffer, SpotLightMetaBuffer};
+use super::pipeline::DEPTH_TEXTURE_BINDING;
+use super::{
+    LightMapPipeline, LightMapPipelineId, LightMapTexture, PointLightMetaBuffer,
+    SpotLightMetaBuffer,
+};
 
 const LIGHT_MAP_PASS: &str = "light_map_pass";
 const LIGHT_MAP_BIND_GROUP: &str = "light_map_bind_group";
@@ -27,10 +31,13 @@ pub fn light_map_pass(
         &ViewUniformOffset,
         &LightMapTexture,
         &SdfTexture,
+        &LightMapPipelineId,
+        Option<&ViewDepthTexture>,
     )>,
     mut ctx: RenderContext,
 ) {
-    let (ambient_index, view_offset, light_map_texture, sdf_texture) = view.into_inner();
+    let (ambient_index, view_offset, light_map_texture, sdf_texture, pipeline_id, depth_texture) =
+        view.into_inner();
 
     let light_map_pipeline = world.resource::<LightMapPipeline>();
     let pipeline_cache = world.resource::<PipelineCache>();
@@ -44,7 +51,7 @@ pub fn light_map_pass(
         Some(spot_light_binding),
         Some(spot_light_count_binding),
     ) = (
-        pipeline_cache.get_render_pipeline(light_map_pipeline.pipeline_id),
+        pipeline_cache.get_render_pipeline(pipeline_id.id),
         world.resource::<ViewUniforms>().uniforms.binding(),
         world
             .resource::<ComponentUniforms<ExtractedAmbientLight2d>>()
@@ -65,19 +72,33 @@ pub fn light_map_pass(
         return;
     };
 
+    let mut entries = BindGroupEntries::sequential((
+        view_uniform_binding.clone(),
+        ambient_light_uniform.clone(),
+        point_light_binding.clone(),
+        point_light_count_binding.clone(),
+        &sdf_texture.sdf.default_view,
+        &light_map_pipeline.sdf_sampler,
+        spot_light_binding.clone(),
+        spot_light_count_binding.clone(),
+    ))
+    .to_vec();
+
+    if pipeline_id.key.z_sorting {
+        let Some(depth_texture) = depth_texture else {
+            return;
+        };
+        entries.push(BindGroupEntry {
+            binding: DEPTH_TEXTURE_BINDING,
+            resource: BindingResource::TextureView(depth_texture.view()),
+        });
+    }
+
     let light_map_bind_group = ctx.render_device().create_bind_group(
         LIGHT_MAP_BIND_GROUP,
-        &pipeline_cache.get_bind_group_layout(&light_map_pipeline.layout_descriptor),
-        &BindGroupEntries::sequential((
-            view_uniform_binding.clone(),
-            ambient_light_uniform.clone(),
-            point_light_binding.clone(),
-            point_light_count_binding.clone(),
-            &sdf_texture.sdf.default_view,
-            &light_map_pipeline.sdf_sampler,
-            spot_light_binding.clone(),
-            spot_light_count_binding.clone(),
-        )),
+        &pipeline_cache
+            .get_bind_group_layout(&light_map_pipeline.layout_descriptor(pipeline_id.key)),
+        &entries,
     );
 
     let mut light_map_pass = ctx.begin_tracked_render_pass(RenderPassDescriptor {
