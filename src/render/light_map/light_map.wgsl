@@ -2,10 +2,12 @@
 #import bevy_render::view::View
 #import bevy_light_2d::types::{AmbientLight2d, PointLight2d, PointLightMeta, SpotLight2d, SpotLightMeta}
 #import bevy_light_2d::view_transformations::{
+    depth_to_world_z,
     frag_coord_to_ndc,
     ndc_to_world,
     ndc_to_uv,
-    world_to_ndc
+    world_to_ndc,
+    world_units_per_pixel
 };
 
 // We're currently only using a single uniform binding for point lights in
@@ -13,6 +15,8 @@
 // ensure our point lights can fit in 4kb.
 const MAX_POINT_LIGHTS: u32 = 82u;
 const MAX_SPOT_LIGHTS:  u32 = 64u;
+
+const F16_MAX: f32 = 65504.0;
 
 @group(0) @binding(0)
 var<uniform> view: View;
@@ -51,13 +55,27 @@ var sdf_sampler: sampler;
 @group(0) @binding(7)
 var<uniform> spot_light_meta: SpotLightMeta;
 
+#ifdef Z_SORTING
+#ifdef MULTISAMPLED
+    @group(0) @binding(8)
+    var depth_texture: texture_depth_multisampled_2d;
+#else
+    @group(0) @binding(8)
+    var depth_texture: texture_depth_2d;
+#endif
+#endif
+
 @fragment
 fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
-    let pos = ndc_to_world(frag_coord_to_ndc(in.position.xy));
+    let ndc = frag_coord_to_ndc(in.position.xy);
+    let pos = ndc_to_world(ndc);
+    let sprite_z = sprite_z(in.position.xy, ndc);
 
-    if get_distance(pos) <= 0.0 {
+    if is_shadowed(sample_sdf(pos), sprite_z) {
         return vec4(ambient_light.color.rgb, 1.0);
     }
+
+    let min_step = world_units_per_pixel();
 
     var lighting_color = ambient_light.color.rgb;
     
@@ -67,7 +85,7 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
         let dist = distance(light.center, pos);
 
         if dist < light.radius {
-            let raymarch = raymarch(pos, light.center);
+            let raymarch = raymarch(pos, light.center, sprite_z, min_step);
 
             if raymarch > 0.0 || light.cast_shadows == 0 {
                 lighting_color += light.color.rgb * attenuation(dist, light.radius, light.intensity, light.falloff);
@@ -83,7 +101,7 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
         if dist < light.radius {
             let mask = spot_mask(light, pos, effective_center);
             if mask > 0.0 {
-                let vis = raymarch(pos, effective_center);
+                let vis = raymarch(pos, effective_center, sprite_z, min_step);
                 if vis > 0.0 || light.cast_shadows == 0u {
                     lighting_color += light.color.rgb * attenuation(dist, light.radius, light.intensity, light.falloff) * mask;
                 }
@@ -109,10 +127,26 @@ fn attenuation(dist: f32, radius: f32, intensity: f32, falloff: f32) -> f32 {
     return intensity * square(1.0 - s2) / (1.0 + falloff * s2);
 }
 
-fn get_distance(pos: vec2<f32>) -> f32 {
+fn sprite_z(frag_coord: vec2<f32>, ndc: vec2<f32>) -> f32 {
+#ifdef Z_SORTING
+    let depth = textureLoad(depth_texture, vec2<i32>(frag_coord), 0);
+    return depth_to_world_z(ndc, depth);
+#else
+    return -F16_MAX;
+#endif
+}
+
+fn sample_sdf(pos: vec2<f32>) -> vec4<f32> {
     let uv = ndc_to_uv(world_to_ndc(pos));
-    let dist = textureSampleLevel(sdf, sdf_sampler, uv, 0.0).r;
-    return dist;
+    return textureSampleLevel(sdf, sdf_sampler, uv, 0.0);
+}
+
+fn is_shadowed(sdf_sample: vec4<f32>, sprite_z: f32) -> bool {
+#ifdef Z_SORTING
+    return sdf_sample.r <= 0.0 && sdf_sample.g > sprite_z;
+#else
+    return sdf_sample.r <= 0.0;
+#endif
 }
 
 fn distance_squared(a: vec2<f32>, b: vec2<f32>) -> f32 {
@@ -120,14 +154,14 @@ fn distance_squared(a: vec2<f32>, b: vec2<f32>) -> f32 {
     return dot(c, c);
 }
 
-fn raymarch(ray_origin: vec2<f32>, ray_target: vec2<f32>) -> f32 {
+fn raymarch(ray_origin: vec2<f32>, ray_target: vec2<f32>, sprite_z: f32, min_step: f32) -> f32 {
     let ray_direction = normalize(ray_target - ray_origin);
     let stop_at = distance_squared(ray_origin, ray_target);
 
     var ray_progress: f32 = 0.0;
     var pos = vec2<f32>(0.0);
 
-    for (var i = 0; i < 32; i++) {
+    for (var i = 0; i < 48; i++) {
         pos = ray_origin + ray_progress * ray_direction;
 
         if (ray_progress * ray_progress >= stop_at) {
@@ -135,13 +169,13 @@ fn raymarch(ray_origin: vec2<f32>, ray_target: vec2<f32>) -> f32 {
             return 1.0;
         }
 
-        let dist = get_distance(pos);
+        let sdf_sample = sample_sdf(pos);
 
-        if dist <= 0.0 {
+        if is_shadowed(sdf_sample, sprite_z) {
             break;
         }
 
-        ray_progress += dist;
+        ray_progress += max(abs(sdf_sample.r), min_step);
     }
 
     // ray found occluder

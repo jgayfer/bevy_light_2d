@@ -44,10 +44,11 @@ impl Candle {
             }
             Children [(
                 PointLight2d {
-                    radius: 48.0,
+                    radius: 64.0,
                     color: Color::Srgba(YELLOW),
                     intensity: 2.0,
                     falloff: 4.0,
+                    cast_shadows: true
                 }
                 Transform::from_xyz(0.0, 4.0, 0.0)
             )]

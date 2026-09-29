@@ -16,6 +16,7 @@ fn setup(mut commands: Commands) {
                 brightness: 0.1,
                 ..default()
             },
+            ..default()
         },
     ));
 

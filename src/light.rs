@@ -18,6 +18,10 @@ use bevy::{
 pub struct Light2d {
     /// The ambight light to apply to the scene.
     pub ambient_light: AmbientLight2d,
+    /// If occluder z-sorting should take place. Useful for top-down games.
+    ///
+    /// Currently only sprites using `SpriteMesh` can take advantage of z-sorting.
+    pub z_sorting: bool,
 }
 
 /// A light that provides illumination in all directions.
