@@ -17,6 +17,7 @@ Designed to be simple to use, yet expressive enough to fit a variety of needs.
 - Component driven design
 - Configurable point lights
 - Light occlusion
+- Occluder z-sorting
 - Dynamic shadows
 - Camera specific ambient light
 - Single camera rendering
