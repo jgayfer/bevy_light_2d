@@ -38,6 +38,7 @@ fn setup_camera(mut commands: Commands) {
                 brightness: 0.1,
                 ..default()
             },
+            ..default()
         },
     ));
 }
