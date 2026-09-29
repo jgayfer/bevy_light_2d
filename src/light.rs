@@ -14,7 +14,7 @@ use bevy::{
 /// A "marker" component to be used with a `Camera2d`.
 ///
 /// 2D lighting effects will only run for cameras that have this component.
-#[derive(Component, Default)]
+#[derive(Component, Default, Clone)]
 pub struct Light2d {
     /// The ambight light to apply to the scene.
     pub ambient_light: AmbientLight2d,
