@@ -7,8 +7,8 @@
 // WebGL2, which is limited to 4kb in BatchedUniformBuffer, so we need to
 // ensure our occluders can fit in 4kb.
 //
-// As each occluder is 16 bytes, we can fit 4096 / 16 = 256 occluders.
-const MAX_OCCLUDERS: u32 = 256u;
+// As each occluder is 32 bytes, we can fit 4096 / 32 = 128 occluders.
+const MAX_OCCLUDERS: u32 = 128u;
 
 @group(0) @binding(0)
 var<uniform> view: View;

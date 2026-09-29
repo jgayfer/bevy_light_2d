@@ -75,6 +75,7 @@ pub fn extract_spot_lights(
 pub struct ExtractedLightOccluder2d {
     pub half_size: Vec2,
     pub center: Vec2,
+    pub z: f32,
 }
 
 #[derive(Component, Default, Clone, ShaderType)]
@@ -140,6 +141,7 @@ pub fn extract_light_occluders(
             LightOccluder2dShape::Rectangle { half_size } => ExtractedLightOccluder2d {
                 half_size,
                 center: global_transform.translation().xy(),
+                z: global_transform.translation().z,
             },
         };
 
