@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added `Clone` and `Default` to all components to ensure bsn! support (#74).
+
 ### Changed
 
 - Cull lights and occluders in the main world (#71).
