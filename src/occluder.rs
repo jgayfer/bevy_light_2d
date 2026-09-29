@@ -13,7 +13,7 @@ use bevy::{
 /// A light occluder that prevents light passing through it, casting shadows.
 ///
 /// This is commonly used as a component within [`LightOcluder2dBundle`].
-#[derive(Default, Component)]
+#[derive(Default, Component, Clone)]
 #[require(
     SyncToRenderWorld,
     Transform,
@@ -28,6 +28,7 @@ pub struct LightOccluder2d {
 }
 
 /// Shape data for a light occluder.
+#[derive(Clone)]
 pub enum LightOccluder2dShape {
     /// A rectangular light occluder.
     Rectangle {
