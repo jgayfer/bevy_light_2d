@@ -9,10 +9,8 @@ use bevy::{
         query::{AnyOf, Changed, Or, Without},
         system::{Commands, Query},
     },
-    math::{
-        Vec3A, Vec3Swizzles,
-        bounding::{BoundingCircle, IntersectsVolume},
-    },
+    math::{Vec3A, Vec3Swizzles},
+    shape::{BoundingCircle, IntersectsVolume},
     transform::components::GlobalTransform,
 };
 

@@ -1,13 +1,12 @@
-#import bevy_core_pipeline::fullscreen_vertex_shader::FullscreenVertexOutput
-#import bevy_render::view::View
-#import bevy_light_2d::types::{AmbientLight2d, PointLight2d, PointLightMeta, SpotLight2d, SpotLightMeta}
-#import bevy_light_2d::view_transformations::{
+import bevy_core_pipeline::fullscreen_vertex_shader::FullscreenVertexOutput;
+import bevy_light_2d::render::types::{AmbientLight2d, PointLight2d, PointLightMeta, SpotLight2d, SpotLightMeta};
+import bevy_light_2d::render::view_transformations::{
     depth_to_world_z,
     frag_coord_to_ndc,
     ndc_to_world,
     ndc_to_uv,
     world_to_ndc,
-    world_units_per_pixel
+    world_units_per_pixel,
 };
 
 // We're currently only using a single uniform binding for point lights in
@@ -18,21 +17,17 @@ const MAX_SPOT_LIGHTS:  u32 = 64u;
 
 const F16_MAX: f32 = 65504.0;
 
-@group(0) @binding(0)
-var<uniform> view: View;
-
 @group(0) @binding(1)
 var<uniform> ambient_light: AmbientLight2d;
 
 // WebGL2 does not support storage buffers, so we fall back to a fixed length
 // array in a uniform buffer.
-#if AVAILABLE_STORAGE_BUFFER_BINDINGS >= 6
+@if(AVAILABLE_STORAGE_BUFFER_BINDINGS__GE_6)
     @group(0) @binding(2)
     var<storage> point_lights: array<PointLight2d>;
-#else
+@else
     @group(0) @binding(2)
     var<uniform> point_lights: array<PointLight2d, MAX_POINT_LIGHTS>;
-#endif
 
 @group(0) @binding(3)
 var<uniform> point_light_meta: PointLightMeta;
@@ -44,26 +39,22 @@ var sdf: texture_2d<f32>;
 var sdf_sampler: sampler;
 
 // Spot lights: SSBO on modern backends, UBO array on WebGL2
-#if AVAILABLE_STORAGE_BUFFER_BINDINGS >= 6
+@if(AVAILABLE_STORAGE_BUFFER_BINDINGS__GE_6)
     @group(0) @binding(6)
     var<storage> spot_lights: array<SpotLight2d>;
-#else
+@else
     @group(0) @binding(6)
     var<uniform> spot_lights: array<SpotLight2d, MAX_SPOT_LIGHTS>;
-#endif
 
 @group(0) @binding(7)
 var<uniform> spot_light_meta: SpotLightMeta;
 
-#ifdef Z_SORTING
-#ifdef MULTISAMPLED
+@if(Z_SORTING && MULTISAMPLED)
     @group(0) @binding(8)
     var depth_texture: texture_depth_multisampled_2d;
-#else
+@elif(Z_SORTING)
     @group(0) @binding(8)
     var depth_texture: texture_depth_2d;
-#endif
-#endif
 
 @fragment
 fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
@@ -128,12 +119,12 @@ fn attenuation(dist: f32, radius: f32, intensity: f32, falloff: f32) -> f32 {
 }
 
 fn sprite_z(frag_coord: vec2<f32>, ndc: vec2<f32>) -> f32 {
-#ifdef Z_SORTING
-    let depth = textureLoad(depth_texture, vec2<i32>(frag_coord), 0);
-    return depth_to_world_z(ndc, depth);
-#else
-    return -F16_MAX;
-#endif
+    @if(Z_SORTING)
+        let depth = textureLoad(depth_texture, vec2<i32>(frag_coord), 0);
+    @if(Z_SORTING)
+        return depth_to_world_z(ndc, depth);
+    @else
+        return -F16_MAX;
 }
 
 fn sample_sdf(pos: vec2<f32>) -> vec4<f32> {
@@ -142,11 +133,10 @@ fn sample_sdf(pos: vec2<f32>) -> vec4<f32> {
 }
 
 fn is_shadowed(sdf_sample: vec4<f32>, sprite_z: f32) -> bool {
-#ifdef Z_SORTING
-    return sdf_sample.r <= 0.0 && sdf_sample.g > sprite_z;
-#else
-    return sdf_sample.r <= 0.0;
-#endif
+    @if(Z_SORTING)
+        return sdf_sample.r <= 0.0 && sdf_sample.g > sprite_z;
+    @else
+        return sdf_sample.r <= 0.0;
 }
 
 fn distance_squared(a: vec2<f32>, b: vec2<f32>) -> f32 {

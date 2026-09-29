@@ -1,5 +1,3 @@
-#define_import_path bevy_light_2d::types
-
 struct AmbientLight2d {
     color: vec4<f32>,
 }

@@ -1,4 +1,6 @@
-use bevy::{color::palettes::css::YELLOW, prelude::*, sprite::SpriteMesh, window::PrimaryWindow};
+use bevy::{
+    color::palettes::css::YELLOW, prelude::*, sprite::SpriteAlphaMode, window::PrimaryWindow,
+};
 use bevy_light_2d::prelude::*;
 
 mod candle;
@@ -91,12 +93,14 @@ fn follow_cursor(
 fn spawn_chests(mut commands: Commands, tileset: Res<DungeonTileset>) {
     for (x, y) in [(2, 0), (-2, 1), (-2, -1)] {
         commands.spawn((
-            SpriteMesh {
+            Sprite {
                 image: tileset.texture.clone(),
                 texture_atlas: Some(TextureAtlas {
                     index: CHEST,
                     layout: tileset.layout.clone(),
                 }),
+                // Masked sprites write depth, which z-sorting relies on.
+                alpha_mode: SpriteAlphaMode::Mask(0.5),
                 ..default()
             },
             Transform::from_translation(tile_translation(x, y).extend(ENTITY_INDEX)),
@@ -117,9 +121,9 @@ fn set_clear_color(mut clear_color: ResMut<ClearColor>) {
 }
 
 fn candles() -> impl SceneList {
-    bsn_list! [
-        (@Candle Transform::from_xyz(0., 2., ENTITY_INDEX))
-    ]
+    bsn_list! {
+        @Candle Transform::from_xyz(0., 2., ENTITY_INDEX)
+    }
 }
 
 fn spawn_tiles(mut commands: Commands, tileset: Res<DungeonTileset>) {
