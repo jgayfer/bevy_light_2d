@@ -155,6 +155,17 @@ fn distance_squared(a: vec2<f32>, b: vec2<f32>) -> f32 {
 }
 
 fn raymarch(ray_origin: vec2<f32>, ray_target: vec2<f32>, sprite_z: f32, min_step: f32) -> f32 {
+    // Lights that sit on the edge of an occluder can cause fragments
+    // to be either lit or shadowed, depending on where the final march
+    // lands (e.g. overshooting the light and ending up "in" the occluder
+    // will result in no light being cast).
+    //
+    // To fix this, we can check if the light center itself is shadowed,
+    // skipping the raymarch if it is.
+    if is_shadowed(sample_sdf(ray_target), sprite_z) {
+        return 0.0;
+    }
+
     let ray_direction = normalize(ray_target - ray_origin);
     let stop_at = distance_squared(ray_origin, ray_target);
 
