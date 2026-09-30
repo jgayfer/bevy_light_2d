@@ -183,14 +183,19 @@ fn raymarch(ray_origin: vec2<f32>, ray_target: vec2<f32>, sprite_z: f32, min_ste
         let sdf_sample = sample_sdf(pos);
 
         if is_shadowed(sdf_sample, sprite_z) {
-            break;
+            return 0.0;
         }
 
         ray_progress += max(abs(sdf_sample.r), min_step);
     }
 
-    // ray found occluder
-    return 0.0;
+    // Out of steps. Nothing along the marched path was occluded, but the
+    // remainder is unverified.
+    //
+    // We treat this case as not occluded. There are tradeoffs both ways,
+    // but treating it as occluded can result in z-sorted sprites getting
+    // a shadow from their own occluder at sharp angles.
+    return 1.0;
 }
 
 // Calculates the mask for a given spotlight. 
