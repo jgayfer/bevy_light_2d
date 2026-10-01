@@ -15,7 +15,7 @@ pub use node::light_map_pass;
 pub use pipeline::LightMapPipeline;
 pub use prepare::{
     prepare_light_map_pipelines, prepare_light_map_texture, prepare_point_light_count,
-    prepare_spot_light_count, prepare_z_sorting_depth_texture,
+    prepare_spot_light_count,
 };
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]

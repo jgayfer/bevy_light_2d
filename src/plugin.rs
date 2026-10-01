@@ -3,7 +3,7 @@
 use bevy::{
     asset::embedded_asset,
     camera::visibility::VisibilitySystems,
-    core_pipeline::{Core2d, Core2dSystems, core_2d::prepare_core_2d_depth_textures},
+    core_pipeline::{Core2d, Core2dSystems},
     prelude::*,
     render::{
         Render, RenderApp, RenderSystems, extract_component::UniformComponentPlugin,
@@ -16,6 +16,7 @@ use crate::{
     light::{AmbientLight2d, PointLight2d, SpotLight2d},
     occluder::LightOccluder2dVisibility,
     render::{
+        configure_depth_texture,
         empty_buffer::{EmptyBuffer, prepare_empty_buffer},
         extract::{
             ExtractedAmbientLight2d, ExtractedLightOccluder2d, ExtractedPointLight2d,
@@ -26,7 +27,7 @@ use crate::{
         light_map::{
             LightMapPipeline, PointLightMetaBuffer, SpotLightMetaBuffer, light_map_pass,
             prepare_light_map_pipelines, prepare_light_map_texture, prepare_point_light_count,
-            prepare_spot_light_count, prepare_z_sorting_depth_texture,
+            prepare_spot_light_count,
         },
         lighting::{LightingPipeline, lighting_pass, prepare_lighting_pipelines},
         sdf::{
@@ -94,9 +95,9 @@ impl Plugin for Light2dPlugin {
                 (
                     prepare_lighting_pipelines.in_set(RenderSystems::Prepare),
                     prepare_light_map_pipelines.in_set(RenderSystems::Prepare),
-                    prepare_z_sorting_depth_texture
-                        .after(prepare_core_2d_depth_textures)
-                        .in_set(RenderSystems::PrepareResources),
+                    configure_depth_texture
+                        .after(prepare_view_targets)
+                        .in_set(RenderSystems::PrepareViews),
                     prepare_point_light_count.in_set(RenderSystems::Prepare),
                     prepare_spot_light_count.in_set(RenderSystems::Prepare),
                     prepare_occluder_meta.in_set(RenderSystems::Prepare),

@@ -1,5 +1,4 @@
 use bevy::{
-    core_pipeline::core_2d::CORE_2D_DEPTH_FORMAT,
     ecs::{
         entity::Entity,
         system::{Commands, Query, Res, ResMut},
@@ -11,7 +10,7 @@ use bevy::{
         },
         renderer::{RenderDevice, RenderQueue},
         texture::TextureCache,
-        view::{Msaa, ViewDepthStencilTexture, ViewTarget},
+        view::{Msaa, ViewTarget},
     },
 };
 
@@ -23,7 +22,6 @@ use super::{
 };
 
 const LIGHT_MAP_TEXTURE: &str = "light_map_texture";
-const Z_SORTING_DEPTH_TEXTURE: &str = "light_2d_z_sorting_depth_texture";
 
 pub fn prepare_light_map_pipelines(
     mut commands: Commands,
@@ -41,39 +39,6 @@ pub fn prepare_light_map_pipelines(
         commands
             .entity(entity)
             .insert(LightMapPipelineId { id, key });
-    }
-}
-
-// Bevy doesn't use TEXTURE_BINDING for the 2d depth map, so it can't be used
-// in a shader. We can hack that by overwriting ViewDepthStencilTexture with the texture
-// binding flag. Hoping to get this changed upstream so we can remove this.
-pub fn prepare_z_sorting_depth_texture(
-    mut commands: Commands,
-    render_device: Res<RenderDevice>,
-    mut texture_cache: ResMut<TextureCache>,
-    views: Query<(Entity, &ViewDepthStencilTexture, &ExtractedLight2d)>,
-) {
-    for (entity, depth, light_2d) in &views {
-        if !light_2d.z_sorting {
-            continue;
-        }
-        let texture = texture_cache.get(
-            &render_device,
-            TextureDescriptor {
-                label: Some(Z_SORTING_DEPTH_TEXTURE),
-                size: depth.texture().size(),
-                mip_level_count: 1,
-                sample_count: depth.texture().sample_count(),
-                dimension: TextureDimension::D2,
-                format: CORE_2D_DEPTH_FORMAT,
-                usage: TextureUsages::RENDER_ATTACHMENT | TextureUsages::TEXTURE_BINDING,
-                view_formats: &[],
-            },
-        );
-
-        commands
-            .entity(entity)
-            .insert(ViewDepthStencilTexture::new(texture, Some(0.0), None));
     }
 }
 
