@@ -30,8 +30,8 @@ In the [`basic`](https://github.com/jgayfer/bevy_light_2d/blob/main/examples/bas
 ```toml
 # Cargo.toml
 [dependencies]
-bevy = "0.19"
-bevy_light_2d = "0.10"
+bevy = "0.20"
+bevy_light_2d = "0.11"
 ```
 
 ```rust
@@ -46,10 +46,11 @@ fn main() {
 }
 
 fn scene() -> impl SceneList {
-    bsn_list![
-        Camera2d Light2d,
+    bsn_list! {
+        Camera2d Light2d
+        ---
         PointLight2d { intensity: 3.0, radius: 100.0 }
-    ]
+    }
 }
 ```
 
@@ -69,6 +70,7 @@ general application over depth of features.
 
 | bevy | bevy_light_2d |
 |------|---------------|
+| 0.20 | 0.11          |
 | 0.19 | 0.10          |
 | 0.18 | 0.9           |
 | 0.17 | 0.8           |
