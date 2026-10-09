@@ -6,7 +6,7 @@ use bevy::render::render_resource::{
     RenderPassColorAttachment, RenderPassDescriptor,
 };
 use bevy::render::renderer::{RenderContext, RenderDevice, ViewQuery};
-use bevy::render::view::{ViewDepthTexture, ViewUniformOffset, ViewUniforms};
+use bevy::render::view::{ViewDepthStencilTexture, ViewUniformOffset, ViewUniforms};
 use smallvec::{SmallVec, smallvec};
 
 use crate::render::empty_buffer::EmptyBuffer;
@@ -32,7 +32,7 @@ pub fn light_map_pass(
         &LightMapTexture,
         &SdfTexture,
         &LightMapPipelineId,
-        Option<&ViewDepthTexture>,
+        Option<&ViewDepthStencilTexture>,
     )>,
     mut ctx: RenderContext,
 ) {
@@ -90,7 +90,7 @@ pub fn light_map_pass(
         };
         entries.push(BindGroupEntry {
             binding: DEPTH_TEXTURE_BINDING,
-            resource: BindingResource::TextureView(depth_texture.view()),
+            resource: BindingResource::TextureView(&depth_texture.attachment.texture.default_view),
         });
     }
 

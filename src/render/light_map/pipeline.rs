@@ -1,3 +1,4 @@
+use bevy::asset::{Handle, load_embedded_asset};
 use bevy::core_pipeline::FullscreenShader;
 use bevy::ecs::resource::Resource;
 use bevy::ecs::world::{FromWorld, World};
@@ -12,12 +13,13 @@ use bevy::render::render_resource::{
 };
 use bevy::render::renderer::RenderDevice;
 use bevy::render::view::ViewUniform;
+use bevy::shader::Shader;
 
 use crate::render::extract::{
     ExtractedAmbientLight2d, ExtractedPointLight2d, ExtractedSpotLight2d,
 };
 
-use super::{LIGHT_MAP_SHADER, LightMapPipelineKey, PointLightMeta, SpotLightMeta};
+use super::{LightMapPipelineKey, PointLightMeta, SpotLightMeta};
 
 const LIGHT_MAP_BIND_GROUP_LAYOUT: &str = "light_map_group_layout";
 const LIGHT_MAP_PIPELINE: &str = "light_map_pipeline";
@@ -29,6 +31,7 @@ pub struct LightMapPipeline {
     pub base_entries: Vec<BindGroupLayoutEntry>,
     pub sdf_sampler: Sampler,
     pub fullscreen_shader: FullscreenShader,
+    pub shader: Handle<Shader>,
 }
 
 impl LightMapPipeline {
@@ -68,11 +71,13 @@ impl FromWorld for LightMapPipeline {
 
         let sdf_sampler = render_device.create_sampler(&SamplerDescriptor::default());
         let fullscreen_shader = world.resource::<FullscreenShader>().clone();
+        let shader = load_embedded_asset!(world, "light_map.wesl");
 
         Self {
             base_entries,
             sdf_sampler,
             fullscreen_shader,
+            shader,
         }
     }
 }
@@ -94,7 +99,7 @@ impl SpecializedRenderPipeline for LightMapPipeline {
             layout: vec![self.layout_descriptor(key)],
             vertex: self.fullscreen_shader.to_vertex_state(),
             fragment: Some(FragmentState {
-                shader: LIGHT_MAP_SHADER,
+                shader: self.shader.clone(),
                 shader_defs,
                 entry_point: Some("fragment".into()),
                 targets: vec![Some(ColorTargetState {
@@ -102,6 +107,7 @@ impl SpecializedRenderPipeline for LightMapPipeline {
                     blend: None,
                     write_mask: ColorWrites::ALL,
                 })],
+                constants: Vec::new(),
             }),
             primitive: PrimitiveState::default(),
             depth_stencil: None,

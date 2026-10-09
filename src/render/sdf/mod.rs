@@ -3,22 +3,18 @@ mod pipeline;
 mod prepare;
 
 use bevy::{
-    asset::{Handle, weak_handle},
     ecs::{component::Component, resource::Resource},
     math::Vec3,
     render::{
         render_resource::{ShaderType, UniformBuffer},
         texture::CachedTexture,
     },
-    shader::Shader,
 };
 
 pub use node::sdf_pass;
 pub use pipeline::SdfPipeline;
 pub use prepare::prepare_occluder_meta;
 pub use prepare::prepare_sdf_texture;
-
-pub const SDF_SHADER: Handle<Shader> = weak_handle!("16251728-6dd9-481e-95a7-7c2e0ff8d920");
 
 #[derive(Component)]
 pub struct SdfTexture {

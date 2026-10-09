@@ -11,7 +11,7 @@ use bevy::{
         },
         renderer::{RenderDevice, RenderQueue},
         texture::TextureCache,
-        view::{Msaa, ViewDepthTexture, ViewTarget},
+        view::{Msaa, ViewDepthStencilTexture, ViewTarget},
     },
 };
 
@@ -45,13 +45,13 @@ pub fn prepare_light_map_pipelines(
 }
 
 // Bevy doesn't use TEXTURE_BINDING for the 2d depth map, so it can't be used
-// in a shader. We can hack that by overwriting ViewDepthTexture with the texture
+// in a shader. We can hack that by overwriting ViewDepthStencilTexture with the texture
 // binding flag. Hoping to get this changed upstream so we can remove this.
 pub fn prepare_z_sorting_depth_texture(
     mut commands: Commands,
     render_device: Res<RenderDevice>,
     mut texture_cache: ResMut<TextureCache>,
-    views: Query<(Entity, &ViewDepthTexture, &ExtractedLight2d)>,
+    views: Query<(Entity, &ViewDepthStencilTexture, &ExtractedLight2d)>,
 ) {
     for (entity, depth, light_2d) in &views {
         if !light_2d.z_sorting {
@@ -61,9 +61,9 @@ pub fn prepare_z_sorting_depth_texture(
             &render_device,
             TextureDescriptor {
                 label: Some(Z_SORTING_DEPTH_TEXTURE),
-                size: depth.texture.size(),
+                size: depth.texture().size(),
                 mip_level_count: 1,
-                sample_count: depth.texture.sample_count(),
+                sample_count: depth.texture().sample_count(),
                 dimension: TextureDimension::D2,
                 format: CORE_2D_DEPTH_FORMAT,
                 usage: TextureUsages::RENDER_ATTACHMENT | TextureUsages::TEXTURE_BINDING,
@@ -73,7 +73,7 @@ pub fn prepare_z_sorting_depth_texture(
 
         commands
             .entity(entity)
-            .insert(ViewDepthTexture::new(texture, Some(0.0)));
+            .insert(ViewDepthStencilTexture::new(texture, Some(0.0), None));
     }
 }
 
